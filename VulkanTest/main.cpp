@@ -49,21 +49,12 @@ private:
 	VkInstance m_VkInstance;
 	VkDebugUtilsMessengerEXT m_VkDebugMessenger;
 	VkPhysicalDevice m_VkPhysicalDevice = VK_NULL_HANDLE;
+	VkDevice m_VkDevice;
+	VkQueue m_VkGraphicsQueue;
 
 	std::vector<const char*> m_vValidationLayers = { "VK_LAYER_KHRONOS_validation" };
-	//**************************
-
-	static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(
-		VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-		VkDebugUtilsMessageTypeFlagsEXT messageType,
-		const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-		void* pUserData) 
-	{
-		std::cerr << "Validation layer: " << pCallbackData->pMessage << std::endl;
-
-		return VK_FALSE;
-	}
-
+	
+	//******WINDOW*********
 	void InitWindow()
 	{
 		glfwInit();
@@ -74,6 +65,7 @@ private:
 		m_pWindow = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Vulkan", nullptr, nullptr);
 	}
 
+	//****INSTANCE*****
 	bool CheckValidationLayers()
 	{
 		uint32_t uiLayerCount = 0;
@@ -166,6 +158,18 @@ private:
 			throw std::runtime_error("Failed to create instance !");
 	}
 
+	//****DEBUG CALLBACK*****
+	static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(
+		VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+		VkDebugUtilsMessageTypeFlagsEXT messageType,
+		const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+		void* pUserData)
+	{
+		std::cerr << "Validation layer: " << pCallbackData->pMessage << std::endl;
+
+		return VK_FALSE;
+	}
+
 	void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo) 
 	{
 		createInfo = {};
@@ -187,6 +191,7 @@ private:
 			throw std::runtime_error("Failed to set up debug messenger!");
 	}
 
+	//****PHYSICAL DEVICE*****
 	struct QueueFamilyIndices
 	{
 		std::optional<uint32_t> uiGraphicsFamily;
@@ -219,12 +224,12 @@ private:
 	bool IsDeviceSuitable(const VkPhysicalDevice &device)
 	{
 		VkPhysicalDeviceProperties deviceProperties;
-		vkGetPhysicalDeviceProperties(m_VkPhysicalDevice, &deviceProperties);
+		vkGetPhysicalDeviceProperties(device, &deviceProperties);
 
 		VkPhysicalDeviceFeatures deviceFeatures;
-		vkGetPhysicalDeviceFeatures(m_VkPhysicalDevice, &deviceFeatures);
+		vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
 
-		QueueFamilyIndices indices = FindQueueFamilies(m_VkPhysicalDevice);
+		QueueFamilyIndices indices = FindQueueFamilies(device);
 		return indices.IsComplete();
 	}
 
@@ -251,11 +256,49 @@ private:
 			throw std::runtime_error("Failed to find a suitable GPU!");
 	}
 
+
+	//****LOGICAL DEVICE*****
+	void CreateLogicalDevice()
+	{
+		QueueFamilyIndices indices = FindQueueFamilies(m_VkPhysicalDevice);
+
+		VkDeviceQueueCreateInfo queueCreateInfo = {};
+		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		queueCreateInfo.queueFamilyIndex = indices.uiGraphicsFamily.value();
+		queueCreateInfo.queueCount = 1;
+		float fQueuePriority = 1.0f;
+		queueCreateInfo.pQueuePriorities = &fQueuePriority;
+
+		VkPhysicalDeviceFeatures deviceFeatures = {};
+
+		VkDeviceCreateInfo createInfo = {};
+		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+		createInfo.pQueueCreateInfos = &queueCreateInfo;
+		createInfo.queueCreateInfoCount = 1;
+		createInfo.pEnabledFeatures = &deviceFeatures;
+		createInfo.enabledExtensionCount = 0;
+
+		//needed for older Vulkan versions compatibility 
+		if (ENABLE_VALIDATION_LAYERS) 
+		{
+			createInfo.enabledLayerCount = static_cast<uint32_t>(m_vValidationLayers.size());
+			createInfo.ppEnabledLayerNames = m_vValidationLayers.data();
+		}
+		else
+			createInfo.enabledLayerCount = 0;
+
+		if (vkCreateDevice(m_VkPhysicalDevice, &createInfo, nullptr, &m_VkDevice) != VK_SUCCESS)
+			throw std::runtime_error("Failed to create logical device!");
+
+		vkGetDeviceQueue(m_VkDevice, indices.uiGraphicsFamily.value(), 0, &m_VkGraphicsQueue);
+	}
+
 	void InitVulkan() 
 	{
 		CreateInstance();
 		SetupDebugMessenger();
 		PickPhysicalDevice();
+		CreateLogicalDevice();
 	}
 
 	void MainLoop() 
@@ -268,6 +311,8 @@ private:
 
 	void Cleanup() 
 	{
+		vkDestroyDevice(m_VkDevice, nullptr);
+
 		if (ENABLE_VALIDATION_LAYERS)
 			DestroyDebugUtilsMessengerEXT(m_VkInstance, m_VkDebugMessenger, nullptr);
 		
