@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <functional>
 #include <cstdlib>
+#include <optional>
 
 #define WINDOW_WIDTH	800
 #define WINDOW_HEIGHT	600
@@ -47,6 +48,7 @@ private:
 
 	VkInstance m_VkInstance;
 	VkDebugUtilsMessengerEXT m_VkDebugMessenger;
+	VkPhysicalDevice m_VkPhysicalDevice = VK_NULL_HANDLE;
 
 	std::vector<const char*> m_vValidationLayers = { "VK_LAYER_KHRONOS_validation" };
 	//**************************
@@ -185,10 +187,75 @@ private:
 			throw std::runtime_error("Failed to set up debug messenger!");
 	}
 
+	struct QueueFamilyIndices
+	{
+		std::optional<uint32_t> uiGraphicsFamily;
+
+		bool IsComplete() { return uiGraphicsFamily.has_value(); }
+	};
+
+	QueueFamilyIndices FindQueueFamilies(const VkPhysicalDevice &device)
+	{
+		QueueFamilyIndices indices;
+
+		uint32_t uiQueueFamilyCount = 0;
+		vkGetPhysicalDeviceQueueFamilyProperties(device, &uiQueueFamilyCount, nullptr);
+
+		std::vector<VkQueueFamilyProperties> vQueueFamilies(uiQueueFamilyCount);
+		vkGetPhysicalDeviceQueueFamilyProperties(device, &uiQueueFamilyCount, vQueueFamilies.data());
+
+		for (uint32_t i = 0; i < uiQueueFamilyCount; ++i)
+		{
+			if (vQueueFamilies[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
+				indices.uiGraphicsFamily = i;
+
+			if (indices.IsComplete())
+				break;
+		}
+
+		return indices;
+	}
+
+	bool IsDeviceSuitable(const VkPhysicalDevice &device)
+	{
+		VkPhysicalDeviceProperties deviceProperties;
+		vkGetPhysicalDeviceProperties(m_VkPhysicalDevice, &deviceProperties);
+
+		VkPhysicalDeviceFeatures deviceFeatures;
+		vkGetPhysicalDeviceFeatures(m_VkPhysicalDevice, &deviceFeatures);
+
+		QueueFamilyIndices indices = FindQueueFamilies(m_VkPhysicalDevice);
+		return indices.IsComplete();
+	}
+
+	void PickPhysicalDevice() //select first found suitable device
+	{
+		uint32_t uiDeviceCount;
+		vkEnumeratePhysicalDevices(m_VkInstance, &uiDeviceCount, nullptr);
+		if (uiDeviceCount == 0)
+			throw std::runtime_error("Faild to find GPUs with Vulkan support!");
+
+		std::vector<VkPhysicalDevice> vDevices(uiDeviceCount);
+		vkEnumeratePhysicalDevices(m_VkInstance, &uiDeviceCount, vDevices.data());
+
+		for (const auto& device : vDevices)
+		{
+			if (IsDeviceSuitable(device))
+			{
+				m_VkPhysicalDevice = device;
+				break;
+			}
+		}
+
+		if (m_VkPhysicalDevice == VK_NULL_HANDLE)
+			throw std::runtime_error("Failed to find a suitable GPU!");
+	}
+
 	void InitVulkan() 
 	{
 		CreateInstance();
 		SetupDebugMessenger();
+		PickPhysicalDevice();
 	}
 
 	void MainLoop() 
