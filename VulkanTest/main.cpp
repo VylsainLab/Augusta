@@ -139,12 +139,12 @@ private:
 	void PickPhysicalDevice() //select first found suitable device
 	{
 		uint32_t uiDeviceCount;
-		vkEnumeratePhysicalDevices(m_VkInstance, &uiDeviceCount, nullptr);
+		vkEnumeratePhysicalDevices(vkw::Context::m_VkInstance, &uiDeviceCount, nullptr);
 		if (uiDeviceCount == 0)
 			throw std::runtime_error("Failed to find GPUs with Vulkan support!");
 
 		std::vector<VkPhysicalDevice> vDevices(uiDeviceCount);
-		vkEnumeratePhysicalDevices(m_VkInstance, &uiDeviceCount, vDevices.data());
+		vkEnumeratePhysicalDevices(vkw::Context::m_VkInstance, &uiDeviceCount, vDevices.data());
 
 		for (const auto& device : vDevices)
 		{
@@ -191,8 +191,8 @@ private:
 		//needed for older Vulkan versions compatibility 
 		if (ENABLE_VALIDATION_LAYERS) 
 		{
-			createInfo.enabledLayerCount = static_cast<uint32_t>(m_vValidationLayers.size());
-			createInfo.ppEnabledLayerNames = m_vValidationLayers.data();
+			createInfo.enabledLayerCount = static_cast<uint32_t>(vkw::Context::m_vValidationLayers.size());
+			createInfo.ppEnabledLayerNames = vkw::Context::m_vValidationLayers.data();
 		}
 		else
 			createInfo.enabledLayerCount = 0;
@@ -763,7 +763,7 @@ private:
 
 	void InitVulkan() 
 	{
-		AddNewWindow(m_VkInstance, "Vulkan", WINDOW_WIDTH, WINDOW_HEIGHT);
+		AddNewWindow(vkw::Context::m_VkInstance, "Vulkan", WINDOW_WIDTH, WINDOW_HEIGHT);
 		PickPhysicalDevice();
 		CreateLogicalDevice();
 		CreateSwapChain();

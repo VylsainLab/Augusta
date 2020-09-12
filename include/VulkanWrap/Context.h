@@ -1,7 +1,15 @@
 #ifndef VKW_CONTEXT_H
 #define VKW_CONTEXT_H
 
-#include <vulkan/vulkan.h>
+#define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
+#include <vector>
+
+#ifdef NDEBUG
+#define ENABLE_VALIDATION_LAYERS	false
+#else
+#define ENABLE_VALIDATION_LAYERS	true
+#endif
 
 namespace vkw
 {
@@ -9,11 +17,17 @@ namespace vkw
 	{
 	public:
 		static void Init();
+		static void Release();
 
-		static VkInstance GetInstance() { return m_VkInstance; }
+		static VkInstance m_VkInstance;
+		static std::vector<const char*> m_vValidationLayers;
 
 	protected:
-		static VkInstance m_VkInstance;
+		static bool CheckValidationLayers();
+		static void CreateInstance();
+		static void SetupDebugMessenger();		
+ 
+		static VkDebugUtilsMessengerEXT m_VkDebugMessenger;		
 	};
 }
 #endif

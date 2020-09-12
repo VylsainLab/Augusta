@@ -1,15 +1,8 @@
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
+#include <VulkanWrap/Context.h>
 #include <VulkanWrap/Window.h>
 #include <VulkanWrap/Context.h>
 #include <vector>
 #include <memory>
-
-#ifdef NDEBUG
-#define ENABLE_VALIDATION_LAYERS	false
-#else
-#define ENABLE_VALIDATION_LAYERS	true
-#endif
 
 namespace vkw
 {
@@ -28,18 +21,7 @@ namespace vkw
 	protected:
 		void UpdateWindowsList();
 
-		//Vulkan context
-		bool CheckValidationLayers();
-		void CreateInstance();
-		void SetupDebugMessenger();
-		void InitVulkan();
-		void ReleaseVulkan();
-
 		static bool m_bGLFWInitialized;
-		VkInstance m_VkInstance;
-		VkDebugUtilsMessengerEXT m_VkDebugMessenger;
 		std::vector<std::shared_ptr<vkw::Window>> m_vWindows;
-
-		std::vector<const char*> m_vValidationLayers = { "VK_LAYER_KHRONOS_validation" };
 	};
 }
