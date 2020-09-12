@@ -763,7 +763,7 @@ private:
 
 	void InitVulkan() 
 	{
-		AddNewWindow(vkw::Context::m_VkInstance, "Vulkan", WINDOW_WIDTH, WINDOW_HEIGHT);
+		AddNewWindow("Vulkan", WINDOW_WIDTH, WINDOW_HEIGHT);
 		PickPhysicalDevice();
 		CreateLogicalDevice();
 		CreateSwapChain();

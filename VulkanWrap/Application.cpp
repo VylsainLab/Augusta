@@ -30,9 +30,9 @@ namespace vkw
 		}
 	}
 
-	vkw::Window* Application::AddNewWindow(VkInstance &instance, const char* szName, uint16_t uiWidth, uint16_t uiHeight)
+	vkw::Window* Application::AddNewWindow(const char* szName, uint16_t uiWidth, uint16_t uiHeight)
 	{
-		std::shared_ptr<vkw::Window> pWindow(new vkw::Window(instance, szName, uiWidth, uiHeight));
+		std::shared_ptr<vkw::Window> pWindow(new vkw::Window(szName, uiWidth, uiHeight));
 		m_vWindows.push_back(pWindow);
 		return pWindow.get();
 	}

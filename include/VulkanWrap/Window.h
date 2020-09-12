@@ -10,7 +10,7 @@ namespace vkw
 	class Window
 	{
 	public:
-		Window(VkInstance& instance, const char* szName, uint16_t uiWidth, uint16_t uiHeight);
+		Window(const char* szName, uint16_t uiWidth, uint16_t uiHeight);
 		virtual ~Window();
 
 		VkSurfaceKHR GetSurface() { return m_VkSurface; }
@@ -21,7 +21,6 @@ namespace vkw
 		GLFWwindow* m_pWindow = nullptr;
 		static bool m_bGLFWInitialized;
 		VkSurfaceKHR m_VkSurface;
-		VkInstance* m_pVkInstance = nullptr;
 	};
 }
 #endif

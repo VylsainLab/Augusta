@@ -12,7 +12,7 @@ namespace vkw
 		Application();
 		virtual ~Application();
 		
-		vkw::Window* AddNewWindow(VkInstance &instance, const char* szName, uint16_t uiWidth, uint16_t uiHeight);
+		vkw::Window* AddNewWindow(const char* szName, uint16_t uiWidth, uint16_t uiHeight);
 
 		void Run();
 
