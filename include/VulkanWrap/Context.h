@@ -4,6 +4,7 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include <vector>
+#include <optional>
 
 #ifdef NDEBUG
 #define ENABLE_VALIDATION_LAYERS	false
@@ -13,21 +14,44 @@
 
 namespace vkw
 {
+	struct QueueFamilyIndices
+	{
+		std::optional<uint32_t> uiGraphicsFamily;
+		std::optional<uint32_t> uiPresentFamily;
+
+		bool IsComplete() { return uiGraphicsFamily.has_value() && uiPresentFamily.has_value(); }
+	};
+
 	class Context
 	{
 	public:
-		static void Init();
+		static void InitInstance();
+		static void Init(const VkSurfaceKHR& surface);
 		static void Release();
+
+		static QueueFamilyIndices GetQueueFamilies(const VkSurfaceKHR& surface);
 
 		static VkInstance m_VkInstance;
 		static std::vector<const char*> m_vValidationLayers;
+		
+		static VkDevice m_VkDevice;
+		static VkPhysicalDevice m_VkPhysicalDevice;
+		static VkQueue m_VkGraphicsQueue;
+		static VkQueue m_VkPresentQueue;
+		static std::vector<const char*> m_vDeviceExtensions;
 
 	protected:
 		static bool CheckValidationLayers();
 		static void CreateInstance();
 		static void SetupDebugMessenger();		
+
+		static bool CheckDeviceExtensionSupport(const VkPhysicalDevice& device);
+		static bool IsDeviceSuitable(const VkPhysicalDevice& device);
+		static void PickPhysicalDevice();
+		static void CreateLogicalDevice();
  
 		static VkDebugUtilsMessengerEXT m_VkDebugMessenger;		
+		
 	};
 }
 #endif

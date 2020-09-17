@@ -5,12 +5,12 @@
 
 namespace vkw
 {
-	Window::Window(const char* szName, uint16_t uiWidth, uint16_t uiHeight)
+	Window::Window(SWindowDesc desc)
 	{					
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-		m_pWindow = glfwCreateWindow(uiWidth, uiHeight, szName, nullptr, nullptr);
+		m_pWindow = glfwCreateWindow(desc.uiWidth, desc.uiHeight, desc.strName.c_str(), nullptr, nullptr);
 
 		//create surface
 		if (glfwCreateWindowSurface(vkw::Context::m_VkInstance, m_pWindow, nullptr, &m_VkSurface) != VK_SUCCESS)

@@ -2,12 +2,18 @@
 #include <set>
 #include <string>
 #include <iostream>
+#include <optional>
 
 namespace vkw
 {
 	VkInstance Context::m_VkInstance;
 	VkDebugUtilsMessengerEXT Context::m_VkDebugMessenger;
 	std::vector<const char*> Context::m_vValidationLayers = { "VK_LAYER_KHRONOS_validation" };
+	VkPhysicalDevice Context::m_VkPhysicalDevice = VK_NULL_HANDLE;
+	VkDevice Context::m_VkDevice;
+	VkQueue Context::m_VkGraphicsQueue;
+	VkQueue Context::m_VkPresentQueue;
+	std::vector<const char*> Context::m_vDeviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
 	void PrintExtensions()
 	{
@@ -70,10 +76,16 @@ namespace vkw
 			func(instance, debugMessenger, pAllocator);
 	}
 
-	void Context::Init()
+	void Context::InitInstance()
 	{
 		CreateInstance();
 		SetupDebugMessenger();
+	}
+
+	void Context::Init(const VkSurfaceKHR& surface)
+	{
+		PickPhysicalDevice();
+		CreateLogicalDevice();
 	}
 
 	void Context::Release()
@@ -149,5 +161,149 @@ namespace vkw
 
 		if (vkCreateInstance(&createInfo, nullptr, &m_VkInstance) != VK_SUCCESS)
 			throw std::runtime_error("Failed to create instance !");
+	}
+
+	//Physical device
+	bool Context::CheckDeviceExtensionSupport(const VkPhysicalDevice& device)
+	{
+		uint32_t uiExtensionCount = 0;
+		vkEnumerateDeviceExtensionProperties(device, nullptr, &uiExtensionCount, nullptr);
+
+		std::vector<VkExtensionProperties> vAvailableExtensions(uiExtensionCount);
+		vkEnumerateDeviceExtensionProperties(device, nullptr, &uiExtensionCount, vAvailableExtensions.data());
+
+		std::set<std::string> requiredExtensions(m_vDeviceExtensions.begin(), m_vDeviceExtensions.end());
+		for (const auto& extension : vAvailableExtensions)
+			requiredExtensions.erase(extension.extensionName);
+
+		return requiredExtensions.empty();
+	}
+
+	QueueFamilyIndices FindQueueFamilies(const VkPhysicalDevice& device, const VkSurfaceKHR& surface)
+	{
+		QueueFamilyIndices indices;
+
+		uint32_t uiQueueFamilyCount = 0;
+		vkGetPhysicalDeviceQueueFamilyProperties(device, &uiQueueFamilyCount, nullptr);
+
+		std::vector<VkQueueFamilyProperties> vQueueFamilies(uiQueueFamilyCount);
+		vkGetPhysicalDeviceQueueFamilyProperties(device, &uiQueueFamilyCount, vQueueFamilies.data());
+
+		for (uint32_t i = 0; i < uiQueueFamilyCount; ++i)
+		{
+			if (vQueueFamilies[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
+				indices.uiGraphicsFamily = i;
+
+			VkBool32 bIsPresentSupported = false;
+			vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &bIsPresentSupported);
+			if (bIsPresentSupported)
+				indices.uiPresentFamily = i;
+
+			if (indices.IsComplete())
+				break;
+		}
+
+		return indices;
+	}
+
+	QueueFamilyIndices Context::GetQueueFamilies(const VkSurfaceKHR& surface)
+	{
+		if (m_VkPhysicalDevice == VK_NULL_HANDLE)
+			throw std::runtime_error("Physical device has not been initialized");
+
+		return FindQueueFamilies(m_VkPhysicalDevice, surface);
+	}
+
+	bool IsDeviceSuitable(const VkPhysicalDevice& device)
+	{
+		VkPhysicalDeviceProperties deviceProperties;
+		vkGetPhysicalDeviceProperties(device, &deviceProperties);
+
+		VkPhysicalDeviceFeatures deviceFeatures;
+		vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+
+		//extensions
+		bool bExtensionsSupported = CheckDeviceExtensionSupport(device);
+
+		//swap chain
+		bool bSwapChainAdequate = false;
+		if (bExtensionsSupported)
+		{
+			SwapChainSupportDetails details = QuerySwapChainSupport(device);
+			bSwapChainAdequate = !details.formats.empty() && !details.presentModes.empty();
+		}
+
+		//queue families
+		QueueFamilyIndices indices = FindQueueFamilies(device);
+
+		return indices.IsComplete() && bExtensionsSupported && bSwapChainAdequate;
+	}
+
+	void Context::PickPhysicalDevice() //select first found suitable device
+	{
+		uint32_t uiDeviceCount;
+		vkEnumeratePhysicalDevices(vkw::Context::m_VkInstance, &uiDeviceCount, nullptr);
+		if (uiDeviceCount == 0)
+			throw std::runtime_error("Failed to find GPUs with Vulkan support!");
+
+		std::vector<VkPhysicalDevice> vDevices(uiDeviceCount);
+		vkEnumeratePhysicalDevices(vkw::Context::m_VkInstance, &uiDeviceCount, vDevices.data());
+
+		for (const auto& device : vDevices)
+		{
+			if (IsDeviceSuitable(device))
+			{
+				m_VkPhysicalDevice = device;
+				break;
+			}
+		}
+
+		if (m_VkPhysicalDevice == VK_NULL_HANDLE)
+			throw std::runtime_error("Failed to find a suitable GPU!");
+	}
+
+
+	//****LOGICAL DEVICE*****
+	void Context::CreateLogicalDevice()
+	{
+		QueueFamilyIndices indices = FindQueueFamilies(m_VkPhysicalDevice);
+
+		std::set<uint32_t> sUniqueQueueFamilies = { indices.uiGraphicsFamily.value(), indices.uiPresentFamily.value() };
+		std::vector<VkDeviceQueueCreateInfo> vQueueCreateInfos;
+		float fQueuePriority = 1.0f;
+		for (uint32_t uiQueueFamily : sUniqueQueueFamilies)
+		{
+			VkDeviceQueueCreateInfo queueCreateInfo = {};
+			queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+			queueCreateInfo.queueFamilyIndex = uiQueueFamily;
+			queueCreateInfo.queueCount = 1;
+			queueCreateInfo.pQueuePriorities = &fQueuePriority;
+			vQueueCreateInfos.push_back(queueCreateInfo);
+		}
+
+		VkPhysicalDeviceFeatures deviceFeatures = {};
+
+		VkDeviceCreateInfo createInfo = {};
+		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+		createInfo.queueCreateInfoCount = (uint32_t)vQueueCreateInfos.size();
+		createInfo.pQueueCreateInfos = vQueueCreateInfos.data();
+		createInfo.pEnabledFeatures = &deviceFeatures;
+		createInfo.enabledExtensionCount = (uint32_t)m_vDeviceExtensions.size();
+		createInfo.ppEnabledExtensionNames = m_vDeviceExtensions.data();
+
+		//needed for older Vulkan versions compatibility 
+		if (ENABLE_VALIDATION_LAYERS)
+		{
+			createInfo.enabledLayerCount = static_cast<uint32_t>(vkw::Context::m_vValidationLayers.size());
+			createInfo.ppEnabledLayerNames = vkw::Context::m_vValidationLayers.data();
+		}
+		else
+			createInfo.enabledLayerCount = 0;
+
+		if (vkCreateDevice(m_VkPhysicalDevice, &createInfo, nullptr, &m_VkDevice) != VK_SUCCESS)
+			throw std::runtime_error("Failed to create logical device!");
+
+		vkGetDeviceQueue(m_VkDevice, indices.uiGraphicsFamily.value(), 0, &m_VkGraphicsQueue);
+		vkGetDeviceQueue(m_VkDevice, indices.uiPresentFamily.value(), 0, &m_VkPresentQueue);
 	}
 }

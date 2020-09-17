@@ -9,10 +9,8 @@ namespace vkw
 	class Application
 	{
 	public:
-		Application();
+		Application(std::vector<SWindowDesc> vWindowList);
 		virtual ~Application();
-		
-		vkw::Window* AddNewWindow(const char* szName, uint16_t uiWidth, uint16_t uiHeight);
 
 		void Run();
 

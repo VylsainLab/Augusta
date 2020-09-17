@@ -9,7 +9,7 @@ namespace vkw
 {
 	bool Application::m_bGLFWInitialized = false;
 
-	Application::Application()
+	Application::Application(std::vector<SWindowDesc> vWindowList)
 	{
 		if (m_bGLFWInitialized == false)
 		{
@@ -17,7 +17,15 @@ namespace vkw
 			assert(ret = GLFW_TRUE);
 		}
 
-		vkw::Context::Init();
+		vkw::Context::InitInstance();
+		if (vWindowList.empty())
+			throw std::runtime_error("Application needs at least one window.");
+		for (auto desc : vWindowList)
+		{
+			std::shared_ptr<vkw::Window> pWindow(new vkw::Window(desc));
+			m_vWindows.push_back(pWindow);
+		}
+		vkw::Context::Init(m_vWindows.at(0)->GetSurface());
 	}
 
 	Application::~Application()
@@ -30,13 +38,6 @@ namespace vkw
 		}
 	}
 
-	vkw::Window* Application::AddNewWindow(const char* szName, uint16_t uiWidth, uint16_t uiHeight)
-	{
-		std::shared_ptr<vkw::Window> pWindow(new vkw::Window(szName, uiWidth, uiHeight));
-		m_vWindows.push_back(pWindow);
-		return pWindow.get();
-	}
-
 	void Application::Run()
 	{
 		while (!m_vWindows.empty())
@@ -45,6 +46,8 @@ namespace vkw
 			glfwPollEvents();
 			Render();
 		}
+
+		vkDeviceWaitIdle(vkw::Context::m_VkDevice);
 	}
 
 	void Application::UpdateWindowsList()

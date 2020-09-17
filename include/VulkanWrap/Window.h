@@ -7,10 +7,17 @@
 
 namespace vkw
 {
+	struct SWindowDesc
+	{
+		std::string strName;
+		uint16_t uiWidth;
+		uint16_t uiHeight;
+	};
+
 	class Window
 	{
 	public:
-		Window(const char* szName, uint16_t uiWidth, uint16_t uiHeight);
+		Window(SWindowDesc desc);
 		virtual ~Window();
 
 		VkSurfaceKHR GetSurface() { return m_VkSurface; }
