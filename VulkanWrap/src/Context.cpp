@@ -1,4 +1,5 @@
 #include <VulkanWrap/Context.h>
+#include <VulkanWrap/SwapChain.h>
 #include <set>
 #include <string>
 #include <iostream>
@@ -6,13 +7,14 @@
 
 namespace vkw
 {
-	VkInstance Context::m_VkInstance;
+	VkInstance Context::m_VkInstance = VK_NULL_HANDLE;
 	VkDebugUtilsMessengerEXT Context::m_VkDebugMessenger;
 	std::vector<const char*> Context::m_vValidationLayers = { "VK_LAYER_KHRONOS_validation" };
+	VkSurfaceKHR Context::m_ReferenceSurface = VK_NULL_HANDLE;
 	VkPhysicalDevice Context::m_VkPhysicalDevice = VK_NULL_HANDLE;
-	VkDevice Context::m_VkDevice;
-	VkQueue Context::m_VkGraphicsQueue;
-	VkQueue Context::m_VkPresentQueue;
+	VkDevice Context::m_VkDevice = VK_NULL_HANDLE;
+	VkQueue Context::m_VkGraphicsQueue = VK_NULL_HANDLE;
+	VkQueue Context::m_VkPresentQueue = VK_NULL_HANDLE;
 	std::vector<const char*> Context::m_vDeviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
 	void PrintExtensions()
@@ -82,14 +84,17 @@ namespace vkw
 		SetupDebugMessenger();
 	}
 
-	void Context::Init(const VkSurfaceKHR& surface)
+	void Context::Init(const VkSurfaceKHR& reference_surface)
 	{
+		m_ReferenceSurface = reference_surface;
 		PickPhysicalDevice();
 		CreateLogicalDevice();
 	}
 
 	void Context::Release()
 	{
+		vkDestroyDevice(m_VkDevice, nullptr);
+
 		if (ENABLE_VALIDATION_LAYERS)
 			DestroyDebugUtilsMessengerEXT(m_VkInstance, m_VkDebugMessenger, nullptr);
 
@@ -214,7 +219,7 @@ namespace vkw
 		return FindQueueFamilies(m_VkPhysicalDevice, surface);
 	}
 
-	bool IsDeviceSuitable(const VkPhysicalDevice& device)
+	bool Context::IsDeviceSuitable(const VkPhysicalDevice& device, const VkSurfaceKHR& surface)
 	{
 		VkPhysicalDeviceProperties deviceProperties;
 		vkGetPhysicalDeviceProperties(device, &deviceProperties);
@@ -229,12 +234,12 @@ namespace vkw
 		bool bSwapChainAdequate = false;
 		if (bExtensionsSupported)
 		{
-			SwapChainSupportDetails details = QuerySwapChainSupport(device);
+			SwapChainSupportDetails details = SwapChain::QuerySwapChainSupport(device, surface);
 			bSwapChainAdequate = !details.formats.empty() && !details.presentModes.empty();
 		}
 
 		//queue families
-		QueueFamilyIndices indices = FindQueueFamilies(device);
+		QueueFamilyIndices indices = FindQueueFamilies(device, surface);
 
 		return indices.IsComplete() && bExtensionsSupported && bSwapChainAdequate;
 	}
@@ -251,7 +256,7 @@ namespace vkw
 
 		for (const auto& device : vDevices)
 		{
-			if (IsDeviceSuitable(device))
+			if (IsDeviceSuitable(device,m_ReferenceSurface))
 			{
 				m_VkPhysicalDevice = device;
 				break;
@@ -266,7 +271,7 @@ namespace vkw
 	//****LOGICAL DEVICE*****
 	void Context::CreateLogicalDevice()
 	{
-		QueueFamilyIndices indices = FindQueueFamilies(m_VkPhysicalDevice);
+		QueueFamilyIndices indices = FindQueueFamilies(m_VkPhysicalDevice, m_ReferenceSurface);
 
 		std::set<uint32_t> sUniqueQueueFamilies = { indices.uiGraphicsFamily.value(), indices.uiPresentFamily.value() };
 		std::vector<VkDeviceQueueCreateInfo> vQueueCreateInfos;

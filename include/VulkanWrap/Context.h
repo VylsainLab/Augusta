@@ -21,18 +21,21 @@ namespace vkw
 
 		bool IsComplete() { return uiGraphicsFamily.has_value() && uiPresentFamily.has_value(); }
 	};
+	
 
 	class Context
 	{
 	public:
 		static void InitInstance();
-		static void Init(const VkSurfaceKHR& surface);
+		static void Init(const VkSurfaceKHR& reference_surface);
 		static void Release();
 
 		static QueueFamilyIndices GetQueueFamilies(const VkSurfaceKHR& surface);
-
+		
 		static VkInstance m_VkInstance;
 		static std::vector<const char*> m_vValidationLayers;
+
+		static VkSurfaceKHR m_ReferenceSurface;
 		
 		static VkDevice m_VkDevice;
 		static VkPhysicalDevice m_VkPhysicalDevice;
@@ -45,8 +48,8 @@ namespace vkw
 		static void CreateInstance();
 		static void SetupDebugMessenger();		
 
-		static bool CheckDeviceExtensionSupport(const VkPhysicalDevice& device);
-		static bool IsDeviceSuitable(const VkPhysicalDevice& device);
+		static bool CheckDeviceExtensionSupport(const VkPhysicalDevice& device);		
+		static bool IsDeviceSuitable(const VkPhysicalDevice& device, const VkSurfaceKHR& surface);
 		static void PickPhysicalDevice();
 		static void CreateLogicalDevice();
  
