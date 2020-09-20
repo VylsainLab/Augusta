@@ -21,10 +21,12 @@
   <ItemGroup>
     <ClInclude Include="..\include\VulkanWrap\Application.h" />
     <ClInclude Include="..\include\VulkanWrap\Context.h" />
+    <ClInclude Include="..\include\VulkanWrap\ShaderFactory.h" />
     <ClInclude Include="..\include\VulkanWrap\SwapChain.h" />
     <ClInclude Include="..\include\VulkanWrap\Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ShaderFactory.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Context.cpp" />
     <ClCompile Include="src\SwapChain.cpp" />

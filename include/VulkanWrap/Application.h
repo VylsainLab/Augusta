@@ -1,3 +1,6 @@
+#ifndef VKW_APPLICATION_H
+#define VKW_APPLICATION_H
+
 #include <VulkanWrap/Context.h>
 #include <VulkanWrap/Window.h>
 #include <VulkanWrap/Context.h>
@@ -36,3 +39,5 @@ namespace vkw
 		uint32_t m_uiCurrentFrame = 0;
 	};
 }
+
+#endif

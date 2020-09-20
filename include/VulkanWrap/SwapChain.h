@@ -1,5 +1,7 @@
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
+#ifndef VKW_SWAPCHAIN_H
+#define VKW_SWAPCHAIN_H
+
+#include <vulkan/vulkan.h>
 #include <vector>
 
 namespace vkw
@@ -34,3 +36,5 @@ namespace vkw
 		uint32_t m_uiImageCount = 0;
 	};
 }
+
+#endif

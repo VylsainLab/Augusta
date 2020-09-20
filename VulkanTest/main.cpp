@@ -12,6 +12,7 @@
 #include <cassert>
 #include <VulkanWrap/Application.h>
 #include <VulkanWrap/SwapChain.h>
+#include <VulkanWrap/ShaderFactory.h>
 
 #define WINDOW_WIDTH	800
 #define WINDOW_HEIGHT	600
@@ -36,39 +37,6 @@ private:
 	VkRenderPass m_VkRenderPass;
 	VkPipelineLayout m_VkPipelineLayout;
 	VkPipeline m_VkGraphicsPipeline;
-
-	//**************SHADERS******************
-
-	//TODO use libshaderc
-	static std::vector<char> readFile(const std::string& filename) 
-	{
-		std::ifstream file(filename, std::ios::ate | std::ios::binary);
-
-		if (!file.is_open())
-			throw std::runtime_error("failed to open file!");
-
-		size_t fileSize = (size_t)file.tellg();
-		std::vector<char> buffer(fileSize);
-		file.seekg(0);
-		file.read(buffer.data(), fileSize);
-		file.close();
-
-		return buffer;
-	}
-
-	VkShaderModule CreateShaderModule(const std::vector<char>& code) 
-	{
-		VkShaderModuleCreateInfo createInfo = {};
-		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-		createInfo.codeSize = code.size();
-		createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
-
-		VkShaderModule shaderModule;
-		if (vkCreateShaderModule(vkw::Context::m_VkDevice, &createInfo, nullptr, &shaderModule) != VK_SUCCESS)
-			throw std::runtime_error("Failed to create shader module!");
-
-		return shaderModule;
-	}
 
 	//************RENDER PASS****************
 
@@ -120,12 +88,8 @@ private:
 
 	void CreateGraphicsPipeline()
 	{
-		//Shaders
-		auto vertShaderCode = readFile("shaders/vert.spv");
-		auto fragShaderCode = readFile("shaders/frag.spv");
-
-		VkShaderModule vertShaderModule = CreateShaderModule(vertShaderCode);
-		VkShaderModule fragShaderModule = CreateShaderModule(fragShaderCode);
+		VkShaderModule vertShaderModule = vkw::ShaderFactory::CreateShaderModule("shaders/vert.spv");
+		VkShaderModule fragShaderModule = vkw::ShaderFactory::CreateShaderModule("shaders/frag.spv");
 
 		VkPipelineShaderStageCreateInfo vertShaderStageInfo = {};
 		vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -269,7 +233,7 @@ private:
 	{		
 		CreateRenderPass();
 		CreateGraphicsPipeline();
-		//Setup(m_VkRenderPass,m_VkGraphicsPipeline);
+		Setup(m_VkRenderPass,m_VkGraphicsPipeline);
 	}
 
 	void Cleanup() 
