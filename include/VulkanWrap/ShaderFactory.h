@@ -7,12 +7,20 @@
 
 namespace vkw
 {
-	class ShaderFactory
+	class ShaderModule
 	{
 	public:
-		static VkShaderModule CreateShaderModule(const std::string& filepath);
+		ShaderModule(const std::string& filepath, VkShaderStageFlagBits stage, const std::string& entryPointName);
+		~ShaderModule();
+
+		//VkShaderModule GetShaderModuleHandle() const { return m_VkShaderModule; }
+		const VkPipelineShaderStageCreateInfo& GetPipelineShaderModuleCreateInfo();
+
 	protected:
-		static std::vector<char> ReadFile(const std::string& filepath);
+		std::vector<char> ReadFile(const std::string& filepath);
+		VkShaderModule m_VkShaderModule;
+		VkShaderStageFlagBits m_VkShaderStageFlag;
+		std::string m_strEntryPointName;
 	};
 }
 

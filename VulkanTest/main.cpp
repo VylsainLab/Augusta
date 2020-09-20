@@ -1,18 +1,8 @@
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
-
-#include <iostream>
-#include <stdexcept>
-#include <functional>
-#include <cstdlib>
-#include <optional>
-#include <set>
-#include <algorithm>
-#include <fstream>
-#include <cassert>
 #include <VulkanWrap/Application.h>
 #include <VulkanWrap/SwapChain.h>
 #include <VulkanWrap/ShaderFactory.h>
+#include <iostream>
+#include <stdexcept>
 
 #define WINDOW_WIDTH	800
 #define WINDOW_HEIGHT	600
@@ -20,7 +10,6 @@
 class HelloTriangleApplication : public vkw::Application
 {
 public:
-
 	HelloTriangleApplication(const std::string& name, uint16_t width, uint16_t height)
 		: vkw::Application(name, width, height)
 	{}
@@ -88,22 +77,10 @@ private:
 
 	void CreateGraphicsPipeline()
 	{
-		VkShaderModule vertShaderModule = vkw::ShaderFactory::CreateShaderModule("shaders/vert.spv");
-		VkShaderModule fragShaderModule = vkw::ShaderFactory::CreateShaderModule("shaders/frag.spv");
+		vkw::ShaderModule vertShaderModule("shaders/vert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main");
+		vkw::ShaderModule fragShaderModule("shaders/frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main");
 
-		VkPipelineShaderStageCreateInfo vertShaderStageInfo = {};
-		vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-		vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
-		vertShaderStageInfo.module = vertShaderModule;
-		vertShaderStageInfo.pName = "main";
-
-		VkPipelineShaderStageCreateInfo fragShaderStageInfo = {};
-		fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-		fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-		fragShaderStageInfo.module = fragShaderModule;
-		fragShaderStageInfo.pName = "main";
-
-		VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
+		VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderModule.GetPipelineShaderModuleCreateInfo(), fragShaderModule.GetPipelineShaderModuleCreateInfo() };
 
 		//Vertex input : hard coded in vertex shader for now
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
@@ -221,10 +198,6 @@ private:
 
 		if (vkCreateGraphicsPipelines(vkw::Context::m_VkDevice, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_VkGraphicsPipeline) != VK_SUCCESS)
 			throw std::runtime_error("failed to create graphics pipeline!");
-
-		//cleanup
-		vkDestroyShaderModule(vkw::Context::m_VkDevice, fragShaderModule, nullptr);
-		vkDestroyShaderModule(vkw::Context::m_VkDevice, vertShaderModule, nullptr);
 	}
 
 	//***************************************
