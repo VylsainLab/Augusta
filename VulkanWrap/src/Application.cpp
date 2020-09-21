@@ -141,7 +141,7 @@ namespace vkw
 		if (vkAllocateCommandBuffers(vkw::Context::m_VkDevice, &allocInfo, m_vVkSwapChainCommandBuffers.data()) != VK_SUCCESS)
 			throw std::runtime_error("Failed to allocate command buffers!");
 
-		for (size_t i = 0; i < m_vVkSwapChainCommandBuffers.size(); i++)
+		for (uint32_t i = 0; i < m_vVkSwapChainCommandBuffers.size(); i++)
 		{
 			//Begin command buffer recording
 			VkCommandBufferBeginInfo beginInfo = {};

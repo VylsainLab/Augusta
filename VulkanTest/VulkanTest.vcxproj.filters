@@ -23,9 +23,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\compile.bat">
-      <Filter>shaders</Filter>
-    </None>
     <None Include="shaders\shader.frag">
       <Filter>shaders</Filter>
     </None>

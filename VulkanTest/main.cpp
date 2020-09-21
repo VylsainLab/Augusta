@@ -77,8 +77,8 @@ private:
 
 	void CreateGraphicsPipeline()
 	{
-		vkw::ShaderModule vertShaderModule("shaders/vert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main");
-		vkw::ShaderModule fragShaderModule("shaders/frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main");
+		vkw::ShaderModule vertShaderModule("shaders/shader.vert", VK_SHADER_STAGE_VERTEX_BIT);
+		vkw::ShaderModule fragShaderModule("shaders/shader.frag", VK_SHADER_STAGE_FRAGMENT_BIT);
 
 		VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderModule.GetPipelineShaderModuleCreateInfo(), fragShaderModule.GetPipelineShaderModuleCreateInfo() };
 
