@@ -1,2 +1,5 @@
 *.vs
 *x64
+*glfw3.lib
+include/glm
+include/GLFW
