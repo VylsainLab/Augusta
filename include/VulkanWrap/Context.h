@@ -54,7 +54,6 @@ namespace vkw
 		static void CreateLogicalDevice();
  
 		static VkDebugUtilsMessengerEXT m_VkDebugMessenger;		
-		
 	};
 }
 #endif

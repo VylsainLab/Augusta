@@ -1,5 +1,6 @@
 #include <VulkanWrap/Context.h>
 #include <VulkanWrap/SwapChain.h>
+#include <VulkanWrap/MemoryAllocator.h>
 #include <set>
 #include <string>
 #include <iostream>
@@ -89,10 +90,13 @@ namespace vkw
 		m_ReferenceSurface = reference_surface;
 		PickPhysicalDevice();
 		CreateLogicalDevice();
+		MemoryAllocator::Init();
 	}
 
 	void Context::Release()
 	{
+		MemoryAllocator::Release();
+
 		vkDestroyDevice(m_VkDevice, nullptr);
 
 		if (ENABLE_VALIDATION_LAYERS)
@@ -267,8 +271,6 @@ namespace vkw
 			throw std::runtime_error("Failed to find a suitable GPU!");
 	}
 
-
-	//****LOGICAL DEVICE*****
 	void Context::CreateLogicalDevice()
 	{
 		QueueFamilyIndices indices = FindQueueFamilies(m_VkPhysicalDevice, m_ReferenceSurface);

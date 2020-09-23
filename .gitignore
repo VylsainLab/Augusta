@@ -3,3 +3,4 @@
 *glfw3.lib
 include/glm
 include/GLFW
+include/VulkanMemoryAllocator/vk_mem_alloc.h
