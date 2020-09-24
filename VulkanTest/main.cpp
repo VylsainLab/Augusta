@@ -26,9 +26,9 @@ public:
 private:	
 	VkPipelineLayout m_VkPipelineLayout;
 	VkPipeline m_VkGraphicsPipeline;
-	uint32_t m_uiVertexCount = 0;
+	uint32_t m_uiIndexCount = 0;
 	vkw::Buffer* m_pVertexBuffer = nullptr;
-
+	vkw::Buffer* m_pIndexBuffer = nullptr;
 
 	//************GRAPHICS PIPELINE**********
 
@@ -156,12 +156,17 @@ private:
 	void CreateVertexBuffer()
 	{		
 		const std::vector<float> vertices = {
-			0.0f, -0.5f, 1.0f, 1.0f, 1.0f,
-			0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
-			-0.5f, 0.5f, 0.0f, 0.0f, 1.0f
+			-0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+			0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+			0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+			-0.5f, 0.5f, 1.0f, 1.0f, 1.0f
 		};
-		m_uiVertexCount = (uint32_t)vertices.size() / 5;
-		m_pVertexBuffer = new vkw::Buffer((uint32_t)vertices.size()*sizeof(float), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT , VMA_MEMORY_USAGE_GPU_ONLY, (void*)vertices.data());
+		
+		m_pVertexBuffer = new vkw::Buffer((uint64_t)vertices.size()*sizeof(float), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT , VMA_MEMORY_USAGE_GPU_ONLY, (void*)vertices.data());
+
+		const std::vector<uint16_t> indices = { 0, 1, 2, 2, 3, 0 };
+		m_uiIndexCount = (uint32_t)indices.size();
+		m_pIndexBuffer = new vkw::Buffer((uint64_t)(m_uiIndexCount * sizeof(uint16_t)), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VMA_MEMORY_USAGE_GPU_ONLY, (void*)indices.data());
 	}
 
 	//***************************************
@@ -180,12 +185,15 @@ private:
 		VkDeviceSize offsets[] = { 0 };
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
-		vkCmdDraw(commandBuffer, m_uiVertexCount, 1, 0, 0);
+		vkCmdBindIndexBuffer(commandBuffer, m_pIndexBuffer->GetBufferHandle(), 0, VK_INDEX_TYPE_UINT16);
+
+		vkCmdDrawIndexed(commandBuffer, m_uiIndexCount, 1, 0, 0, 0);
 	}
 
 	void Cleanup() 
 	{		
 		delete m_pVertexBuffer;
+		delete m_pIndexBuffer;
 
 		vkDestroyPipeline(vkw::Context::m_VkDevice, m_VkGraphicsPipeline, nullptr);
 
