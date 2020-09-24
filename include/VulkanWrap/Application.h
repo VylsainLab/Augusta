@@ -25,7 +25,6 @@ namespace vkw
 	protected:
 
 		void CreateRenderPass();
-		void CreateCommandPool();
 		void CreateSwapChainCommandBuffers();
 		void CreateSyncObjects();
 
@@ -34,7 +33,7 @@ namespace vkw
 
 		VkRenderPass m_VkRenderPass;
 		std::vector<VkCommandBuffer> m_vVkSwapChainCommandBuffers;
-		VkCommandPool m_VkCommandPool;
+		
 		std::vector<VkSemaphore> m_vVkImageAvailableSemaphores;
 		std::vector<VkSemaphore> m_vVkRenderFinishedSemaphores;
 		std::vector<VkFence> m_vVkInFlightFences;

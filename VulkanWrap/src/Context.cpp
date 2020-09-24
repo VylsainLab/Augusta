@@ -16,6 +16,7 @@ namespace vkw
 	VkDevice Context::m_VkDevice = VK_NULL_HANDLE;
 	VkQueue Context::m_VkGraphicsQueue = VK_NULL_HANDLE;
 	VkQueue Context::m_VkPresentQueue = VK_NULL_HANDLE;
+	VkCommandPool Context::m_VkCommandPool = VK_NULL_HANDLE;
 	std::vector<const char*> Context::m_vDeviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
 	void PrintExtensions()
@@ -90,12 +91,15 @@ namespace vkw
 		m_ReferenceSurface = reference_surface;
 		PickPhysicalDevice();
 		CreateLogicalDevice();
+		CreateCommandPool();
 		MemoryAllocator::Init();
 	}
 
 	void Context::Release()
 	{
 		MemoryAllocator::Release();
+
+		vkDestroyCommandPool(m_VkDevice, m_VkCommandPool, nullptr);
 
 		vkDestroyDevice(m_VkDevice, nullptr);
 
@@ -223,7 +227,7 @@ namespace vkw
 		return FindQueueFamilies(m_VkPhysicalDevice, surface);
 	}
 
-	bool Context::IsDeviceSuitable(const VkPhysicalDevice& device, const VkSurfaceKHR& surface)
+	bool Context::IsDeviceSuitable(const VkPhysicalDevice& device)
 	{
 		VkPhysicalDeviceProperties deviceProperties;
 		vkGetPhysicalDeviceProperties(device, &deviceProperties);
@@ -238,12 +242,12 @@ namespace vkw
 		bool bSwapChainAdequate = false;
 		if (bExtensionsSupported)
 		{
-			SwapChainSupportDetails details = SwapChain::QuerySwapChainSupport(device, surface);
+			SwapChainSupportDetails details = SwapChain::QuerySwapChainSupport(device, m_ReferenceSurface);
 			bSwapChainAdequate = !details.formats.empty() && !details.presentModes.empty();
 		}
 
 		//queue families
-		QueueFamilyIndices indices = FindQueueFamilies(device, surface);
+		QueueFamilyIndices indices = FindQueueFamilies(device, m_ReferenceSurface);
 
 		return indices.IsComplete() && bExtensionsSupported && bSwapChainAdequate;
 	}
@@ -260,7 +264,7 @@ namespace vkw
 
 		for (const auto& device : vDevices)
 		{
-			if (IsDeviceSuitable(device,m_ReferenceSurface))
+			if (IsDeviceSuitable(device))
 			{
 				m_VkPhysicalDevice = device;
 				break;
@@ -312,5 +316,18 @@ namespace vkw
 
 		vkGetDeviceQueue(m_VkDevice, indices.uiGraphicsFamily.value(), 0, &m_VkGraphicsQueue);
 		vkGetDeviceQueue(m_VkDevice, indices.uiPresentFamily.value(), 0, &m_VkPresentQueue);
+	}
+
+	void Context::CreateCommandPool()
+	{
+		vkw::QueueFamilyIndices queueFamilyIndices = GetQueueFamilies(m_ReferenceSurface);
+
+		VkCommandPoolCreateInfo poolInfo = {};
+		poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+		poolInfo.queueFamilyIndex = queueFamilyIndices.uiGraphicsFamily.value();
+		poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+
+		if (vkCreateCommandPool(m_VkDevice, &poolInfo, nullptr, &m_VkCommandPool) != VK_SUCCESS)
+			throw std::runtime_error("Failed to create command pool!");
 	}
 }

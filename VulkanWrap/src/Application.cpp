@@ -29,25 +29,24 @@ namespace vkw
 		m_pWindow->InitSwapChain();
 		CreateRenderPass();
 		m_pWindow->InitFramebuffers(m_VkRenderPass);
-		CreateCommandPool();
 		CreateSwapChainCommandBuffers();
 		CreateSyncObjects();
 	}
 
 	Application::~Application()
 	{
+		vkDestroyRenderPass(Context::m_VkDevice, m_VkRenderPass, nullptr);
+
 		for (uint8_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
 		{
-			vkDestroySemaphore(vkw::Context::m_VkDevice, m_vVkRenderFinishedSemaphores[i], nullptr);
-			vkDestroySemaphore(vkw::Context::m_VkDevice, m_vVkImageAvailableSemaphores[i], nullptr);
-			vkDestroyFence(vkw::Context::m_VkDevice, m_vVkInFlightFences[i], nullptr);
+			vkDestroySemaphore(Context::m_VkDevice, m_vVkRenderFinishedSemaphores[i], nullptr);
+			vkDestroySemaphore(Context::m_VkDevice, m_vVkImageAvailableSemaphores[i], nullptr);
+			vkDestroyFence(Context::m_VkDevice, m_vVkInFlightFences[i], nullptr);
 		}
-
-		vkDestroyCommandPool(vkw::Context::m_VkDevice, m_VkCommandPool, nullptr);
 
 		m_pWindow.reset();
 
-		vkw::Context::Release();
+		Context::Release();
 
 		if (m_bGLFWInitialized == true)
 		{
@@ -190,26 +189,13 @@ namespace vkw
 			throw std::runtime_error("failed to create render pass!");
 	}
 
-	void Application::CreateCommandPool()
-	{
-		vkw::QueueFamilyIndices queueFamilyIndices = vkw::Context::GetQueueFamilies(m_pWindow->GetSurface());
-
-		VkCommandPoolCreateInfo poolInfo = {};
-		poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-		poolInfo.queueFamilyIndex = queueFamilyIndices.uiGraphicsFamily.value();
-		poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-
-		if (vkCreateCommandPool(vkw::Context::m_VkDevice, &poolInfo, nullptr, &m_VkCommandPool) != VK_SUCCESS)
-			throw std::runtime_error("Failed to create command pool!");
-	}
-
 	void Application::CreateSwapChainCommandBuffers()
 	{
 		m_vVkSwapChainCommandBuffers.resize(m_pWindow->GetSwapChainImageCount());
 
 		VkCommandBufferAllocateInfo allocInfo = {};
 		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocInfo.commandPool = m_VkCommandPool;
+		allocInfo.commandPool = Context::m_VkCommandPool;
 		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 		allocInfo.commandBufferCount = (uint32_t)m_vVkSwapChainCommandBuffers.size();
 

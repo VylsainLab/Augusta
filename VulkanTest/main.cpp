@@ -160,8 +160,8 @@ private:
 			0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
 			-0.5f, 0.5f, 0.0f, 0.0f, 1.0f
 		};
-		m_uiVertexCount = vertices.size() / 5;
-		m_pVertexBuffer = new vkw::Buffer((uint32_t)vertices.size()*sizeof(float), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT , VMA_MEMORY_USAGE_CPU_ONLY, (void*)vertices.data());
+		m_uiVertexCount = (uint32_t)vertices.size() / 5;
+		m_pVertexBuffer = new vkw::Buffer((uint32_t)vertices.size()*sizeof(float), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT , VMA_MEMORY_USAGE_GPU_ONLY, (void*)vertices.data());
 	}
 
 	//***************************************
@@ -190,8 +190,6 @@ private:
 		vkDestroyPipeline(vkw::Context::m_VkDevice, m_VkGraphicsPipeline, nullptr);
 
 		vkDestroyPipelineLayout(vkw::Context::m_VkDevice, m_VkPipelineLayout, nullptr);
-
-		vkDestroyRenderPass(vkw::Context::m_VkDevice, m_VkRenderPass, nullptr);
 	}
 };
 

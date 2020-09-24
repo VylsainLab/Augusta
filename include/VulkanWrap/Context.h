@@ -41,6 +41,7 @@ namespace vkw
 		static VkPhysicalDevice m_VkPhysicalDevice;
 		static VkQueue m_VkGraphicsQueue;
 		static VkQueue m_VkPresentQueue;
+		static VkCommandPool m_VkCommandPool;
 		static std::vector<const char*> m_vDeviceExtensions;
 
 	protected:
@@ -49,9 +50,10 @@ namespace vkw
 		static void SetupDebugMessenger();		
 
 		static bool CheckDeviceExtensionSupport(const VkPhysicalDevice& device);		
-		static bool IsDeviceSuitable(const VkPhysicalDevice& device, const VkSurfaceKHR& surface);
+		static bool IsDeviceSuitable(const VkPhysicalDevice& device);
 		static void PickPhysicalDevice();
 		static void CreateLogicalDevice();
+		static void CreateCommandPool();
  
 		static VkDebugUtilsMessengerEXT m_VkDebugMessenger;		
 	};
