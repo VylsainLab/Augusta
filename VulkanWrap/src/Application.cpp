@@ -58,13 +58,29 @@ namespace vkw
 	{
 		while (!m_pWindow->IsClosed())
 		{
-			glfwPollEvents();
+			ProcessEvents();
 			BeginRender();
 			Render(m_vVkSwapChainCommandBuffers[m_uiCurrentImageIndex]);
 			EndRender();
 		}
 
 		vkDeviceWaitIdle(vkw::Context::m_VkDevice);
+	}
+
+	void Application::AddEventObserver(IGLFWEventObserver* pObserver)
+	{
+		m_vEventObservers.push_back(pObserver);
+	}
+
+	void Application::ProcessEvents()
+	{
+		glfwPollEvents();
+
+		if (glfwGetKey(m_pWindow->GetGLFWWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
+			glfwSetWindowShouldClose(m_pWindow->GetGLFWWindow(), GLFW_TRUE);
+
+		for (auto observer : m_vEventObservers)
+			observer->ProcessEvents(m_pWindow->GetGLFWWindow());
 	}
 
 	void Application::BeginRender()

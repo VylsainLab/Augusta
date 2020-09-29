@@ -10,19 +10,28 @@
 
 namespace vkw
 {
+	class IGLFWEventObserver
+	{
+	public:
+		virtual void ProcessEvents(GLFWwindow* pWindow) = 0;
+	};
+
 	class Application
 	{
 	public:
 		Application(const std::string& name, uint16_t width, uint16_t height);
 		virtual ~Application();
 
-		void Run();
+		void Run();		
+		
+		virtual void Render(VkCommandBuffer& commandBuffer)=0;		
 
-		void BeginRender();
-		virtual void Render(VkCommandBuffer& commandBuffer)=0;
-		void EndRender();
+		void AddEventObserver(IGLFWEventObserver* pObserver);
 
 	protected:
+		void ProcessEvents();
+		void BeginRender();
+		void EndRender();
 
 		void CreateRenderPass();
 		void CreateSwapChainCommandBuffers();
@@ -40,6 +49,8 @@ namespace vkw
 		std::vector<VkFence> m_vVkImagesInFlightFences;
 		uint32_t m_uiCurrentFrame = 0;
 		uint32_t m_uiCurrentImageIndex = 0;
+
+		std::vector<IGLFWEventObserver*> m_vEventObservers;
 	};
 }
 

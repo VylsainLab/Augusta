@@ -29,6 +29,7 @@ namespace vkw
 		VkFormat GetSwapChainImageFormat() const;
 		VkExtent2D GetSwapChainExtent() const;
 		VkFramebuffer GetSwapChainFramebuffer(uint32_t index) const;
+		GLFWwindow* GetGLFWWindow() const { return m_pWindow; }
 
 	protected:
 		GLFWwindow* m_pWindow = nullptr;
