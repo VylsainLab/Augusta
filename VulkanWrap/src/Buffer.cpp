@@ -26,55 +26,6 @@ namespace vkw
 
 		if (pData != nullptr)
 			CopyData(m_uiSize, pData);
-
-		/*VkMemoryPropertyFlags memFlags;
-		vmaGetMemoryTypeProperties(MemoryAllocator::m_VmaAllocator, m_VmaAllocationInfo.memoryType, &memFlags);
-		if ((memFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) != 0) //CPU side memory, map it directly
-		{
-			void* data;
-			vmaMapMemory(MemoryAllocator::m_VmaAllocator, m_VmaAllocation, &data);
-			memcpy(data, pData, size);
-			vmaUnmapMemory(MemoryAllocator::m_VmaAllocator, m_VmaAllocation);
-		}
-		else //create a cpu side buffer to map data and transfer it to final buffer
-		{
-			Buffer stagingBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY, pData);
-
-			VkCommandBufferAllocateInfo allocInfo{};
-			allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-			allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-			allocInfo.commandPool = Context::m_VkCommandPool;
-			allocInfo.commandBufferCount = 1;
-
-			VkCommandBuffer commandBuffer;
-			vkAllocateCommandBuffers(Context::m_VkDevice, &allocInfo, &commandBuffer);
-
-			VkCommandBufferBeginInfo beginInfo{};
-			beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-			beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-
-			vkBeginCommandBuffer(commandBuffer, &beginInfo);
-
-			VkBufferCopy copyRegion{};
-			copyRegion.srcOffset = 0; // Optional
-			copyRegion.dstOffset = 0; // Optional
-			copyRegion.size = size;
-			vkCmdCopyBuffer(commandBuffer, stagingBuffer.GetBufferHandle(), this->GetBufferHandle(), 1, &copyRegion);
-
-			vkEndCommandBuffer(commandBuffer);
-
-			VkSubmitInfo submitInfo{};
-			submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-			submitInfo.commandBufferCount = 1;
-			submitInfo.pCommandBuffers = &commandBuffer;
-
-			vkQueueSubmit(Context::m_VkGraphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
-
-			vkQueueWaitIdle(Context::m_VkGraphicsQueue);
-
-			vkFreeCommandBuffers(Context::m_VkDevice, Context::m_VkCommandPool, 1, &commandBuffer);
-			//stagingBuffer.CopyTo(this);
-		}*/
 	}
 
 	Buffer::~Buffer()
@@ -98,21 +49,8 @@ namespace vkw
 		else //create a cpu side buffer to map data and transfer it to final buffer
 		{
 			Buffer stagingBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY, pData);
-
-			VkCommandBufferAllocateInfo allocInfo{};
-			allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-			allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-			allocInfo.commandPool = Context::m_VkCommandPool;
-			allocInfo.commandBufferCount = 1;
-
-			VkCommandBuffer commandBuffer;
-			vkAllocateCommandBuffers(Context::m_VkDevice, &allocInfo, &commandBuffer);
-
-			VkCommandBufferBeginInfo beginInfo{};
-			beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-			beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-
-			vkBeginCommandBuffer(commandBuffer, &beginInfo);
+			
+			VkCommandBuffer commandBuffer = Context::BuildSingleTimeCommandBuffer();
 
 			VkBufferCopy copyRegion{};
 			copyRegion.srcOffset = 0; // Optional
@@ -120,18 +58,7 @@ namespace vkw
 			copyRegion.size = size;
 			vkCmdCopyBuffer(commandBuffer, stagingBuffer.GetBufferHandle(), this->GetBufferHandle(), 1, &copyRegion);
 
-			vkEndCommandBuffer(commandBuffer);
-
-			VkSubmitInfo submitInfo{};
-			submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-			submitInfo.commandBufferCount = 1;
-			submitInfo.pCommandBuffers = &commandBuffer;
-
-			vkQueueSubmit(Context::m_VkGraphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
-
-			vkQueueWaitIdle(Context::m_VkGraphicsQueue);
-
-			vkFreeCommandBuffers(Context::m_VkDevice, Context::m_VkCommandPool, 1, &commandBuffer);
+			Context::SubmitAndFreeCommandBuffer(commandBuffer);
 		}
 	}
 }

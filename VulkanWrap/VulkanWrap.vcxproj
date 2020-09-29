@@ -26,6 +26,7 @@
     <ClInclude Include="..\include\VulkanWrap\MemoryAllocator.h" />
     <ClInclude Include="..\include\VulkanWrap\ShaderFactory.h" />
     <ClInclude Include="..\include\VulkanWrap\SwapChain.h" />
+    <ClInclude Include="..\include\VulkanWrap\Texture.h" />
     <ClInclude Include="..\include\VulkanWrap\VertexFormat.h" />
     <ClInclude Include="..\include\VulkanWrap\Window.h" />
   </ItemGroup>
@@ -39,6 +40,7 @@
     <ClCompile Include="src\SwapChain.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\VertexFormat.cpp" />
     <ClCompile Include="src\Window.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

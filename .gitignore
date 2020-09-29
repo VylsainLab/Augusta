@@ -4,3 +4,5 @@
 include/glm
 include/GLFW
 include/VulkanMemoryAllocator/vk_mem_alloc.h
+include/stb_image.h
+Assets/Textures/

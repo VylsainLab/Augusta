@@ -31,6 +31,9 @@ namespace vkw
 		static void Release();
 
 		static QueueFamilyIndices GetQueueFamilies(const VkSurfaceKHR& surface);
+
+		static VkCommandBuffer BuildSingleTimeCommandBuffer();
+		static void SubmitAndFreeCommandBuffer(VkCommandBuffer commandBuffer);
 		
 		static VkInstance m_VkInstance;
 		static std::vector<const char*> m_vValidationLayers;

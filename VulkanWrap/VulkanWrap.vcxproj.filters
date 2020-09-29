@@ -45,8 +45,11 @@
     <ClInclude Include="..\include\VulkanWrap\Window.h">
       <Filter>Source Files\Vulkan</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\VulkanWrap\Texture.h">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClInclude>
     <ClInclude Include="..\include\VulkanWrap\Camera.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -75,7 +78,10 @@
       <Filter>Source Files\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="src\Camera.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Texture.cpp">
+      <Filter>Source Files\Vulkan</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

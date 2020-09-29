@@ -4,6 +4,7 @@
 #include <VulkanWrap/VertexFormat.h>
 #include <VulkanWrap/Buffer.h>
 #include <VulkanWrap/Camera.h>
+#include <VulkanWrap/Texture.h>
 #include <iostream>
 #include <stdexcept>
 
@@ -32,15 +33,18 @@ public:
 	}
 
 private:	
-	VkDescriptorSetLayout m_VkDescriptorSetLayout = VK_NULL_HANDLE;
-	VkDescriptorPool m_VkDescriptorPool = VK_NULL_HANDLE;
+	
 	VkPipelineLayout m_VkPipelineLayout = VK_NULL_HANDLE;
 	VkPipeline m_VkGraphicsPipeline = VK_NULL_HANDLE;
 	uint32_t m_uiIndexCount = 0;
 	vkw::Buffer* m_pVertexBuffer = nullptr;
 	vkw::Buffer* m_pIndexBuffer = nullptr;
 	std::vector<vkw::Buffer*> m_vUniformBuffers; //One per swap chain image
+	VkDescriptorSetLayout m_VkDescriptorSetLayout = VK_NULL_HANDLE;
+	VkDescriptorPool m_VkDescriptorPool = VK_NULL_HANDLE;
 	std::vector<VkDescriptorSet> m_vDescriptorSets;
+
+	vkw::Texture m_Texture;
 
 	//Game objects
 	vkw::Camera m_Camera;
@@ -267,14 +271,15 @@ private:
 
 	//***************************************
 
-	void Init() 
-	{		
+	void Init()
+	{
 		CreateDescriptorSetLayout();
 		CreateGraphicsPipeline();
-		CreateVertexBuffer();	
+		CreateVertexBuffer();
 		CreateUniformBuffers();
 		CreateDescriptorPool();
 		CreateDescriptorSets();
+		m_Texture.LoadFromFile("../Assets/Textures/Stalin.jpg");
 	}
 
 	void Update()
