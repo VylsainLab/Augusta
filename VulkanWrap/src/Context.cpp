@@ -284,7 +284,7 @@ namespace vkw
 		//queue families
 		QueueFamilyIndices indices = FindQueueFamilies(device, m_ReferenceSurface);
 
-		return indices.IsComplete() && bExtensionsSupported && bSwapChainAdequate;
+		return indices.IsComplete() && bExtensionsSupported && bSwapChainAdequate && deviceFeatures.samplerAnisotropy;
 	}
 
 	void Context::PickPhysicalDevice() //select first found suitable device
@@ -328,6 +328,7 @@ namespace vkw
 		}
 
 		VkPhysicalDeviceFeatures deviceFeatures = {};
+		deviceFeatures.samplerAnisotropy = VK_TRUE;
 
 		VkDeviceCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
