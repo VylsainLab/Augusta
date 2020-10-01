@@ -22,7 +22,9 @@ namespace vkw
 		bool IsComplete() { return uiGraphicsFamily.has_value() && uiPresentFamily.has_value(); }
 	};
 	
-
+	//Class containing all the resources shared accross the whole application like Instance, Device, etc...
+	//For now, Context also contains some resources and methods related to the main rendering thread (queues and command pools),
+	//this will probably change as we move towards a multithreaded rendering engine
 	class Context
 	{
 	public:

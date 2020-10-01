@@ -5,6 +5,7 @@
 #include <VulkanWrap/Buffer.h>
 #include <VulkanWrap/Camera.h>
 #include <VulkanWrap/Texture.h>
+#include <VulkanWrap/Mesh.h>
 #include <iostream>
 #include <stdexcept>
 
@@ -15,7 +16,8 @@ class HelloTriangleApplication : public vkw::Application
 {
 public:
 	HelloTriangleApplication(const std::string& name, uint16_t width, uint16_t height)
-		:	vkw::Application(name, width, height)
+		:	vkw::Application(name, width, height),
+			m_VertexFormat({ vkw::VERTEX_FORMAT_VEC2F32,vkw::VERTEX_FORMAT_VEC3F32, vkw::VERTEX_FORMAT_VEC2F32 })
 	{
 		vkw::SCameraDesc desc;
 		desc.speed = 0.001f;
@@ -37,8 +39,8 @@ private:
 	VkPipelineLayout m_VkPipelineLayout = VK_NULL_HANDLE;
 	VkPipeline m_VkGraphicsPipeline = VK_NULL_HANDLE;
 	uint32_t m_uiIndexCount = 0;
-	vkw::Buffer* m_pVertexBuffer = nullptr;
-	vkw::Buffer* m_pIndexBuffer = nullptr;
+	vkw::VertexFormat m_VertexFormat;
+	std::unique_ptr<vkw::Mesh> m_pMesh = nullptr;
 	std::vector<vkw::Buffer*> m_vUniformBuffers; //One per swap chain image
 	VkDescriptorSetLayout m_VkDescriptorSetLayout = VK_NULL_HANDLE;
 	VkDescriptorPool m_VkDescriptorPool = VK_NULL_HANDLE;
@@ -84,10 +86,8 @@ private:
 		vkw::ShaderModule fragShaderModule("shaders/shader.frag", VK_SHADER_STAGE_FRAGMENT_BIT);
 
 		VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderModule.GetPipelineShaderModuleCreateInfo(), fragShaderModule.GetPipelineShaderModuleCreateInfo() };
-
-		std::vector<vkw::VertexFormatComponents> vComponents = { vkw::VERTEX_FORMAT_VEC2F32,vkw::VERTEX_FORMAT_VEC3F32, vkw::VERTEX_FORMAT_VEC2F32 }; //pos 2D, color, texcoord
-		vkw::VertexFormat vertexFormat(vComponents);		
-		VkPipelineVertexInputStateCreateInfo vertexInputInfo = vertexFormat.GetPipelineVertexInputStateCreateInfo();
+	
+		VkPipelineVertexInputStateCreateInfo vertexInputInfo = m_VertexFormat.GetPipelineVertexInputStateCreateInfo();
 
 		//Input assembly
 		VkPipelineInputAssemblyStateCreateInfo inputAssembly = {};
@@ -199,7 +199,7 @@ private:
 			throw std::runtime_error("failed to create graphics pipeline!");
 	}
 
-	void CreateVertexBuffer()
+	void CreateMesh()
 	{		
 		const std::vector<float> vertices = {
 			-0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
@@ -207,12 +207,9 @@ private:
 			0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
 			-0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f
 		};
-		
-		m_pVertexBuffer = new vkw::Buffer((uint64_t)vertices.size()*sizeof(float), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT , VMA_MEMORY_USAGE_GPU_ONLY, (void*)vertices.data());
+		const std::vector<uint32_t> indices = { 0, 1, 2, 2, 3, 0 };
 
-		const std::vector<uint16_t> indices = { 0, 1, 2, 2, 3, 0 };
-		m_uiIndexCount = (uint32_t)indices.size();
-		m_pIndexBuffer = new vkw::Buffer((uint64_t)(m_uiIndexCount * sizeof(uint16_t)), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VMA_MEMORY_USAGE_GPU_ONLY, (void*)indices.data());
+		m_pMesh = std::make_unique<vkw::Mesh>(vkw::VKW_MESH_USAGE_STATIC, m_VertexFormat, static_cast<uint32_t>(vertices.size()), (void*)vertices.data(), static_cast<uint32_t>(indices.size()), indices.data());
 	}
 
 	struct UniformBufferObject 
@@ -300,7 +297,7 @@ private:
 
 		CreateDescriptorSetLayout();
 		CreateGraphicsPipeline();
-		CreateVertexBuffer();
+		CreateMesh();
 		CreateUniformBuffers();
 		CreateDescriptorPool();
 		CreateDescriptorSets();		
@@ -324,22 +321,13 @@ private:
 
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_VkGraphicsPipeline);
 
-		VkBuffer vertexBuffers[] = { m_pVertexBuffer->GetBufferHandle() };
-		VkDeviceSize offsets[] = { 0 };
-		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-
-		vkCmdBindIndexBuffer(commandBuffer, m_pIndexBuffer->GetBufferHandle(), 0, VK_INDEX_TYPE_UINT16);
-
 		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_VkPipelineLayout, 0, 1, &m_vDescriptorSets[m_uiCurrentImageIndex], 0, nullptr);
 
-		vkCmdDrawIndexed(commandBuffer, m_uiIndexCount, 1, 0, 0, 0);
+		m_pMesh->Draw(commandBuffer);
 	}
 
 	void Cleanup() 
 	{		
-		delete m_pVertexBuffer;
-		delete m_pIndexBuffer;
-
 		for (uint32_t i = 0; i < m_pWindow->GetSwapChainImageCount(); ++i)
 			delete m_vUniformBuffers[i];
 

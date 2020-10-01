@@ -20,9 +20,11 @@ namespace vkw
 	class VertexFormat
 	{
 	public:
-		VertexFormat(std::vector<VertexFormatComponents>& vComponents);
+		VertexFormat(const std::vector<VertexFormatComponents>& vComponents);
 
 		VkPipelineVertexInputStateCreateInfo GetPipelineVertexInputStateCreateInfo() const;
+
+		uint32_t GetStride() const { return m_Binding.stride; }
 
 	protected:
 		VkVertexInputBindingDescription m_Binding;

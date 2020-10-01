@@ -2,7 +2,7 @@
 
 namespace vkw
 {
-	VertexFormat::VertexFormat(std::vector<VertexFormatComponents>& vComponents)
+	VertexFormat::VertexFormat(const std::vector<VertexFormatComponents>& vComponents)
 	{
 		m_Binding = VkVertexInputBindingDescription{};
 		m_Binding.binding = 0;

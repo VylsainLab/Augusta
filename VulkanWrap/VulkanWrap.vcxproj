@@ -24,6 +24,7 @@
     <ClInclude Include="..\include\VulkanWrap\Camera.h" />
     <ClInclude Include="..\include\VulkanWrap\Context.h" />
     <ClInclude Include="..\include\VulkanWrap\MemoryAllocator.h" />
+    <ClInclude Include="..\include\VulkanWrap\Mesh.h" />
     <ClInclude Include="..\include\VulkanWrap\ShaderFactory.h" />
     <ClInclude Include="..\include\VulkanWrap\SwapChain.h" />
     <ClInclude Include="..\include\VulkanWrap\Texture.h" />
@@ -36,6 +37,7 @@
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Context.cpp" />
     <ClCompile Include="src\MemoryAllocator.cpp" />
+    <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\ShaderFactory.cpp" />
     <ClCompile Include="src\SwapChain.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

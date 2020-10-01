@@ -8,6 +8,7 @@
 
 namespace vkw
 {
+	//Object designed to load a GLSL file, compile it into a Spir-V code and create the related VkShaderModule
 	class ShaderModule
 	{
 	public:

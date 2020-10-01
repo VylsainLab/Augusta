@@ -5,6 +5,8 @@
 
 namespace vkw
 {
+	// Vulkan buffer and memory allocation wrapping object
+	// Memory allocation is done via VulkanMemoryAllocator library
 	class Buffer
 	{
 	public:
