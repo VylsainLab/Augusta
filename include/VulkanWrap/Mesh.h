@@ -8,8 +8,8 @@ namespace vkw
 {
 	enum MeshUsage
 	{
-		VKW_MESH_USAGE_STATIC,
-		VKW_MESH_USAGE_DYNAMIC
+		MESH_USAGE_STATIC,
+		MESH_USAGE_DYNAMIC
 	};
 
 	class Mesh

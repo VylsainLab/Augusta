@@ -209,7 +209,7 @@ private:
 		};
 		const std::vector<uint32_t> indices = { 0, 1, 2, 2, 3, 0 };
 
-		m_pMesh = std::make_unique<vkw::Mesh>(vkw::VKW_MESH_USAGE_STATIC, m_VertexFormat, static_cast<uint32_t>(vertices.size()), (void*)vertices.data(), static_cast<uint32_t>(indices.size()), indices.data());
+		m_pMesh = std::make_unique<vkw::Mesh>(vkw::MESH_USAGE_STATIC, m_VertexFormat, static_cast<uint32_t>(vertices.size()), (void*)vertices.data(), static_cast<uint32_t>(indices.size()), indices.data());
 	}
 
 	struct UniformBufferObject 
