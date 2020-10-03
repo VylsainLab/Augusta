@@ -19,6 +19,9 @@
     <Filter Include="Source Files\Core">
       <UniqueIdentifier>{32ce844b-1deb-4b80-b283-c7353423fa73}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Utils">
+      <UniqueIdentifier>{150bca1f-dbc2-4a36-a976-a609887bf4a6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\VulkanWrap\Application.h">
@@ -54,6 +57,12 @@
     <ClInclude Include="..\include\VulkanWrap\Mesh.h">
       <Filter>Source Files\Vulkan</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\VulkanWrap\Scene.h">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\VulkanWrap\AssimpParser.h">
+      <Filter>Source Files\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp">
@@ -88,6 +97,12 @@
     </ClCompile>
     <ClCompile Include="src\Mesh.cpp">
       <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scene.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AssimpParser.cpp">
+      <Filter>Source Files\Utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

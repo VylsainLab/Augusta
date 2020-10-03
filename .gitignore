@@ -1,8 +1,13 @@
 *.vs
 *x64
 *glfw3.lib
+*assimp.lib
+*IrrXMLd.lib
+*zlibd.lib
 include/glm
 include/GLFW
 include/VulkanMemoryAllocator/vk_mem_alloc.h
 include/stb_image.h
+include/assimp
 Assets/Textures/
+Assets/Models/

@@ -5,7 +5,7 @@
 #include <VulkanWrap/Buffer.h>
 #include <VulkanWrap/Camera.h>
 #include <VulkanWrap/Texture.h>
-#include <VulkanWrap/Mesh.h>
+#include <VulkanWrap/AssimpParser.h>
 #include <iostream>
 #include <stdexcept>
 
@@ -17,7 +17,8 @@ class HelloTriangleApplication : public vkw::Application
 public:
 	HelloTriangleApplication(const std::string& name, uint16_t width, uint16_t height)
 		:	vkw::Application(name, width, height),
-			m_VertexFormat({ vkw::VERTEX_FORMAT_VEC2F32,vkw::VERTEX_FORMAT_VEC3F32, vkw::VERTEX_FORMAT_VEC2F32 })
+			m_VertexFormat({ vkw::VERTEX_FORMAT_VEC3F32,vkw::VERTEX_FORMAT_VEC3F32, vkw::VERTEX_FORMAT_VEC2F32 }),
+			m_AssimpParser(vkw::VERTEX_COMPONENT_NORMAL|vkw::VERTEX_COMPONENT_TEXCOORD)
 	{
 		vkw::SCameraDesc desc;
 		desc.speed = 0.001f;
@@ -47,9 +48,13 @@ private:
 	std::vector<VkDescriptorSet> m_vDescriptorSets;
 
 	vkw::Texture m_Texture;
+	std::shared_ptr<vkw::Scene> m_pScene;
 
 	//Game objects
 	vkw::Camera m_Camera;
+
+	//Utils
+	vkw::AssimpParser m_AssimpParser;
 
 	void CreateDescriptorSetLayout()
 	{
@@ -163,15 +168,19 @@ private:
 		colorBlending.blendConstants[2] = 0.0f; 
 		colorBlending.blendConstants[3] = 0.0f; 
 
-		//TODO : eventual dynamic states
+		//PushConstants
+		VkPushConstantRange pushConstantRange{};
+		pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+		pushConstantRange.offset = 0;
+		pushConstantRange.size = sizeof(PushConstantData);
 
 		//Pipeline layout (uniforms specification)
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount = 1; 
 		pipelineLayoutInfo.pSetLayouts = &m_VkDescriptorSetLayout; 
-		pipelineLayoutInfo.pushConstantRangeCount = 0; 
-		pipelineLayoutInfo.pPushConstantRanges = nullptr; 
+		pipelineLayoutInfo.pushConstantRangeCount = 1; 
+		pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange; 
 
 		if (vkCreatePipelineLayout(vkw::Context::m_VkDevice, &pipelineLayoutInfo, nullptr, &m_VkPipelineLayout) != VK_SUCCESS)
 			throw std::runtime_error("Failed to create pipeline layout!");
@@ -202,21 +211,32 @@ private:
 	void CreateMesh()
 	{		
 		const std::vector<float> vertices = {
-			-0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-			0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-			0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-			-0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f
+			-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+			0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+			0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+			-0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f
 		};
 		const std::vector<uint32_t> indices = { 0, 1, 2, 2, 3, 0 };
 
-		m_pMesh = std::make_unique<vkw::Mesh>(vkw::MESH_USAGE_STATIC, m_VertexFormat, static_cast<uint32_t>(vertices.size()), (void*)vertices.data(), static_cast<uint32_t>(indices.size()), indices.data());
+		vkw::SMeshDesc desc;
+		desc.usage = vkw::MESH_USAGE_STATIC;
+		desc.pFormat = &m_VertexFormat;
+		desc.vertexCount = static_cast<uint32_t>(vertices.size());
+		desc.vertexData = (void*)vertices.data();
+		desc.indexCount = static_cast<uint32_t>(indices.size());
+		desc.indexData = indices.data();
+		m_pMesh = std::make_unique<vkw::Mesh>(desc);
 	}
 
 	struct UniformBufferObject 
 	{
-		glm::mat4 model;
 		glm::mat4 view;
 		glm::mat4 proj;
+	};
+
+	struct PushConstantData
+	{
+		glm::mat4 model;
 	};
 
 	void CreateUniformBuffers()
@@ -294,6 +314,9 @@ private:
 	void Init()
 	{
 		m_Texture.LoadFromFile("../Assets/Textures/Stalin.jpg");
+		m_pScene = std::make_shared<vkw::Scene>();
+		m_AssimpParser.LoadSceneFromFile(m_pScene, "../Assets/Models/stanford-bunny.fbx");
+		m_pScene->GetRootNode()->Scale(glm::dvec3(0.01));
 
 		CreateDescriptorSetLayout();
 		CreateGraphicsPipeline();
@@ -309,7 +332,6 @@ private:
 
 		//update uniform buffers
 		UniformBufferObject ubo;
-		ubo.model = glm::mat4(1.f);
 		ubo.view = glm::mat4(m_Camera.GetViewMatrix());
 		ubo.proj = glm::mat4(m_Camera.GetProjectionMatrix());
 		m_vUniformBuffers[m_uiCurrentImageIndex]->CopyData(sizeof(UniformBufferObject), &ubo);
@@ -323,7 +345,27 @@ private:
 
 		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_VkPipelineLayout, 0, 1, &m_vDescriptorSets[m_uiCurrentImageIndex], 0, nullptr);
 
+		glm::mat4 model(1.f);
+		vkCmdPushConstants(
+			commandBuffer,
+			m_VkPipelineLayout,
+			VK_SHADER_STAGE_VERTEX_BIT,
+			0,
+			sizeof(PushConstantData),
+			&model);
+
 		m_pMesh->Draw(commandBuffer);
+
+		model = static_cast<glm::mat4>(m_pScene->GetRootNode()->GetTransform());
+		vkCmdPushConstants(
+			commandBuffer,
+			m_VkPipelineLayout,
+			VK_SHADER_STAGE_VERTEX_BIT,
+			0,
+			sizeof(PushConstantData),
+			&model);
+		
+		m_pScene->GetRootNode()->GetMesh(0)->Draw(commandBuffer);
 	}
 
 	void Cleanup() 

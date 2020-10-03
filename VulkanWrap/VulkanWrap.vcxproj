@@ -20,11 +20,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\VulkanWrap\Application.h" />
+    <ClInclude Include="..\include\VulkanWrap\AssimpParser.h" />
     <ClInclude Include="..\include\VulkanWrap\Buffer.h" />
     <ClInclude Include="..\include\VulkanWrap\Camera.h" />
     <ClInclude Include="..\include\VulkanWrap\Context.h" />
     <ClInclude Include="..\include\VulkanWrap\MemoryAllocator.h" />
     <ClInclude Include="..\include\VulkanWrap\Mesh.h" />
+    <ClInclude Include="..\include\VulkanWrap\Scene.h" />
     <ClInclude Include="..\include\VulkanWrap\ShaderFactory.h" />
     <ClInclude Include="..\include\VulkanWrap\SwapChain.h" />
     <ClInclude Include="..\include\VulkanWrap\Texture.h" />
@@ -33,11 +35,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\AssimpParser.cpp" />
     <ClCompile Include="src\Buffer.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Context.cpp" />
     <ClCompile Include="src\MemoryAllocator.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
+    <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\ShaderFactory.cpp" />
     <ClCompile Include="src\SwapChain.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

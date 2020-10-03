@@ -2,34 +2,32 @@
 
 namespace vkw
 {
-	//* MeshUsage parameter will define how often mesh data will be modified and therefore if allocated memory is on CPU or GPU side
-	//* Index data is optional and draw command will depend on it
-	Mesh::Mesh(MeshUsage usage, VertexFormat vertexFormat, uint32_t vertexCount, void* vertexData, uint32_t indexCount, const uint32_t* indexData)
+	Mesh::Mesh(SMeshDesc desc)
 	{
 		VmaMemoryUsage memoryUsage;
-		switch (usage)
+		switch (desc.usage)
 		{
-		case vkw::VKW_MESH_USAGE_STATIC:
+		case vkw::MESH_USAGE_STATIC:
 			memoryUsage = VMA_MEMORY_USAGE_GPU_ONLY;
 			break;
-		case vkw::VKW_MESH_USAGE_DYNAMIC:
+		case vkw::MESH_USAGE_DYNAMIC:
 			memoryUsage = VMA_MEMORY_USAGE_CPU_ONLY;
 			break;
 		default:
 			break;
 		}
 
-		m_uiVertexCount = vertexCount;
+		m_uiVertexCount = desc.vertexCount;
 		m_pVertexBuffer = std::make_unique<Buffer>(
-			static_cast<uint64_t>(vertexCount*vertexFormat.GetStride()), 
+			static_cast<uint64_t>(desc.vertexCount* desc.pFormat->GetStride()),
 			VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 
 			memoryUsage,
-			vertexData);
+			desc.vertexData);
 		
-		if (indexCount >= 0 && indexData != nullptr)
+		if (desc.indexCount >= 0 && desc.indexData != nullptr)
 		{
-			m_uiIndexCount = indexCount;
-			m_pIndexBuffer = std::make_unique<Buffer>((uint64_t)(m_uiIndexCount * sizeof(uint32_t)), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VMA_MEMORY_USAGE_GPU_ONLY, (void*)indexData);
+			m_uiIndexCount = desc.indexCount;
+			m_pIndexBuffer = std::make_unique<Buffer>((uint64_t)(m_uiIndexCount * sizeof(uint32_t)), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VMA_MEMORY_USAGE_GPU_ONLY, (void*)desc.indexData);
 		}
 	}
 

@@ -12,10 +12,22 @@ namespace vkw
 		MESH_USAGE_DYNAMIC
 	};
 
+	//* MeshUsage parameter will define how often mesh data will be modified and therefore if allocated memory is on CPU or GPU side
+	//* Index data is optional and draw command will depend on it
+	struct SMeshDesc
+	{
+		MeshUsage usage;
+		VertexFormat* pFormat;
+		uint32_t vertexCount = 0;
+		void* vertexData = nullptr;
+		uint32_t indexCount = 0;
+		const uint32_t* indexData = nullptr;
+	};
+
 	class Mesh
 	{
 	public:
-		Mesh(MeshUsage usage, VertexFormat vertexFormat, uint32_t vertexCount, void* vertexData, uint32_t indexCount=0, const uint32_t* indexData=nullptr);
+		Mesh(SMeshDesc desc);
 		~Mesh();
 
 		void Draw(const VkCommandBuffer &commandBuffer);
