@@ -61,4 +61,16 @@ namespace vkw
 	{
 		m_pRootNode->SetTransform(mat);
 	}
+
+	//*****************************ISCENERENDERER**********************************
+	void ISceneRenderer::RecursiveRender(std::shared_ptr<Node> pNode, glm::dmat4 trans)
+	{
+		glm::dmat4 localTrans = trans * pNode->GetTransform();
+		RenderNode(pNode, localTrans);
+
+		for (uint32_t i = 0; i < pNode->GetNbChildren(); ++i)
+		{
+			RecursiveRender(pNode->GetChild(i), localTrans);
+		}
+	}
 }

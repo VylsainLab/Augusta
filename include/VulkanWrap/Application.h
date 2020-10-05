@@ -24,7 +24,7 @@ namespace vkw
 
 		void Run();		
 		
-		virtual void Render(VkCommandBuffer& commandBuffer)=0;		
+		virtual void Render(VkCommandBuffer commandBuffer)=0;		
 
 		void AddEventObserver(IGLFWEventObserver* pObserver);
 

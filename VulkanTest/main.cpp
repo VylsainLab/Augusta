@@ -12,7 +12,7 @@
 #define WINDOW_WIDTH	800
 #define WINDOW_HEIGHT	600
 
-class HelloTriangleApplication : public vkw::Application
+class HelloTriangleApplication : public vkw::Application, public vkw::ISceneRenderer
 {
 public:
 	HelloTriangleApplication(const std::string& name, uint16_t width, uint16_t height)
@@ -39,18 +39,18 @@ private:
 	
 	VkPipelineLayout m_VkPipelineLayout = VK_NULL_HANDLE;
 	VkPipeline m_VkGraphicsPipeline = VK_NULL_HANDLE;
-	uint32_t m_uiIndexCount = 0;
+	
 	vkw::VertexFormat m_VertexFormat;
-	std::unique_ptr<vkw::Mesh> m_pMesh = nullptr;
 	std::vector<vkw::Buffer*> m_vUniformBuffers; //One per swap chain image
 	VkDescriptorSetLayout m_VkDescriptorSetLayout = VK_NULL_HANDLE;
 	VkDescriptorPool m_VkDescriptorPool = VK_NULL_HANDLE;
 	std::vector<VkDescriptorSet> m_vDescriptorSets;
 
-	vkw::Texture m_Texture;
+	VkCommandBuffer m_ActiveCommandBuffer = VK_NULL_HANDLE;
+
+	//Scene	
 	std::shared_ptr<vkw::Scene> m_pScene;
 
-	//Game objects
 	vkw::Camera m_Camera;
 
 	//Utils
@@ -208,26 +208,6 @@ private:
 			throw std::runtime_error("failed to create graphics pipeline!");
 	}
 
-	void CreateMesh()
-	{		
-		const std::vector<float> vertices = {
-			-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-			0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-			0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-			-0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f
-		};
-		const std::vector<uint32_t> indices = { 0, 1, 2, 2, 3, 0 };
-
-		vkw::SMeshDesc desc;
-		desc.usage = vkw::MESH_USAGE_STATIC;
-		desc.pFormat = &m_VertexFormat;
-		desc.vertexCount = static_cast<uint32_t>(vertices.size());
-		desc.vertexData = (void*)vertices.data();
-		desc.indexCount = static_cast<uint32_t>(indices.size());
-		desc.indexData = indices.data();
-		m_pMesh = std::make_unique<vkw::Mesh>(desc);
-	}
-
 	struct UniformBufferObject 
 	{
 		glm::mat4 view;
@@ -283,10 +263,10 @@ private:
 			bufferInfo.offset = 0;
 			bufferInfo.range = sizeof(UniformBufferObject);
 
-			VkDescriptorImageInfo imageInfo{};
+			/*VkDescriptorImageInfo imageInfo{};
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 			imageInfo.imageView = m_Texture.GetImageView();
-			imageInfo.sampler = m_Texture.GetSampler();
+			imageInfo.sampler = m_Texture.GetSampler();*/
 
 			std::array<VkWriteDescriptorSet,2> descriptorWrites{};
 			descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -313,14 +293,12 @@ private:
 
 	void Init()
 	{
-		m_Texture.LoadFromFile("../Assets/Textures/Stalin.jpg");
 		m_pScene = std::make_shared<vkw::Scene>();
 		m_AssimpParser.LoadSceneFromFile(m_pScene, "../Assets/Models/stanford-bunny.fbx");
 		m_pScene->GetRootNode()->Scale(glm::dvec3(0.01));
 
 		CreateDescriptorSetLayout();
 		CreateGraphicsPipeline();
-		CreateMesh();
 		CreateUniformBuffers();
 		CreateDescriptorPool();
 		CreateDescriptorSets();		
@@ -337,35 +315,34 @@ private:
 		m_vUniformBuffers[m_uiCurrentImageIndex]->CopyData(sizeof(UniformBufferObject), &ubo);
 	}
 
-	virtual void Render(VkCommandBuffer& commandBuffer) override
+	virtual void RenderNode(std::shared_ptr<vkw::Node> pNode, glm::dmat4 trans) override
 	{
+		glm::mat4 ftrans = static_cast<glm::mat4>(trans);
+		vkCmdPushConstants(
+			m_ActiveCommandBuffer,
+			m_VkPipelineLayout,
+			VK_SHADER_STAGE_VERTEX_BIT,
+			0,
+			sizeof(PushConstantData),
+			&ftrans);
+
+		for (uint32_t i = 0; i < pNode->GetNbMeshes(); ++i)
+		{
+			pNode->GetMesh(i)->Draw(m_ActiveCommandBuffer);
+		}
+	}
+
+	virtual void Render(VkCommandBuffer commandBuffer) override
+	{
+		m_ActiveCommandBuffer = commandBuffer;
+
 		Update();
 
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_VkGraphicsPipeline);
 
 		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_VkPipelineLayout, 0, 1, &m_vDescriptorSets[m_uiCurrentImageIndex], 0, nullptr);
 
-		glm::mat4 model(1.f);
-		vkCmdPushConstants(
-			commandBuffer,
-			m_VkPipelineLayout,
-			VK_SHADER_STAGE_VERTEX_BIT,
-			0,
-			sizeof(PushConstantData),
-			&model);
-
-		m_pMesh->Draw(commandBuffer);
-
-		model = static_cast<glm::mat4>(m_pScene->GetRootNode()->GetTransform());
-		vkCmdPushConstants(
-			commandBuffer,
-			m_VkPipelineLayout,
-			VK_SHADER_STAGE_VERTEX_BIT,
-			0,
-			sizeof(PushConstantData),
-			&model);
-		
-		m_pScene->GetRootNode()->GetMesh(0)->Draw(commandBuffer);
+		RecursiveRender(m_pScene->GetRootNode(), glm::dmat4(1.));
 	}
 
 	void Cleanup() 

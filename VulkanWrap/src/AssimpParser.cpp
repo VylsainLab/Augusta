@@ -159,10 +159,6 @@ namespace vkw
 				//meshDesc.m_pMaterial = pTarget->GetMaterialByName(mMaterialIndirection[pMesh->mMaterialIndex].c_str());
 				meshDesc.usage = MESH_USAGE_STATIC;
 				meshDesc.pFormat = &vertexFormat;
-				//meshDesc.m_DrawableDesc.vertexAttribList.SetStride(32);
-				//meshDesc.m_DrawableDesc.vertexAttribList.AddAttrib(0, 3, GL_FLOAT, (void*)0);
-				//meshDesc.m_DrawableDesc.vertexAttribList.AddAttrib(1, 2, GL_FLOAT, (void*)12);
-				//meshDesc.m_DrawableDesc.vertexAttribList.AddAttrib(2, 3, GL_FLOAT, (void*)20);
 
 				if ((m_uiVertexComponentFlags & VERTEX_COMPONENT_NORMAL) && pMesh->mNormals == nullptr)
 					std::cerr << "Mesh " << pMesh->mName.C_Str() << " is missing normals";
@@ -185,9 +181,6 @@ namespace vkw
 							memcpy(p, &pMesh->mNormals[j].x, sizeof(float)); p += sizeof(float);
 							memcpy(p, &pMesh->mNormals[j].y, sizeof(float)); p += sizeof(float);
 							memcpy(p, &pMesh->mNormals[j].z, sizeof(float)); p += sizeof(float);
-							/*pBuf[(j * 8) + 5] = pMesh->mNormals[j].x;
-							pBuf[(j * 8) + 6] = pMesh->mNormals[j].y;
-							pBuf[(j * 8) + 7] = pMesh->mNormals[j].z;*/
 						}
 						else
 							p += 3 * sizeof(float);
@@ -196,8 +189,6 @@ namespace vkw
 						{
 							memcpy(p, &pMesh->mTextureCoords[0][j].x, sizeof(float)); p += sizeof(float);
 							memcpy(p, &pMesh->mTextureCoords[0][j].y, sizeof(float)); p += sizeof(float);
-							/*pBuf[(j * 8) + 3] = pMesh->mTextureCoords[0][j].x;
-							pBuf[(j * 8) + 4] = pMesh->mTextureCoords[0][j].y;*/
 						}
 						else
 							p += 2 * sizeof(float);
