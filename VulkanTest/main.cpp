@@ -9,8 +9,8 @@
 #include <iostream>
 #include <stdexcept>
 
-#define WINDOW_WIDTH	800
-#define WINDOW_HEIGHT	600
+#define WINDOW_WIDTH	1280
+#define WINDOW_HEIGHT	720
 
 class HelloTriangleApplication : public vkw::Application, public vkw::ISceneRenderer
 {
@@ -18,12 +18,13 @@ public:
 	HelloTriangleApplication(const std::string& name, uint16_t width, uint16_t height)
 		:	vkw::Application(name, width, height),
 			m_VertexFormat({ vkw::VERTEX_FORMAT_VEC3F32,vkw::VERTEX_FORMAT_VEC3F32, vkw::VERTEX_FORMAT_VEC2F32 }),
-			m_AssimpParser(vkw::VERTEX_COMPONENT_NORMAL|vkw::VERTEX_COMPONENT_TEXCOORD)
+			m_AssimpParser(vkw::VERTEX_COMPONENT_NORMAL|vkw::VERTEX_COMPONENT_TEXCOORD, true, aiProcess_Triangulate|aiProcess_PreTransformVertices)
 	{
 		vkw::SCameraDesc desc;
 		desc.speed = 0.001f;
 		desc.sensitivity = 0.1f;
 		desc.position = glm::vec3(0., 0., 1.);
+		desc.aspect = float(width) / float(height);
 		m_Camera = vkw::Camera(desc);
 		AddEventObserver(&m_Camera);
 	}
@@ -300,8 +301,8 @@ private:
 	void Init()
 	{
 		m_pScene = std::make_shared<vkw::Scene>();
-		m_AssimpParser.LoadSceneFromFile(m_pScene, "../Assets/Models/stanford-bunny.fbx");
-		m_pScene->GetRootNode()->Scale(glm::dvec3(0.01));
+		m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/KV2/kv2.FBX", "../../Assets/KV2/textures/");
+		m_pScene->GetRootNode()->Scale(glm::dvec3(0.001));
 
 		CreateDescriptorSetLayout();
 		CreateGraphicsPipeline();

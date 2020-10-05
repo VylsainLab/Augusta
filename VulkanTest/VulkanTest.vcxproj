@@ -157,7 +157,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../lib;C:\VulkanSDK\1.2.148.1\Lib;C:\VulkanSDK\1.2.148.1\Bin;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp.lib;vulkan-1.lib;glfw3.lib;shaderc_combined.lib;VulkanWrap.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>IrrXML.lib;zlib.lib;assimp.lib;vulkan-1.lib;glfw3.lib;shaderc_combined.lib;VulkanWrap.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

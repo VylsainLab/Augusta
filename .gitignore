@@ -1,9 +1,12 @@
 *.vs
 *x64
 *glfw3.lib
-*assimp.lib
+*assimpd.lib
 *IrrXMLd.lib
 *zlibd.lib
+*assimp.lib
+*IrrXML.lib
+*zlib.lib
 include/glm
 include/GLFW
 include/VulkanMemoryAllocator/vk_mem_alloc.h
