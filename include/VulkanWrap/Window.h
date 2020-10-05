@@ -6,7 +6,7 @@
 #include <string>
 #include <memory>
 #include <vector>
-//#include <VulkanWrap/SwapChain.h>
+#include <VulkanWrap/Texture.h>
 
 namespace vkw
 {
@@ -18,7 +18,7 @@ namespace vkw
 		Window(const std::string &name, uint16_t width, uint16_t height);
 		virtual ~Window();
 
-		void InitSwapChain();
+		void InitAttachments();
 		void InitFramebuffers(const VkRenderPass& renderPass);
 
 		VkSurfaceKHR GetSurface() { return m_VkSurface; }
@@ -26,7 +26,8 @@ namespace vkw
 
 		uint32_t GetSwapChainImageCount();
 		VkSwapchainKHR GetSwapChainHandle() const;
-		VkFormat GetSwapChainImageFormat() const;
+		VkFormat GetColorFormat() const;
+		VkFormat GetDepthStencilFormat() const;
 		VkExtent2D GetSwapChainExtent() const;
 		VkFramebuffer GetSwapChainFramebuffer(uint32_t index) const;
 		GLFWwindow* GetGLFWWindow() const { return m_pWindow; }
@@ -37,6 +38,7 @@ namespace vkw
 		VkSurfaceKHR m_VkSurface;
 		std::unique_ptr<SwapChain> m_pSwapChain = nullptr;
 		std::vector<VkFramebuffer> m_vVkSwapChainFramebuffers;
+		std::unique_ptr<Texture> m_pDepthStencilTexture;
 	};
 }
 #endif

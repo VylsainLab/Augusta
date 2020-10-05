@@ -55,33 +55,13 @@ namespace vkw
 		return VK_PRESENT_MODE_FIFO_KHR;
 	}
 
-	/*VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities)
-	{
-		if (capabilities.currentExtent.width != UINT32_MAX)
-		{
-			return capabilities.currentExtent;
-		}
-		else
-		{
-			VkExtent2D actualExtent = capabilities.currentExtent;// { WINDOW_WIDTH, WINDOW_HEIGHT };
-
-			actualExtent.width = std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, actualExtent.width));
-			actualExtent.height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, actualExtent.height));
-
-			return actualExtent;
-		}
-	}*/
-
 	SwapChain::SwapChain(const VkSurfaceKHR& surface)
 	{
-		/*assert(!m_vWindows.empty());
-		VkSurfaceKHR surface = m_vWindows[0]->GetSurface();*/
-
 		vkw::SwapChainSupportDetails swapChainSupport = SwapChain::QuerySwapChainSupport(Context::m_VkPhysicalDevice, surface);
 
 		VkSurfaceFormatKHR surfaceFormat = ChooseSwapSurfaceFormat(swapChainSupport.formats);
 		VkPresentModeKHR presentMode = ChooseSwapPresentMode(swapChainSupport.presentModes);
-		VkExtent2D extent = swapChainSupport.capabilities.currentExtent; //ChooseSwapExtent(swapChainSupport.capabilities);
+		VkExtent2D extent = swapChainSupport.capabilities.currentExtent;
 
 		m_uiImageCount = swapChainSupport.capabilities.minImageCount + 1;
 

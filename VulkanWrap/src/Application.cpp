@@ -3,6 +3,7 @@
 #include <cassert>
 #include <string>
 #include <set>
+#include <array>
 #include <stdexcept>
 #include <iostream>
 
@@ -26,7 +27,7 @@ namespace vkw
 
 		vkw::Context::Init(m_pWindow->GetSurface());
 
-		m_pWindow->InitSwapChain();
+		m_pWindow->InitAttachments();
 		CreateRenderPass();
 		m_pWindow->InitFramebuffers(m_VkRenderPass);
 		CreateSwapChainCommandBuffers();
@@ -114,9 +115,9 @@ namespace vkw
 		renderPassInfo.framebuffer = m_pWindow->GetSwapChainFramebuffer(m_uiCurrentImageIndex);
 		renderPassInfo.renderArea.offset = { 0, 0 };
 		renderPassInfo.renderArea.extent = m_pWindow->GetSwapChainExtent();
-		VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
-		renderPassInfo.clearValueCount = 1;
-		renderPassInfo.pClearValues = &clearColor;
+		VkClearValue clearColors[] = { { 0.0f, 0.0f, 0.0f, 1.0f }, { 1.0f, 0} };
+		renderPassInfo.clearValueCount = 2;
+		renderPassInfo.pClearValues = clearColors;
 		vkCmdBeginRenderPass(m_vVkSwapChainCommandBuffers[m_uiCurrentImageIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
@@ -164,7 +165,7 @@ namespace vkw
 	void Application::CreateRenderPass()
 	{
 		VkAttachmentDescription colorAttachment = {};
-		colorAttachment.format = m_pWindow->GetSwapChainImageFormat();
+		colorAttachment.format = m_pWindow->GetColorFormat();
 		colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
 		colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -177,15 +178,31 @@ namespace vkw
 		colorAttachmentRef.attachment = 0;
 		colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
+		VkAttachmentDescription depthAttachment = {};
+		depthAttachment.format = m_pWindow->GetDepthStencilFormat();
+		depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+		depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+		depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+		VkAttachmentReference depthAttachmentRef = {};
+		depthAttachmentRef.attachment = 1;
+		depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
 		VkSubpassDescription subpass = {};
 		subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 		subpass.colorAttachmentCount = 1;
 		subpass.pColorAttachments = &colorAttachmentRef;
+		subpass.pDepthStencilAttachment = &depthAttachmentRef;
 
+		std::array<VkAttachmentDescription, 2> attachments = { colorAttachment, depthAttachment };
 		VkRenderPassCreateInfo renderPassInfo = {};
 		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-		renderPassInfo.attachmentCount = 1;
-		renderPassInfo.pAttachments = &colorAttachment;
+		renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+		renderPassInfo.pAttachments = attachments.data();
 		renderPassInfo.subpassCount = 1;
 		renderPassInfo.pSubpasses = &subpass;
 

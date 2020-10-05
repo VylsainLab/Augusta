@@ -31,9 +31,23 @@ namespace vkw
 		glfwDestroyWindow(m_pWindow);
 	}
 
-	void Window::InitSwapChain()
+	void Window::InitAttachments()
 	{
 		m_pSwapChain = std::make_unique<SwapChain>(m_VkSurface);
+
+		//Create depth resources
+		STextureDesc desc;
+		desc.width = m_pSwapChain->GetExtent().width;
+		desc.height = m_pSwapChain->GetExtent().height;
+		desc.aspect = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+		desc.filtering = VK_FILTER_LINEAR;
+		desc.format = VK_FORMAT_D32_SFLOAT_S8_UINT;
+		desc.memoryUsage = VMA_MEMORY_USAGE_GPU_ONLY;
+		desc.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+		desc.tiling = VK_IMAGE_TILING_OPTIMAL;
+		desc.samplingMode = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+		desc.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+		m_pDepthStencilTexture = std::make_unique<Texture>(desc);
 	}
 
 	void Window::InitFramebuffers(const VkRenderPass& renderPass)
@@ -42,12 +56,12 @@ namespace vkw
 
 		for (uint32_t i = 0; i < m_vVkSwapChainFramebuffers.size(); i++)
 		{
-			VkImageView attachments[] = { m_pSwapChain->GetImageViewAtIndex(i) };
+			VkImageView attachments[] = { m_pSwapChain->GetImageViewAtIndex(i), m_pDepthStencilTexture->GetImageView() };
 
 			VkFramebufferCreateInfo framebufferInfo = {};
 			framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 			framebufferInfo.renderPass = renderPass;
-			framebufferInfo.attachmentCount = 1;
+			framebufferInfo.attachmentCount = 2;
 			framebufferInfo.pAttachments = attachments;
 			framebufferInfo.width = m_pSwapChain->GetExtent().width;
 			framebufferInfo.height = m_pSwapChain->GetExtent().height;
@@ -73,9 +87,14 @@ namespace vkw
 		return m_pSwapChain->GetSwapChainHandle();
 	}
 
-	VkFormat Window::GetSwapChainImageFormat() const
+	VkFormat Window::GetColorFormat() const
 	{
 		return m_pSwapChain->GetImageFormat();
+	}
+
+	VkFormat Window::GetDepthStencilFormat() const
+	{
+		return m_pDepthStencilTexture->GetFormat();
 	}
 
 	VkExtent2D Window::GetSwapChainExtent() const
