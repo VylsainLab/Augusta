@@ -3,7 +3,7 @@
 
 #include <vulkan/vulkan.h>
 #include <string>
-#include <VulkanMemoryAllocator/vk_mem_alloc.h>
+#include <vma/vk_mem_alloc.h>
 
 namespace vkw
 {
