@@ -27,13 +27,7 @@
     <ClInclude Include="..\include\Augusta\Application.h">
       <Filter>Source Files\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Augusta\AssimpParser.h">
-      <Filter>Source Files\Vulkan</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\Augusta\Buffer.h">
-      <Filter>Source Files\Vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Augusta\Camera.h">
       <Filter>Source Files\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Augusta\Context.h">
@@ -43,9 +37,6 @@
       <Filter>Source Files\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Augusta\Mesh.h">
-      <Filter>Source Files\Vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\Augusta\Scene.h">
       <Filter>Source Files\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Augusta\ShaderFactory.h">
@@ -62,6 +53,15 @@
     </ClInclude>
     <ClInclude Include="..\include\Augusta\Window.h">
       <Filter>Source Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Augusta\AssimpParser.h">
+      <Filter>Source Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Augusta\Camera.h">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Augusta\Scene.h">
+      <Filter>Source Files\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
