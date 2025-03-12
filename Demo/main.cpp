@@ -1,10 +1,6 @@
 #include <Augusta/Application.h>
-#include <Augusta/SwapChain.h>
 #include <Augusta/ShaderFactory.h>
-#include <Augusta/VertexFormat.h>
-#include <Augusta/Buffer.h>
 #include <Augusta/Camera.h>
-#include <Augusta/Texture.h>
 #include <Augusta/AssimpParser.h>
 #include <iostream>
 #include <stdexcept>
@@ -12,10 +8,10 @@
 #define WINDOW_WIDTH	1280
 #define WINDOW_HEIGHT	720
 
-class HelloTriangleApplication : public aug::Application, public aug::ISceneRenderer
+class AugustaDemo : public aug::Application
 {
 public:
-	HelloTriangleApplication(const std::string& name, uint16_t width, uint16_t height)
+	AugustaDemo(const std::string& name, uint16_t width, uint16_t height)
 		:	aug::Application(name, width, height),
 			m_VertexFormat({ aug::VERTEX_FORMAT_VEC3F32,aug::VERTEX_FORMAT_VEC3F32, aug::VERTEX_FORMAT_VEC2F32 }),
 			m_AssimpParser(aug::VERTEX_COMPONENT_NORMAL|aug::VERTEX_COMPONENT_TEXCOORD, true, aiProcess_Triangulate|aiProcess_PreTransformVertices)
@@ -369,7 +365,7 @@ private:
 
 int main() 
 {
-	HelloTriangleApplication app("Augusta", WINDOW_WIDTH, WINDOW_HEIGHT);
+	AugustaDemo app("Augusta", WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	try 
 	{

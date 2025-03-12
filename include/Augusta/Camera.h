@@ -73,8 +73,8 @@ namespace aug
 			int moveForwardFlag = 0;
 			int moveRightFlag = 0;
 			int mouseSpeed = 0;
-			double cursor_x;
-			double cursor_y;
+			double cursor_x = 0.;
+			double cursor_y = 0.;
 		};
 
 		Input m_Input;

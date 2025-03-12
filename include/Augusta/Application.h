@@ -5,6 +5,7 @@
 #include <Augusta/Window.h>
 #include <Augusta/Context.h>
 #include <Augusta/Buffer.h>
+#include <Augusta/Scene.h>
 #include <vector>
 #include <memory>
 
@@ -16,7 +17,7 @@ namespace aug
 		virtual void ProcessEvents(GLFWwindow* pWindow) = 0;
 	};
 
-	class Application
+	class Application : public ISceneRenderer
 	{
 	public:
 		Application(const std::string& name, uint16_t width, uint16_t height);
