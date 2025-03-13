@@ -3,6 +3,7 @@
 
 #include <Augusta/Context.h>
 #include <Augusta/Window.h>
+#include <Augusta/GraphicsPipeline.h>
 #include <Augusta/Context.h>
 #include <Augusta/Buffer.h>
 #include <Augusta/Scene.h>
@@ -34,14 +35,12 @@ namespace aug
 		void BeginRender();
 		void EndRender();
 
-		void CreateRenderPass();
 		void CreateSwapChainCommandBuffers();
 		void CreateSyncObjects();
 
 		static bool m_bGLFWInitialized;
-		std::unique_ptr<aug::Window> m_pWindow;
-
-		VkRenderPass m_VkRenderPass;
+		std::unique_ptr<Window> m_pWindow;
+		std::unique_ptr<GraphicsPipeline> m_pGraphicsPipeline;
 		std::vector<VkCommandBuffer> m_vVkSwapChainCommandBuffers;
 		
 		std::vector<VkSemaphore> m_vVkImageAvailableSemaphores;

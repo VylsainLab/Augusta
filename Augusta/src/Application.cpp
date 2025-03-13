@@ -23,21 +23,20 @@ namespace aug
 
 		aug::Context::InitInstance();
 
-		m_pWindow = std::make_unique<aug::Window>(name,width,height);
+		m_pWindow = std::make_unique<Window>(name,width,height);
 
 		aug::Context::Init(m_pWindow->GetSurface());
-
 		m_pWindow->InitAttachments();
-		CreateRenderPass();
-		m_pWindow->InitFramebuffers(m_VkRenderPass);
+
+		m_pGraphicsPipeline = std::make_unique<GraphicsPipeline>(m_pWindow.get());
+		
+		m_pWindow->InitFramebuffers(m_pGraphicsPipeline->GetRenderPass()); //TODO move to pipeline
 		CreateSwapChainCommandBuffers();
 		CreateSyncObjects();
 	}
 
 	Application::~Application()
 	{
-		vkDestroyRenderPass(Context::m_VkDevice, m_VkRenderPass, nullptr);
-
 		for (uint8_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
 		{
 			vkDestroySemaphore(Context::m_VkDevice, m_vVkRenderFinishedSemaphores[i], nullptr);
@@ -45,6 +44,7 @@ namespace aug
 			vkDestroyFence(Context::m_VkDevice, m_vVkInFlightFences[i], nullptr);
 		}
 
+		m_pGraphicsPipeline.reset();
 		m_pWindow.reset();
 
 		Context::Release();
@@ -111,7 +111,7 @@ namespace aug
 		//Render pass
 		VkRenderPassBeginInfo renderPassInfo = {};
 		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassInfo.renderPass = m_VkRenderPass;
+		renderPassInfo.renderPass = m_pGraphicsPipeline->GetRenderPass();
 		renderPassInfo.framebuffer = m_pWindow->GetSwapChainFramebuffer(m_uiCurrentImageIndex);
 		renderPassInfo.renderArea.offset = { 0, 0 };
 		renderPassInfo.renderArea.extent = m_pWindow->GetSwapChainExtent();
@@ -160,66 +160,6 @@ namespace aug
 		vkQueuePresentKHR(aug::Context::m_VkPresentQueue, &presentInfo);
 
 		m_uiCurrentFrame = (m_uiCurrentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
-	}
-
-	void Application::CreateRenderPass()
-	{
-		VkAttachmentDescription colorAttachment = {};
-		colorAttachment.format = m_pWindow->GetColorFormat();
-		colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-		colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-		colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
-		VkAttachmentReference colorAttachmentRef = {};
-		colorAttachmentRef.attachment = 0;
-		colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-		VkAttachmentDescription depthAttachment = {};
-		depthAttachment.format = m_pWindow->GetDepthStencilFormat();
-		depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-		depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-		depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
-		VkAttachmentReference depthAttachmentRef = {};
-		depthAttachmentRef.attachment = 1;
-		depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
-		VkSubpassDescription subpass = {};
-		subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-		subpass.colorAttachmentCount = 1;
-		subpass.pColorAttachments = &colorAttachmentRef;
-		subpass.pDepthStencilAttachment = &depthAttachmentRef;
-
-		std::array<VkAttachmentDescription, 2> attachments = { colorAttachment, depthAttachment };
-		VkRenderPassCreateInfo renderPassInfo = {};
-		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-		renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
-		renderPassInfo.pAttachments = attachments.data();
-		renderPassInfo.subpassCount = 1;
-		renderPassInfo.pSubpasses = &subpass;
-
-		// Make sure we reach the color attachment output stage before writing to attachments 
-		// since the framebuffer image is not garanteed to be available before that
-		VkSubpassDependency dependency = {};
-		dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-		dependency.dstSubpass = 0;
-		dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		dependency.srcAccessMask = 0;
-		dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-		renderPassInfo.dependencyCount = 1;
-		renderPassInfo.pDependencies = &dependency;
-
-		if (vkCreateRenderPass(aug::Context::m_VkDevice, &renderPassInfo, nullptr, &m_VkRenderPass) != VK_SUCCESS)
-			throw std::runtime_error("failed to create render pass!");
 	}
 
 	void Application::CreateSwapChainCommandBuffers()

@@ -32,6 +32,7 @@
     <ClInclude Include="..\include\Augusta\Texture.h" />
     <ClInclude Include="..\include\Augusta\VertexFormat.h" />
     <ClInclude Include="..\include\Augusta\Window.h" />
+    <ClInclude Include="GraphicsPipeline.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp" />
@@ -39,6 +40,7 @@
     <ClCompile Include="src\Buffer.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Context.cpp" />
+    <ClCompile Include="src\GraphicsPipeline.cpp" />
     <ClCompile Include="src\MemoryAllocator.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Scene.cpp" />

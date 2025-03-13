@@ -63,6 +63,9 @@
     <ClInclude Include="..\include\Augusta\Scene.h">
       <Filter>Source Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="GraphicsPipeline.h">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp">
@@ -103,6 +106,9 @@
     </ClCompile>
     <ClCompile Include="src\AssimpParser.cpp">
       <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GraphicsPipeline.cpp">
+      <Filter>Source Files\Vulkan</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
