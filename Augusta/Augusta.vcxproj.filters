@@ -63,7 +63,7 @@
     <ClInclude Include="..\include\Augusta\Scene.h">
       <Filter>Source Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsPipeline.h">
+    <ClInclude Include="..\include\Augusta\GraphicsPipeline.h">
       <Filter>Source Files\Vulkan</Filter>
     </ClInclude>
   </ItemGroup>
