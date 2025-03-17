@@ -48,7 +48,6 @@ namespace aug
 		std::vector<VkFence> m_vVkInFlightFences;
 		std::vector<VkFence> m_vVkImagesInFlightFences;
 		uint32_t m_uiCurrentFrame = 0;
-		uint32_t m_uiCurrentImageIndex = 0;
 
 		std::vector<IGLFWEventObserver*> m_vEventObservers;
 	};

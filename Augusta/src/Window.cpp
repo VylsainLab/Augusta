@@ -77,9 +77,19 @@ namespace aug
 		return glfwWindowShouldClose(m_pWindow);
 	}
 
+	uint32_t Window::AcquireNextImage(VkSemaphore semaphore)
+	{
+		return m_pSwapChain->AcquireNextImage(semaphore);
+	}
+
 	uint32_t Window::GetSwapChainImageCount()
 	{
 		return m_pSwapChain->GetImageCount();
+	}
+
+	uint32_t Window::GetSwapChainCurrentImageIndex()
+	{
+		return m_pSwapChain->GetCurrentImageIndex();
 	}
 
 	VkSwapchainKHR Window::GetSwapChainHandle() const

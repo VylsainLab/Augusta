@@ -24,7 +24,10 @@ namespace aug
 		VkSurfaceKHR GetSurface() { return m_VkSurface; }
 		bool IsClosed();
 
+		uint32_t AcquireNextImage(VkSemaphore semaphore);
+
 		uint32_t GetSwapChainImageCount();
+		uint32_t GetSwapChainCurrentImageIndex();
 		VkSwapchainKHR GetSwapChainHandle() const;
 		VkFormat GetColorFormat() const;
 		VkFormat GetDepthStencilFormat() const;

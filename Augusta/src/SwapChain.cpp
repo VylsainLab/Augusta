@@ -142,4 +142,10 @@ namespace aug
 
 		vkDestroySwapchainKHR(aug::Context::m_VkDevice, m_VkSwapChain, nullptr);
 	}
+
+	uint32_t SwapChain::AcquireNextImage(VkSemaphore semaphore)
+	{
+		vkAcquireNextImageKHR(aug::Context::m_VkDevice, m_VkSwapChain, UINT64_MAX, semaphore, VK_NULL_HANDLE, &m_uiCurrentImageIndex);
+		return m_uiCurrentImageIndex;
+	}
 }

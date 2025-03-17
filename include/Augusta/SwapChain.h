@@ -21,11 +21,15 @@ namespace aug
 		SwapChain(const VkSurfaceKHR& surface);
 		virtual ~SwapChain();
 
+		uint32_t AcquireNextImage(VkSemaphore semaphore);
+
 		VkSwapchainKHR GetSwapChainHandle() const { return m_VkSwapChain; }
 		VkFormat GetImageFormat() const { return m_VkSwapChainImageFormat; }
 		VkExtent2D GetExtent() const { return m_VkSwapChainExtent; }
 		uint32_t GetImageCount() const { return m_uiImageCount; }
 		VkImageView GetImageViewAtIndex(uint32_t index) const { return m_vVkSwapChainImageViews.at(index); }
+
+		uint32_t GetCurrentImageIndex() const { return m_uiCurrentImageIndex; }
 
 	protected:
 		VkSwapchainKHR m_VkSwapChain;
@@ -34,6 +38,7 @@ namespace aug
 		std::vector<VkImage> m_vVkSwapChainImages;
 		std::vector<VkImageView> m_vVkSwapChainImageViews;
 		uint32_t m_uiImageCount = 0;
+		uint32_t m_uiCurrentImageIndex = 0;
 	};
 }
 

@@ -25,7 +25,7 @@ public:
 		AddEventObserver(&m_Camera);
 	}
 
-	void RunTriangleApp() 
+	void RunDemo() 
 	{
 		Init();		
 		Run();
@@ -36,9 +36,6 @@ private:
 	
 	aug::VertexFormat m_VertexFormat; //move to render subpass
 	std::vector<aug::Buffer*> m_vUniformBuffers; //One per swap chain image
-	/*VkDescriptorSetLayout m_VkDescriptorSetLayout = VK_NULL_HANDLE;
-	VkDescriptorPool m_VkDescriptorPool = VK_NULL_HANDLE;
-	std::vector<VkDescriptorSet> m_vDescriptorSets;*/
 
 	VkCommandBuffer m_ActiveCommandBuffer = VK_NULL_HANDLE;
 
@@ -99,7 +96,7 @@ private:
 		UniformBufferObject ubo;
 		ubo.view = glm::mat4(m_Camera.GetViewMatrix());
 		ubo.proj = glm::mat4(m_Camera.GetProjectionMatrix());
-		m_vUniformBuffers[m_uiCurrentImageIndex]->CopyData(sizeof(UniformBufferObject), &ubo);
+		m_vUniformBuffers[m_pWindow->GetSwapChainCurrentImageIndex()]->CopyData(sizeof(UniformBufferObject), &ubo);
 	}
 
 	virtual void RenderNode(std::shared_ptr<aug::Node> pNode, glm::dmat4 trans) override
@@ -125,7 +122,7 @@ private:
 
 		Update();
 
-		m_pGraphicsPipeline->Bind(commandBuffer, 1, m_uiCurrentImageIndex);
+		m_pGraphicsPipeline->Bind(commandBuffer, 1, m_pWindow->GetSwapChainCurrentImageIndex());
 
 		RecursiveRender(m_pScene->GetRootNode(), glm::dmat4(1.));
 	}
@@ -143,7 +140,7 @@ int main()
 
 	try 
 	{
-		app.RunTriangleApp();
+		app.RunDemo();
 	}
 	catch (const std::exception& e)
 	{

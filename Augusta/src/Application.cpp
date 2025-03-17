@@ -61,7 +61,7 @@ namespace aug
 		{
 			ProcessEvents();
 			BeginRender();
-			Render(m_vVkSwapChainCommandBuffers[m_uiCurrentImageIndex]);
+			Render(m_vVkSwapChainCommandBuffers[m_pWindow->GetSwapChainCurrentImageIndex()]);
 			EndRender();
 		}
 
@@ -88,14 +88,14 @@ namespace aug
 	{
 		vkWaitForFences(aug::Context::m_VkDevice, 1, &m_vVkInFlightFences[m_uiCurrentFrame], VK_TRUE, UINT64_MAX);
 
-		vkAcquireNextImageKHR(aug::Context::m_VkDevice, m_pWindow->GetSwapChainHandle(), UINT64_MAX, m_vVkImageAvailableSemaphores[m_uiCurrentFrame], VK_NULL_HANDLE, &m_uiCurrentImageIndex);
+		uint32_t currentImage = m_pWindow->AcquireNextImage(m_vVkImageAvailableSemaphores[m_uiCurrentFrame]);
 
 		// Check if a previous frame is using this image (i.e. there is its fence to wait on)
-		if (m_vVkImagesInFlightFences[m_uiCurrentImageIndex] != VK_NULL_HANDLE)
-			vkWaitForFences(aug::Context::m_VkDevice, 1, &m_vVkImagesInFlightFences[m_uiCurrentImageIndex], VK_TRUE, UINT64_MAX);
+		if (m_vVkImagesInFlightFences[currentImage] != VK_NULL_HANDLE)
+			vkWaitForFences(aug::Context::m_VkDevice, 1, &m_vVkImagesInFlightFences[currentImage], VK_TRUE, UINT64_MAX);
 
 		// Mark the image as now being in use by this frame
-		m_vVkImagesInFlightFences[m_uiCurrentImageIndex] = m_vVkInFlightFences[m_uiCurrentFrame];
+		m_vVkImagesInFlightFences[currentImage] = m_vVkInFlightFences[m_uiCurrentFrame];
 
 		vkResetCommandBuffer(m_vVkSwapChainCommandBuffers[m_uiCurrentFrame], VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
 
@@ -105,27 +105,29 @@ namespace aug
 		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 		beginInfo.pInheritanceInfo = nullptr;
 
-		if (vkBeginCommandBuffer(m_vVkSwapChainCommandBuffers[m_uiCurrentImageIndex], &beginInfo) != VK_SUCCESS)
+		if (vkBeginCommandBuffer(m_vVkSwapChainCommandBuffers[currentImage], &beginInfo) != VK_SUCCESS)
 			throw std::runtime_error("Failed to begin recording command buffer!");
 
 		//Render pass
 		VkRenderPassBeginInfo renderPassInfo = {};
 		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		renderPassInfo.renderPass = m_pGraphicsPipeline->GetRenderPass();
-		renderPassInfo.framebuffer = m_pWindow->GetSwapChainFramebuffer(m_uiCurrentImageIndex);
+		renderPassInfo.framebuffer = m_pWindow->GetSwapChainFramebuffer(currentImage);
 		renderPassInfo.renderArea.offset = { 0, 0 };
 		renderPassInfo.renderArea.extent = m_pWindow->GetSwapChainExtent();
 		VkClearValue clearColors[] = { { 0.0f, 0.0f, 0.0f, 1.0f }, { 1.0f, 0} };
 		renderPassInfo.clearValueCount = 2;
 		renderPassInfo.pClearValues = clearColors;
-		vkCmdBeginRenderPass(m_vVkSwapChainCommandBuffers[m_uiCurrentImageIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+		vkCmdBeginRenderPass(m_vVkSwapChainCommandBuffers[currentImage], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
 	void Application::EndRender()
 	{
-		vkCmdEndRenderPass(m_vVkSwapChainCommandBuffers[m_uiCurrentImageIndex]);
+		uint32_t uiCurrentImage = m_pWindow->GetSwapChainCurrentImageIndex();
 
-		if (vkEndCommandBuffer(m_vVkSwapChainCommandBuffers[m_uiCurrentImageIndex]) != VK_SUCCESS)
+		vkCmdEndRenderPass(m_vVkSwapChainCommandBuffers[uiCurrentImage]);
+
+		if (vkEndCommandBuffer(m_vVkSwapChainCommandBuffers[uiCurrentImage]) != VK_SUCCESS)
 			throw std::runtime_error("Failed to record command buffer!");
 
 		//Submit command buffer to graphics queue
@@ -137,7 +139,7 @@ namespace aug
 		submitInfo.pWaitSemaphores = waitSemaphores;
 		submitInfo.pWaitDstStageMask = waitStages;
 		submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = &m_vVkSwapChainCommandBuffers[m_uiCurrentImageIndex];
+		submitInfo.pCommandBuffers = &m_vVkSwapChainCommandBuffers[uiCurrentImage];
 		VkSemaphore signalSemaphores[] = { m_vVkRenderFinishedSemaphores[m_uiCurrentFrame] };
 		submitInfo.signalSemaphoreCount = 1;
 		submitInfo.pSignalSemaphores = signalSemaphores;
@@ -147,7 +149,7 @@ namespace aug
 		if (vkQueueSubmit(aug::Context::m_VkGraphicsQueue, 1, &submitInfo, m_vVkInFlightFences[m_uiCurrentFrame]) != VK_SUCCESS)
 			throw std::runtime_error("Failed to submit draw command buffer!");
 
-		//Present to window
+		//Present to window		
 		VkPresentInfoKHR presentInfo = {};
 		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 		presentInfo.waitSemaphoreCount = 1;
@@ -155,7 +157,7 @@ namespace aug
 		VkSwapchainKHR swapChains[] = { m_pWindow->GetSwapChainHandle() };
 		presentInfo.swapchainCount = 1;
 		presentInfo.pSwapchains = swapChains;
-		presentInfo.pImageIndices = &m_uiCurrentImageIndex;
+		presentInfo.pImageIndices = &uiCurrentImage;
 		presentInfo.pResults = nullptr;
 		vkQueuePresentKHR(aug::Context::m_VkPresentQueue, &presentInfo);
 
