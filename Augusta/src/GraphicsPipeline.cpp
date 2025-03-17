@@ -6,6 +6,31 @@
 aug::GraphicsPipeline::GraphicsPipeline(aug::Window* pWindow)
 {
 	CreateRenderPass(pWindow);
+
+	//Descriptor layout
+	VkDescriptorSetLayoutBinding uboLayoutBinding{};
+	uboLayoutBinding.binding = 0;
+	uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	uboLayoutBinding.descriptorCount = 1;
+	uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+	uboLayoutBinding.pImmutableSamplers = nullptr;
+
+	VkDescriptorSetLayoutBinding samplerLayoutBinding{};
+	samplerLayoutBinding.binding = 1;
+	samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	samplerLayoutBinding.descriptorCount = 1;
+	samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+	samplerLayoutBinding.pImmutableSamplers = nullptr;
+
+	std::array<VkDescriptorSetLayoutBinding, 2> bindings = { uboLayoutBinding, samplerLayoutBinding };
+
+	VkDescriptorSetLayoutCreateInfo layoutInfo{};
+	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+	layoutInfo.pBindings = bindings.data();
+
+	if (vkCreateDescriptorSetLayout(aug::Context::m_VkDevice, &layoutInfo, nullptr, &m_VkDescriptorSetLayout) != VK_SUCCESS)
+		throw std::runtime_error("Failed to create descriptor set layout!");
 }
 
 aug::GraphicsPipeline::~GraphicsPipeline()
@@ -15,6 +40,10 @@ aug::GraphicsPipeline::~GraphicsPipeline()
 	vkDestroyPipelineLayout(aug::Context::m_VkDevice, m_VkPipelineLayout, nullptr);
 
 	vkDestroyRenderPass(Context::m_VkDevice, m_VkRenderPass, nullptr);
+
+	vkDestroyDescriptorPool(aug::Context::m_VkDevice, m_VkDescriptorPool, nullptr);
+
+	vkDestroyDescriptorSetLayout(aug::Context::m_VkDevice, m_VkDescriptorSetLayout, nullptr);
 }
 
 void aug::GraphicsPipeline::CreateRenderPass(aug::Window* pWindow)
@@ -173,7 +202,7 @@ void aug::GraphicsPipeline::Init(const SGraphicsPipelineDesc& desc)
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 	pipelineLayoutInfo.setLayoutCount = 1;
-	pipelineLayoutInfo.pSetLayouts = desc.pDescriptorSetLayout;
+	pipelineLayoutInfo.pSetLayouts = &m_VkDescriptorSetLayout;
 	pipelineLayoutInfo.pushConstantRangeCount = 1;
 	pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
 
@@ -201,11 +230,67 @@ void aug::GraphicsPipeline::Init(const SGraphicsPipelineDesc& desc)
 
 	if (vkCreateGraphicsPipelines(aug::Context::m_VkDevice, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_VkGraphicsPipeline) != VK_SUCCESS)
 		throw std::runtime_error("failed to create graphics pipeline!");
+
+	//Descriptor pool
+	std::array<VkDescriptorPoolSize, 2> poolSizes{};
+	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	poolSizes[0].descriptorCount = desc.pWindow->GetSwapChainImageCount();
+	poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	poolSizes[1].descriptorCount = desc.pWindow->GetSwapChainImageCount();
+
+	VkDescriptorPoolCreateInfo createInfo = {};
+	createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+	createInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
+	createInfo.pPoolSizes = poolSizes.data();
+	createInfo.maxSets = desc.pWindow->GetSwapChainImageCount();
+	if (vkCreateDescriptorPool(aug::Context::m_VkDevice, &createInfo, nullptr, &m_VkDescriptorPool) != VK_SUCCESS)
+		throw std::runtime_error("Failed to create descriptor pool!");
+
+	//Descriptor set
+	std::vector<VkDescriptorSetLayout> layouts(desc.pWindow->GetSwapChainImageCount(), m_VkDescriptorSetLayout);
+
+	VkDescriptorSetAllocateInfo allocInfo{};
+	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	allocInfo.descriptorPool = m_VkDescriptorPool;
+	allocInfo.descriptorSetCount = desc.pWindow->GetSwapChainImageCount();
+	allocInfo.pSetLayouts = layouts.data();
+
+	m_vDescriptorSets.resize(desc.pWindow->GetSwapChainImageCount());
+	if (vkAllocateDescriptorSets(aug::Context::m_VkDevice, &allocInfo, m_vDescriptorSets.data()) != VK_SUCCESS)
+		throw std::runtime_error("Failed to allocate descriptor sets!");
+
+	for (size_t i = 0; i < desc.pWindow->GetSwapChainImageCount(); i++)
+	{
+		VkDescriptorBufferInfo bufferInfo{};
+		bufferInfo.buffer = (*desc.pvUniformBuffers)[i]->GetBufferHandle();
+		bufferInfo.offset = 0;
+		bufferInfo.range = (*desc.pvUniformBuffers)[i]->GetBufferSize();
+
+		std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
+		descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrites[0].dstSet = m_vDescriptorSets[i];
+		descriptorWrites[0].dstBinding = 0;
+		descriptorWrites[0].dstArrayElement = 0;
+		descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		descriptorWrites[0].descriptorCount = 1;
+		descriptorWrites[0].pBufferInfo = &bufferInfo;
+
+		/*descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrites[1].dstSet = m_vDescriptorSets[i];
+		descriptorWrites[1].dstBinding = 1;
+		descriptorWrites[1].dstArrayElement = 0;
+		descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		descriptorWrites[1].descriptorCount = 1;
+		descriptorWrites[1].pImageInfo = &imageInfo;
+
+		vkUpdateDescriptorSets(aug::Context::m_VkDevice, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);*/
+		vkUpdateDescriptorSets(aug::Context::m_VkDevice, 1, &descriptorWrites[0], 0, nullptr);
+	}
 }
 
-void aug::GraphicsPipeline::Bind(const VkCommandBuffer& commandBuffer, uint32_t descriptorSetCount, const VkDescriptorSet* pDescriptorSets)
+void aug::GraphicsPipeline::Bind(const VkCommandBuffer& commandBuffer, uint32_t descriptorSetCount, uint8_t uiCurrentImage)
 {
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_VkGraphicsPipeline);
 
-	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_VkPipelineLayout, 0, descriptorSetCount, pDescriptorSets, 0, nullptr);
+	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_VkPipelineLayout, 0, descriptorSetCount, &m_vDescriptorSets[uiCurrentImage], 0, nullptr);
 }
