@@ -212,8 +212,8 @@ void aug::GraphicsPipeline::Init(const SGraphicsPipelineDesc& desc)
 	//Graphics pipeline
 	VkGraphicsPipelineCreateInfo pipelineInfo = {};
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-	pipelineInfo.stageCount = (uint32_t)desc.vShaderStages.size();
-	pipelineInfo.pStages = desc.vShaderStages.data();
+	pipelineInfo.stageCount = desc.pShader->GetStageCount();
+	pipelineInfo.pStages = desc.pShader->GetPipelineShaderStagesCreateInfo();
 	pipelineInfo.pVertexInputState = &desc.vertexInputInfo;
 	pipelineInfo.pInputAssemblyState = &inputAssembly;
 	pipelineInfo.pViewportState = &viewportState;
@@ -234,32 +234,32 @@ void aug::GraphicsPipeline::Init(const SGraphicsPipelineDesc& desc)
 	//Descriptor pool
 	std::array<VkDescriptorPoolSize, 2> poolSizes{};
 	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	poolSizes[0].descriptorCount = desc.pWindow->GetSwapChainImageCount();
+	poolSizes[0].descriptorCount = MAX_FRAMES_IN_FLIGHT;
 	poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-	poolSizes[1].descriptorCount = desc.pWindow->GetSwapChainImageCount();
+	poolSizes[1].descriptorCount = MAX_FRAMES_IN_FLIGHT;
 
 	VkDescriptorPoolCreateInfo createInfo = {};
 	createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	createInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
 	createInfo.pPoolSizes = poolSizes.data();
-	createInfo.maxSets = desc.pWindow->GetSwapChainImageCount();
+	createInfo.maxSets = MAX_FRAMES_IN_FLIGHT;
 	if (vkCreateDescriptorPool(aug::Context::m_VkDevice, &createInfo, nullptr, &m_VkDescriptorPool) != VK_SUCCESS)
 		throw std::runtime_error("Failed to create descriptor pool!");
 
 	//Descriptor set
-	std::vector<VkDescriptorSetLayout> layouts(desc.pWindow->GetSwapChainImageCount(), m_VkDescriptorSetLayout);
+	std::vector<VkDescriptorSetLayout> layouts( MAX_FRAMES_IN_FLIGHT, m_VkDescriptorSetLayout);
 
 	VkDescriptorSetAllocateInfo allocInfo{};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 	allocInfo.descriptorPool = m_VkDescriptorPool;
-	allocInfo.descriptorSetCount = desc.pWindow->GetSwapChainImageCount();
+	allocInfo.descriptorSetCount = MAX_FRAMES_IN_FLIGHT;
 	allocInfo.pSetLayouts = layouts.data();
 
-	m_vDescriptorSets.resize(desc.pWindow->GetSwapChainImageCount());
+	m_vDescriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
 	if (vkAllocateDescriptorSets(aug::Context::m_VkDevice, &allocInfo, m_vDescriptorSets.data()) != VK_SUCCESS)
 		throw std::runtime_error("Failed to allocate descriptor sets!");
 
-	for (size_t i = 0; i < desc.pWindow->GetSwapChainImageCount(); i++)
+	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
 	{
 		VkDescriptorBufferInfo bufferInfo{};
 		bufferInfo.buffer = (*desc.pvUniformBuffers)[i]->GetBufferHandle();
@@ -288,9 +288,9 @@ void aug::GraphicsPipeline::Init(const SGraphicsPipelineDesc& desc)
 	}
 }
 
-void aug::GraphicsPipeline::Bind(const VkCommandBuffer& commandBuffer, uint32_t descriptorSetCount, uint8_t uiCurrentImage)
+void aug::GraphicsPipeline::Bind(const VkCommandBuffer& commandBuffer, uint32_t descriptorSetCount, uint8_t uiCurrentFrame)
 {
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_VkGraphicsPipeline);
 
-	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_VkPipelineLayout, 0, descriptorSetCount, &m_vDescriptorSets[uiCurrentImage], 0, nullptr);
+	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_VkPipelineLayout, 0, descriptorSetCount, &m_vDescriptorSets[uiCurrentFrame], 0, nullptr);
 }

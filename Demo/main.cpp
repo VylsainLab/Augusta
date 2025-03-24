@@ -35,6 +35,8 @@ public:
 private:	
 	
 	aug::VertexFormat m_VertexFormat; //move to render subpass
+
+	aug::Shader* m_pShader = nullptr;
 	std::vector<aug::Buffer*> m_vUniformBuffers; //One per swap chain image
 
 	VkCommandBuffer m_ActiveCommandBuffer = VK_NULL_HANDLE;
@@ -72,15 +74,15 @@ private:
 		m_pScene = std::make_shared<aug::Scene>();
 		m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/KV2/kv2.FBX", "../../Assets/KV2/textures/");
 		m_pScene->GetRootNode()->Scale(glm::dvec3(0.01));
-		
-		aug::ShaderModule vertShaderModule("shaders/shader.vert", VK_SHADER_STAGE_VERTEX_BIT);
-		aug::ShaderModule fragShaderModule("shaders/shader.frag", VK_SHADER_STAGE_FRAGMENT_BIT);
+	
+		aug::Shader::SetPath("shaders/");
+		m_pShader = new aug::Shader("shader", VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT);
 
 		CreateUniformBuffers();
 
 		aug::SGraphicsPipelineDesc desc;
 		desc.pWindow = m_pWindow.get();
-		desc.vShaderStages = { vertShaderModule.GetPipelineShaderModuleCreateInfo(), fragShaderModule.GetPipelineShaderModuleCreateInfo() };
+		desc.pShader = m_pShader;
 		desc.vertexInputInfo = m_VertexFormat.GetPipelineVertexInputStateCreateInfo();
 		desc.uiPushConstantSize = sizeof(PushConstantData);
 		desc.pvUniformBuffers = &m_vUniformBuffers;
@@ -122,7 +124,7 @@ private:
 
 		Update();
 
-		m_pGraphicsPipeline->Bind(commandBuffer, 1, m_pWindow->GetSwapChainCurrentImageIndex());
+		m_pGraphicsPipeline->Bind(commandBuffer, 1, m_uiCurrentFrame);
 
 		RecursiveRender(m_pScene->GetRootNode(), glm::dmat4(1.));
 	}
@@ -131,6 +133,8 @@ private:
 	{		
 		for (uint32_t i = 0; i < m_pWindow->GetSwapChainImageCount(); ++i)
 			delete m_vUniformBuffers[i];
+
+		delete m_pShader;
 	}
 };
 

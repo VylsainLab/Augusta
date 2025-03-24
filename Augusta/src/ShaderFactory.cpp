@@ -47,6 +47,11 @@ namespace aug
 
 		m_VkShaderStageFlag = stageFlag;	
 		m_strEntryPointName = "main"; //forced by shaderc library
+
+		m_VkPipelineShaderStageCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		m_VkPipelineShaderStageCreateInfo.stage = m_VkShaderStageFlag;
+		m_VkPipelineShaderStageCreateInfo.module = m_VkShaderModule;
+		m_VkPipelineShaderStageCreateInfo.pName = m_strEntryPointName.c_str();
 	}
 
 	ShaderModule::~ShaderModule()
@@ -55,13 +60,8 @@ namespace aug
 	}
 
 	const VkPipelineShaderStageCreateInfo ShaderModule::GetPipelineShaderModuleCreateInfo()
-	{
-		VkPipelineShaderStageCreateInfo pipelineShaderStageCreateInfo = {};
-		pipelineShaderStageCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-		pipelineShaderStageCreateInfo.stage = m_VkShaderStageFlag;
-		pipelineShaderStageCreateInfo.module = m_VkShaderModule;
-		pipelineShaderStageCreateInfo.pName = m_strEntryPointName.c_str();
-		return pipelineShaderStageCreateInfo;
+	{		
+		return m_VkPipelineShaderStageCreateInfo;
 	}
 
 	std::string ShaderModule::ReadFile(const std::string& filepath)
@@ -99,5 +99,29 @@ namespace aug
 			throw std::runtime_error(module.GetErrorMessage());
 
 		return { module.cbegin(), module.cend() };
+	}
+
+
+	std::string Shader::m_sPath = "";
+
+	Shader::Shader(const char* szFileName, int32_t stageBitMask)
+	{
+		//TODO crade, à nettoyer
+		if (stageBitMask & VK_SHADER_STAGE_VERTEX_BIT)
+		{
+			m_mModules[VK_SHADER_STAGE_VERTEX_BIT] = new ShaderModule(m_sPath + szFileName + ".vert", VK_SHADER_STAGE_VERTEX_BIT);
+			m_vVkPipelineShaderStageCreateInfo.push_back(m_mModules[VK_SHADER_STAGE_VERTEX_BIT]->GetPipelineShaderModuleCreateInfo());
+		}
+		if (stageBitMask & VK_SHADER_STAGE_FRAGMENT_BIT)
+		{
+			m_mModules[VK_SHADER_STAGE_FRAGMENT_BIT] = new ShaderModule(m_sPath + szFileName + ".frag", VK_SHADER_STAGE_FRAGMENT_BIT);
+			m_vVkPipelineShaderStageCreateInfo.push_back(m_mModules[VK_SHADER_STAGE_FRAGMENT_BIT]->GetPipelineShaderModuleCreateInfo());
+		}
+	}
+
+	Shader::~Shader()
+	{
+		for (auto item : m_mModules)
+			delete item.second;
 	}
 }

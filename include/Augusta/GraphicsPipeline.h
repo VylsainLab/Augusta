@@ -3,14 +3,19 @@
 
 #include <Augusta/Window.h>
 #include <Augusta/Buffer.h>
+#include <Augusta/ShaderFactory.h>
 #include <vector>
+
+#ifndef MAX_FRAMES_IN_FLIGHT
+#define MAX_FRAMES_IN_FLIGHT	2
+#endif
 
 namespace aug
 {
 	struct SGraphicsPipelineDesc
 	{
 		Window* pWindow;
-		std::vector<VkPipelineShaderStageCreateInfo> vShaderStages;
+		Shader* pShader;
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo;
 		uint32_t uiPushConstantSize; //TODO move to Uniforms
 		std::vector<aug::Buffer*>* pvUniformBuffers;
@@ -25,7 +30,7 @@ namespace aug
 		void CreateRenderPass(aug::Window* pWindow);
 		void Init(const SGraphicsPipelineDesc& desc);
 
-		void Bind(const VkCommandBuffer& commandBuffer, uint32_t descriptorSetCount, uint8_t uiCurrentImage);
+		void Bind(const VkCommandBuffer& commandBuffer, uint32_t descriptorSetCount, uint8_t uiCurrentFrame);
 
 		const VkRenderPass& GetRenderPass() { return m_VkRenderPass; }
 		const VkPipelineLayout& GetPipelineLayout() { return m_VkPipelineLayout; }
