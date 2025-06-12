@@ -7,10 +7,11 @@
 
 namespace aug
 {
-	Window::Window(const std::string& name, uint16_t width, uint16_t height)
+	Window::Window(const std::string& name, uint16_t width, uint16_t height, bool bResizable, bool bVisible)
 	{					
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+		glfwWindowHint(GLFW_RESIZABLE, bResizable);
+		glfwWindowHint(GLFW_VISIBLE, bVisible);
 
 		m_pWindow = glfwCreateWindow(width, height, name.c_str(), nullptr, nullptr);
 

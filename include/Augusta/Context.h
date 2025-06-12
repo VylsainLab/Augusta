@@ -48,6 +48,7 @@ namespace aug
 		static VkQueue m_VkPresentQueue;
 		static VkCommandPool m_VkCommandPool;
 		static std::vector<const char*> m_vDeviceExtensions;
+		static QueueFamilyIndices m_QueueFamilies;
 
 	protected:
 		static bool CheckValidationLayers();

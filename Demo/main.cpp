@@ -63,7 +63,7 @@ private:
 
 	void CreateUniformBuffers()
 	{
-		for (uint32_t i = 0; i < m_pWindow->GetSwapChainImageCount(); ++i)
+		for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
 			m_vUniformBuffers.push_back(new aug::Buffer(sizeof(UniformBufferObject), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU, nullptr));
 	}
 
@@ -80,14 +80,16 @@ private:
 
 		CreateUniformBuffers();
 
-		aug::SGraphicsPipelineDesc desc;
+		aug::SPipelineDesc desc;
 		desc.pWindow = m_pWindow.get();
 		desc.pShader = m_pShader;
 		desc.vertexInputInfo = m_VertexFormat.GetPipelineVertexInputStateCreateInfo();
 		desc.uiPushConstantSize = sizeof(PushConstantData);
 		desc.pvUniformBuffers = &m_vUniformBuffers;
 
-		m_pGraphicsPipeline->Init(desc);
+		m_pPipeline->Init(desc);
+
+		InitImGui();
 	}
 
 	void Update()
@@ -98,19 +100,13 @@ private:
 		UniformBufferObject ubo;
 		ubo.view = glm::mat4(m_Camera.GetViewMatrix());
 		ubo.proj = glm::mat4(m_Camera.GetProjectionMatrix());
-		m_vUniformBuffers[m_pWindow->GetSwapChainCurrentImageIndex()]->CopyData(sizeof(UniformBufferObject), &ubo);
+		m_vUniformBuffers[m_uiCurrentFrame]->CopyData(sizeof(UniformBufferObject), &ubo);
 	}
 
 	virtual void RenderNode(std::shared_ptr<aug::Node> pNode, glm::dmat4 trans) override
 	{
 		glm::mat4 ftrans = static_cast<glm::mat4>(trans);
-		vkCmdPushConstants(
-			m_ActiveCommandBuffer,
-			m_pGraphicsPipeline->GetPipelineLayout(),
-			VK_SHADER_STAGE_VERTEX_BIT,
-			0,
-			sizeof(PushConstantData),
-			&ftrans);
+		m_pPipeline->PushConstants(m_ActiveCommandBuffer ,&ftrans);
 
 		for (uint32_t i = 0; i < pNode->GetNbMeshes(); ++i)
 		{
@@ -124,15 +120,15 @@ private:
 
 		Update();
 
-		m_pGraphicsPipeline->Bind(commandBuffer, 1, m_uiCurrentFrame);
-
 		RecursiveRender(m_pScene->GetRootNode(), glm::dmat4(1.));
+
+		ImGui::ShowDemoWindow();
 	}
 
 	void Cleanup() 
 	{		
-		for (uint32_t i = 0; i < m_pWindow->GetSwapChainImageCount(); ++i)
-			delete m_vUniformBuffers[i];
+		for (auto elem : m_vUniformBuffers)
+			delete elem;
 
 		delete m_pShader;
 	}

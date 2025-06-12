@@ -61,7 +61,7 @@ namespace aug
 	class ISceneRenderer
 	{
 	public:
-		virtual void RenderNode(std::shared_ptr<Node> pNode, glm::dmat4 trans) = 0;
+		virtual void RenderNode(std::shared_ptr<Node> pNode, glm::dmat4 trans) {};
 
 		void RecursiveRender(std::shared_ptr<Node> pNode, glm::dmat4 trans);
 	};

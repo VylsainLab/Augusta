@@ -6,12 +6,14 @@
 #include <array>
 #include <stdexcept>
 #include <iostream>
+#include <imgui-docking/backends/imgui_impl_vulkan.h>
+#include <imgui-docking/backends/imgui_impl_glfw.h>
 
 namespace aug
 {
 	bool Application::m_bGLFWInitialized = false;
 
-	Application::Application(const std::string& name, uint16_t width, uint16_t height)
+	Application::Application(const std::string& name, uint16_t width, uint16_t height, bool bResizable, bool bVisible)
 	{
 		if (m_bGLFWInitialized == false)
 		{
@@ -21,20 +23,24 @@ namespace aug
 
 		aug::Context::InitInstance();
 
-		m_pWindow = std::make_unique<Window>(name,width,height);
+		m_pWindow = std::make_unique<Window>(name,width,height, bResizable, bVisible);
 
 		aug::Context::Init(m_pWindow->GetSurface());
 		m_pWindow->InitAttachments();
 
-		m_pGraphicsPipeline = std::make_unique<GraphicsPipeline>(m_pWindow.get());
+		m_pPipeline = std::make_unique<Pipeline>(m_pWindow.get());
 		
-		m_pWindow->InitFramebuffers(m_pGraphicsPipeline->GetRenderPass()); //TODO move to pipeline
+		m_pWindow->InitFramebuffers(m_pPipeline->GetRenderPass());
 		CreateSwapChainCommandBuffers();
 		CreateSyncObjects();
 	}
 
 	Application::~Application()
 	{
+		ImGui_ImplVulkan_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
+		ImGui::DestroyContext();
+
 		for (uint8_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
 		{
 			vkDestroySemaphore(Context::m_VkDevice, m_vVkRenderFinishedSemaphores[i], nullptr);
@@ -42,7 +48,7 @@ namespace aug
 			vkDestroyFence(Context::m_VkDevice, m_vVkInFlightFences[i], nullptr);
 		}
 
-		m_pGraphicsPipeline.reset();
+		m_pPipeline.reset();
 		m_pWindow.reset();
 
 		Context::Release();
@@ -84,6 +90,11 @@ namespace aug
 
 	void Application::BeginRender()
 	{
+		// Start the Dear ImGui frame
+		ImGui_ImplVulkan_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
 		vkWaitForFences(aug::Context::m_VkDevice, 1, &m_vVkInFlightFences[m_uiCurrentFrame], VK_TRUE, UINT64_MAX);
 
 		uint32_t currentImage = m_pWindow->AcquireNextImage(m_vVkImageAvailableSemaphores[m_uiCurrentFrame]);
@@ -95,7 +106,7 @@ namespace aug
 		// Mark the image as now being in use by this frame
 		m_vVkImagesInFlightFences[currentImage] = m_vVkInFlightFences[m_uiCurrentFrame];
 
-		vkResetCommandBuffer(m_vVkSwapChainCommandBuffers[m_uiCurrentFrame], VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
+		vkResetCommandBuffer(m_vVkSwapChainCommandBuffers[m_uiCurrentFrame], VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);		
 
 		//Begin command buffer recording
 		VkCommandBufferBeginInfo beginInfo = {};
@@ -106,22 +117,20 @@ namespace aug
 		if (vkBeginCommandBuffer(m_vVkSwapChainCommandBuffers[currentImage], &beginInfo) != VK_SUCCESS)
 			throw std::runtime_error("Failed to begin recording command buffer!");
 
-		//Render pass
-		VkRenderPassBeginInfo renderPassInfo = {};
-		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassInfo.renderPass = m_pGraphicsPipeline->GetRenderPass();
-		renderPassInfo.framebuffer = m_pWindow->GetSwapChainFramebuffer(currentImage);
-		renderPassInfo.renderArea.offset = { 0, 0 };
-		renderPassInfo.renderArea.extent = m_pWindow->GetSwapChainExtent();
-		VkClearValue clearColors[] = { { 0.0f, 0.0f, 0.0f, 1.0f }, { 1.0f, 0} };
-		renderPassInfo.clearValueCount = 2;
-		renderPassInfo.pClearValues = clearColors;
-		vkCmdBeginRenderPass(m_vVkSwapChainCommandBuffers[currentImage], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+		if(m_pPipeline)
+			m_pPipeline->Bind(m_vVkSwapChainCommandBuffers[currentImage], m_pWindow->GetSwapChainFramebuffer(currentImage), m_pWindow->GetSwapChainExtent(), 1, m_uiCurrentFrame);
+
+		
 	}
 
 	void Application::EndRender()
 	{
+		ImGui::Render();
+
 		uint32_t uiCurrentImage = m_pWindow->GetSwapChainCurrentImageIndex();
+
+		ImDrawData* main_draw_data = ImGui::GetDrawData();
+		ImGui_ImplVulkan_RenderDrawData(main_draw_data, m_vVkSwapChainCommandBuffers[uiCurrentImage]);		
 
 		vkCmdEndRenderPass(m_vVkSwapChainCommandBuffers[uiCurrentImage]);
 
@@ -146,6 +155,13 @@ namespace aug
 
 		if (vkQueueSubmit(aug::Context::m_VkGraphicsQueue, 1, &submitInfo, m_vVkInFlightFences[m_uiCurrentFrame]) != VK_SUCCESS)
 			throw std::runtime_error("Failed to submit draw command buffer!");
+
+		ImGuiIO& io = ImGui::GetIO();
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+		}
 
 		//Present to window		
 		VkPresentInfoKHR presentInfo = {};
@@ -199,5 +215,46 @@ namespace aug
 				throw std::runtime_error("Failed to create sync objects for a frame!");
 			}
 		}
+	}
+
+	void Application::InitImGui()
+	{
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO(); 
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+
+		ImGui::StyleColorsDark();
+
+		ImGuiStyle& style = ImGui::GetStyle();
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			style.WindowRounding = 0.0f;
+			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+		}
+
+		ImGui_ImplGlfw_InitForVulkan(m_pWindow->GetGLFWWindow(), true);
+
+		ImGui_ImplVulkan_InitInfo init_info = {};
+		init_info.Instance = aug::Context::m_VkInstance;
+		init_info.PhysicalDevice = aug::Context::m_VkPhysicalDevice;
+		init_info.Device = aug::Context::m_VkDevice;
+		init_info.QueueFamily = aug::Context::m_QueueFamilies.uiGraphicsFamily.value();
+		init_info.Queue = aug::Context::m_VkGraphicsQueue;
+		init_info.DescriptorPoolSize = IMGUI_IMPL_VULKAN_MINIMUM_IMAGE_SAMPLER_POOL_SIZE + 1;
+		init_info.RenderPass = m_pPipeline->GetRenderPass();
+		init_info.Subpass = 0;
+		init_info.MinImageCount = 3;
+		init_info.ImageCount = 3;
+		init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+		ImGui_ImplVulkan_Init(&init_info);
+
+		VkCommandBufferBeginInfo beginInfo = {};
+		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		beginInfo.pInheritanceInfo = nullptr;
 	}
 }

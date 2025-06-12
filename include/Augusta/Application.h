@@ -3,12 +3,13 @@
 
 #include <Augusta/Context.h>
 #include <Augusta/Window.h>
-#include <Augusta/GraphicsPipeline.h>
+#include <Augusta/Pipeline.h>
 #include <Augusta/Context.h>
 #include <Augusta/Buffer.h>
 #include <Augusta/Scene.h>
 #include <vector>
 #include <memory>
+#include <imgui-docking/imgui.h>
 
 namespace aug
 {
@@ -21,7 +22,7 @@ namespace aug
 	class Application : public ISceneRenderer
 	{
 	public:
-		Application(const std::string& name, uint16_t width, uint16_t height);
+		Application(const std::string& name, uint16_t width, uint16_t height, bool bResizable=true, bool bVisible=true);
 		virtual ~Application();
 
 		void Run();		
@@ -37,10 +38,11 @@ namespace aug
 
 		void CreateSwapChainCommandBuffers();
 		void CreateSyncObjects();
+		void InitImGui();
 
 		static bool m_bGLFWInitialized;
 		std::unique_ptr<Window> m_pWindow;
-		std::unique_ptr<GraphicsPipeline> m_pGraphicsPipeline;
+		std::unique_ptr<Pipeline> m_pPipeline;
 		std::vector<VkCommandBuffer> m_vVkSwapChainCommandBuffers;
 		
 		std::vector<VkSemaphore> m_vVkImageAvailableSemaphores;

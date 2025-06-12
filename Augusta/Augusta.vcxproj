@@ -19,28 +19,44 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Dependencies\imgui-docking\backends\imgui_impl_glfw.h" />
+    <ClInclude Include="..\..\Dependencies\imgui-docking\backends\imgui_impl_vulkan.h" />
+    <ClInclude Include="..\..\Dependencies\imgui-docking\imconfig.h" />
+    <ClInclude Include="..\..\Dependencies\imgui-docking\imgui.h" />
+    <ClInclude Include="..\..\Dependencies\imgui-docking\imgui_internal.h" />
+    <ClInclude Include="..\..\Dependencies\imgui-docking\imstb_rectpack.h" />
+    <ClInclude Include="..\..\Dependencies\imgui-docking\imstb_textedit.h" />
+    <ClInclude Include="..\..\Dependencies\imgui-docking\imstb_truetype.h" />
     <ClInclude Include="..\include\Augusta\Application.h" />
     <ClInclude Include="..\include\Augusta\AssimpParser.h" />
     <ClInclude Include="..\include\Augusta\Buffer.h" />
     <ClInclude Include="..\include\Augusta\Camera.h" />
     <ClInclude Include="..\include\Augusta\Context.h" />
-    <ClInclude Include="..\include\Augusta\GraphicsPipeline.h" />
+    <ClInclude Include="..\include\Augusta\Pipeline.h" />
     <ClInclude Include="..\include\Augusta\MemoryAllocator.h" />
     <ClInclude Include="..\include\Augusta\Mesh.h" />
     <ClInclude Include="..\include\Augusta\Scene.h" />
     <ClInclude Include="..\include\Augusta\ShaderFactory.h" />
     <ClInclude Include="..\include\Augusta\SwapChain.h" />
     <ClInclude Include="..\include\Augusta\Texture.h" />
+    <ClInclude Include="..\include\Augusta\Uniform.h" />
     <ClInclude Include="..\include\Augusta\VertexFormat.h" />
     <ClInclude Include="..\include\Augusta\Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Dependencies\imgui-docking\backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\..\Dependencies\imgui-docking\backends\imgui_impl_vulkan.cpp" />
+    <ClCompile Include="..\..\Dependencies\imgui-docking\imgui.cpp" />
+    <ClCompile Include="..\..\Dependencies\imgui-docking\imgui_demo.cpp" />
+    <ClCompile Include="..\..\Dependencies\imgui-docking\imgui_draw.cpp" />
+    <ClCompile Include="..\..\Dependencies\imgui-docking\imgui_tables.cpp" />
+    <ClCompile Include="..\..\Dependencies\imgui-docking\imgui_widgets.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\AssimpParser.cpp" />
     <ClCompile Include="src\Buffer.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Context.cpp" />
-    <ClCompile Include="src\GraphicsPipeline.cpp" />
+    <ClCompile Include="src\Pipeline.cpp" />
     <ClCompile Include="src\MemoryAllocator.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Scene.cpp" />
@@ -49,6 +65,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\Uniform.cpp" />
     <ClCompile Include="src\VertexFormat.cpp" />
     <ClCompile Include="src\Window.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -128,7 +145,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../../Dependencies/;../../Dependencies/GLFW/include;../include;C:\VulkanSDK\1.4.304.1\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Dependencies/;../../Dependencies/GLFW/include;../../Dependencies/imgui-docking/;../include;C:\VulkanSDK\1.4.304.1\Include</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>

@@ -18,6 +18,7 @@ namespace aug
 	VkQueue Context::m_VkPresentQueue = VK_NULL_HANDLE;
 	VkCommandPool Context::m_VkCommandPool = VK_NULL_HANDLE;
 	std::vector<const char*> Context::m_vDeviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+	QueueFamilyIndices Context::m_QueueFamilies = QueueFamilyIndices();
 
 	void PrintExtensions()
 	{
@@ -312,9 +313,9 @@ namespace aug
 
 	void Context::CreateLogicalDevice()
 	{
-		QueueFamilyIndices indices = FindQueueFamilies(m_VkPhysicalDevice, m_ReferenceSurface);
+		m_QueueFamilies = FindQueueFamilies(m_VkPhysicalDevice, m_ReferenceSurface);
 
-		std::set<uint32_t> sUniqueQueueFamilies = { indices.uiGraphicsFamily.value(), indices.uiPresentFamily.value() };
+		std::set<uint32_t> sUniqueQueueFamilies = { m_QueueFamilies.uiGraphicsFamily.value(), m_QueueFamilies.uiPresentFamily.value() };
 		std::vector<VkDeviceQueueCreateInfo> vQueueCreateInfos;
 		float fQueuePriority = 1.0f;
 		for (uint32_t uiQueueFamily : sUniqueQueueFamilies)
@@ -350,17 +351,17 @@ namespace aug
 		if (vkCreateDevice(m_VkPhysicalDevice, &createInfo, nullptr, &m_VkDevice) != VK_SUCCESS)
 			throw std::runtime_error("Failed to create logical device!");
 
-		vkGetDeviceQueue(m_VkDevice, indices.uiGraphicsFamily.value(), 0, &m_VkGraphicsQueue);
-		vkGetDeviceQueue(m_VkDevice, indices.uiPresentFamily.value(), 0, &m_VkPresentQueue);
+		vkGetDeviceQueue(m_VkDevice, m_QueueFamilies.uiGraphicsFamily.value(), 0, &m_VkGraphicsQueue);
+		vkGetDeviceQueue(m_VkDevice, m_QueueFamilies.uiPresentFamily.value(), 0, &m_VkPresentQueue);
 	}
 
 	void Context::CreateCommandPool()
 	{
-		aug::QueueFamilyIndices queueFamilyIndices = GetQueueFamilies(m_ReferenceSurface);
+		//aug::QueueFamilyIndices queueFamilyIndices = GetQueueFamilies(m_ReferenceSurface);
 
 		VkCommandPoolCreateInfo poolInfo = {};
 		poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-		poolInfo.queueFamilyIndex = queueFamilyIndices.uiGraphicsFamily.value();
+		poolInfo.queueFamilyIndex = m_QueueFamilies.uiGraphicsFamily.value();
 		poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 
 		if (vkCreateCommandPool(m_VkDevice, &poolInfo, nullptr, &m_VkCommandPool) != VK_SUCCESS)
