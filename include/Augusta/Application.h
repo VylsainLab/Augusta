@@ -9,6 +9,7 @@
 #include <Augusta/Scene.h>
 #include <vector>
 #include <memory>
+#include <imgui-docking/misc/freetype/imgui_freetype.h>
 #include <imgui-docking/imgui.h>
 
 namespace aug

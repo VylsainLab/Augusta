@@ -70,6 +70,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -102,16 +105,16 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>PLUTOSVG_BUILD_STATIC;_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../Dependencies/;../../Dependencies/GLFW/include;../../Dependencies/GLFW/include;../../Dependencies/imgui-docking/;../include;C:\VulkanSDK\1.4.304.1\Include;./irsdk</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Dependencies/;../../Dependencies/plutosvg/include/;../../Dependencies/GLFW/include;../../Dependencies/GLFW/include;../../Dependencies/imgui-docking/;../include;C:\VulkanSDK\1.4.304.1\Include;./irsdk</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../../Dependencies/glfw/lib-vc2022;../../Dependencies/assimp;../lib;C:\VulkanSDK\1.4.304.1\Lib;C:\VulkanSDK\1.4.304.1\Bin;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp.lib;vulkan-1.lib;glfw3.lib;shaderc_combinedd.lib;Augusta.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../Dependencies/plutosvg;../../Dependencies/freetype/win64/;../../Dependencies/glfw/lib-vc2022;../../Dependencies/assimp;../lib;C:\VulkanSDK\1.4.304.1\Lib;C:\VulkanSDK\1.4.304.1\Bin</AdditionalLibraryDirectories>
+      <AdditionalDependencies>plutovg.lib;plutosvg.lib;freetype.lib;assimp.lib;vulkan-1.lib;glfw3.lib;shaderc_combinedd.lib;Augusta.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -145,6 +148,7 @@
     <ClInclude Include="irsdk\irsdk_defines.h" />
     <ClInclude Include="irsdk\irsdk_diskclient.h" />
     <ClInclude Include="irsdk\yaml_parser.h" />
+    <ClInclude Include="Nations.h" />
     <ClInclude Include="RaceEngineer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

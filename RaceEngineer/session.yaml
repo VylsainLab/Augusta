@@ -1,35 +1,35 @@
 ---
 WeekendInfo:
- TrackName: watkinsglen 2021 fullcourse
- TrackID: 434
- TrackLength: 5.4070 km
- TrackLengthOfficial: 5.55 km
- TrackDisplayName: Watkins Glen
- TrackDisplayShortName: Watkins
- TrackConfigName: Boot
- TrackCity: Watkins Glen
- TrackState: NY
- TrackCountry: USA
- TrackAltitude: 135.62 m
- TrackLatitude: 42.341038 m
- TrackLongitude: -76.928833 m
- TrackNorthOffset: 3.1205 rad
- TrackNumTurns: 12
- TrackPitSpeedLimit: 64.37 kph
- TrackPaceSpeed: 26.82 kph
- TrackNumPitStalls: 43
+ TrackName: okayama full
+ TrackID: 166
+ TrackLength: 3.6547 km
+ TrackLengthOfficial: 3.72 km
+ TrackDisplayName: Okayama International Circuit
+ TrackDisplayShortName: Okayama
+ TrackConfigName: Full Course
+ TrackCity: Okayama
+ TrackState: 
+ TrackCountry: Japan
+ TrackAltitude: 265.84 m
+ TrackLatitude: 34.914295 m
+ TrackLongitude: 134.218936 m
+ TrackNorthOffset: 3.0612 rad
+ TrackNumTurns: 11
+ TrackPitSpeedLimit: 60.00 kph
+ TrackPaceSpeed: 17.88 kph
+ TrackNumPitStalls: 40
  TrackType: road course
  TrackDirection: neutral
  TrackWeatherType: Realistic
  TrackSkies: Dynamic
- TrackSurfaceTemp: 33.94 C
- TrackSurfaceTempCrew: 33.94 C
- TrackAirTemp: 18.94 C
- TrackAirPressure: 29.46 Hg
- TrackAirDensity: 1.18 kg/m^3
- TrackWindVel: 8.00 m/s
- TrackWindDir: 0.42 rad
- TrackRelativeHumidity: 72 %
+ TrackSurfaceTemp: 25.16 C
+ TrackSurfaceTempCrew: 25.16 C
+ TrackAirTemp: 19.16 C
+ TrackAirPressure: 28.76 Hg
+ TrackAirDensity: 1.15 kg/m^3
+ TrackWindVel: 6.66 m/s
+ TrackWindDir: 5.63 rad
+ TrackRelativeHumidity: 95 %
  TrackFogLevel: 0 %
  TrackPrecipitation: 0 %
  TrackCleanup: 1
@@ -37,11 +37,11 @@ WeekendInfo:
  TrackVersion: 2025.05.30.01
  SeriesID: 449
  SeasonID: 5713
- SessionID: 277299599
- SubSessionID: 77668816
+ SessionID: 277331545
+ SubSessionID: 77703653
  LeagueID: 0
  Official: 1
- RaceWeek: 2
+ RaceWeek: 5
  EventType: Practice
  Category: SportsCar
  SimMode: full
@@ -55,8 +55,8 @@ WeekendInfo:
  HeatRacing: 0
  BuildType: Release
  BuildTarget: Members
- BuildVersion: 2025.06.10.04
- RaceFarm: DE-Fra
+ BuildVersion: 2025.06.12.02
+ RaceFarm: US-East-OH
  WeekendOptions:
   NumStarters: 30
   StartingGrid: 2x2 inline pole on left
@@ -97,7 +97,7 @@ SessionInfo:
    SessionTime: 7200.0000 sec
    SessionNumLapsToAvg: 0
    SessionType: Practice
-   SessionTrackRubberState: moderate usage
+   SessionTrackRubberState: moderately low usage
    SessionName: PRACTICE
    SessionSubType: 
    SessionSkipped: 0
@@ -106,14 +106,14 @@ SessionInfo:
    ResultsPositions:
    - Position: 1
      ClassPosition: 0
-     CarIdx: 35
-     Lap: 6
-     Time: 103.2859
-     FastestLap: 6
-     FastestTime: 103.2859
-     LastTime: 103.2859
+     CarIdx: 9
+     Lap: 3
+     Time: 91.2211
+     FastestLap: 3
+     FastestTime: 91.2211
+     LastTime: 91.2211
      LapsLed: 0
-     LapsComplete: 6
+     LapsComplete: 3
      JokerLapsComplete: 0
      LapsDriven: 0.000
      Incidents: 0
@@ -121,14 +121,14 @@ SessionInfo:
      ReasonOutStr: Running
    - Position: 2
      ClassPosition: 1
-     CarIdx: 5
-     Lap: 16
-     Time: 103.5377
-     FastestLap: 16
-     FastestTime: 103.5377
-     LastTime: 103.5377
+     CarIdx: 6
+     Lap: 2
+     Time: 92.0295
+     FastestLap: 2
+     FastestTime: 92.0295
+     LastTime: 92.0295
      LapsLed: 0
-     LapsComplete: 16
+     LapsComplete: 2
      JokerLapsComplete: 0
      LapsDriven: 0.000
      Incidents: 0
@@ -136,14 +136,14 @@ SessionInfo:
      ReasonOutStr: Running
    - Position: 3
      ClassPosition: 2
-     CarIdx: 9
-     Lap: 5
-     Time: 103.5776
-     FastestLap: 5
-     FastestTime: 103.5776
-     LastTime: 103.9807
+     CarIdx: 17
+     Lap: 2
+     Time: 92.5222
+     FastestLap: 2
+     FastestTime: 92.5222
+     LastTime: 92.5222
      LapsLed: 0
-     LapsComplete: 6
+     LapsComplete: 2
      JokerLapsComplete: 0
      LapsDriven: 0.000
      Incidents: 0
@@ -151,14 +151,14 @@ SessionInfo:
      ReasonOutStr: Running
    - Position: 4
      ClassPosition: 3
-     CarIdx: 34
-     Lap: 16
-     Time: 103.8915
-     FastestLap: 16
-     FastestTime: 103.8915
-     LastTime: 103.8915
+     CarIdx: 12
+     Lap: 3
+     Time: 95.0316
+     FastestLap: 3
+     FastestTime: 95.0316
+     LastTime: 95.0316
      LapsLed: 0
-     LapsComplete: 16
+     LapsComplete: 3
      JokerLapsComplete: 0
      LapsDriven: 0.000
      Incidents: 0
@@ -166,14 +166,14 @@ SessionInfo:
      ReasonOutStr: Running
    - Position: 5
      ClassPosition: 4
-     CarIdx: 4
-     Lap: 20
-     Time: 103.9008
-     FastestLap: 20
-     FastestTime: 103.9008
-     LastTime: 103.9008
+     CarIdx: 0
+     Lap: 3
+     Time: 95.0788
+     FastestLap: 3
+     FastestTime: 95.0788
+     LastTime: 95.0788
      LapsLed: 0
-     LapsComplete: 20
+     LapsComplete: 3
      JokerLapsComplete: 0
      LapsDriven: 0.000
      Incidents: 0
@@ -181,518 +181,23 @@ SessionInfo:
      ReasonOutStr: Running
    - Position: 6
      ClassPosition: 5
-     CarIdx: 14
-     Lap: 12
-     Time: 104.0347
-     FastestLap: 12
-     FastestTime: 104.0347
-     LastTime: 104.4006
-     LapsLed: 0
-     LapsComplete: 13
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 7
-     ClassPosition: 6
-     CarIdx: 36
-     Lap: 4
-     Time: 104.1774
-     FastestLap: 4
-     FastestTime: 104.1774
-     LastTime: 104.1774
-     LapsLed: 0
-     LapsComplete: 4
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 8
-     ClassPosition: 7
-     CarIdx: 12
-     Lap: 7
-     Time: 104.2612
-     FastestLap: 7
-     FastestTime: 104.2612
-     LastTime: 104.2612
-     LapsLed: 0
-     LapsComplete: 7
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 9
-     ClassPosition: 8
-     CarIdx: 49
-     Lap: 4
-     Time: 104.3246
-     FastestLap: 4
-     FastestTime: 104.3246
-     LastTime: 115.1888
-     LapsLed: 0
-     LapsComplete: 7
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 10
-     ClassPosition: 9
-     CarIdx: 45
-     Lap: 7
-     Time: 104.3651
-     FastestLap: 7
-     FastestTime: 104.3651
-     LastTime: 109.2062
-     LapsLed: 0
-     LapsComplete: 12
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 11
-     ClassPosition: 10
-     CarIdx: 46
-     Lap: 5
-     Time: 104.4091
-     FastestLap: 5
-     FastestTime: 104.4091
-     LastTime: 104.4091
-     LapsLed: 0
-     LapsComplete: 5
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 12
-     ClassPosition: 11
-     CarIdx: 32
-     Lap: 3
-     Time: 104.4191
-     FastestLap: 3
-     FastestTime: 104.4191
-     LastTime: -1.0000
-     LapsLed: 0
-     LapsComplete: 7
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 13
-     ClassPosition: 12
-     CarIdx: 8
-     Lap: 10
-     Time: 104.4278
-     FastestLap: 10
-     FastestTime: 104.4278
-     LastTime: 104.4278
-     LapsLed: 0
-     LapsComplete: 10
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 14
-     ClassPosition: 13
-     CarIdx: 19
-     Lap: 3
-     Time: 104.5649
-     FastestLap: 3
-     FastestTime: 104.5649
-     LastTime: 104.9296
-     LapsLed: 0
-     LapsComplete: 7
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 15
-     ClassPosition: 14
-     CarIdx: 33
-     Lap: 4
-     Time: 104.7321
-     FastestLap: 4
-     FastestTime: 104.7321
-     LastTime: 119.5595
-     LapsLed: 0
-     LapsComplete: 6
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 16
-     ClassPosition: 15
-     CarIdx: 58
-     Lap: 5
-     Time: 104.8342
-     FastestLap: 5
-     FastestTime: 104.8342
-     LastTime: 104.8342
-     LapsLed: 0
-     LapsComplete: 5
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 17
-     ClassPosition: 16
-     CarIdx: 2
-     Lap: 3
-     Time: 104.9052
-     FastestLap: 3
-     FastestTime: 104.9052
-     LastTime: 104.9052
-     LapsLed: 0
-     LapsComplete: 3
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 18
-     ClassPosition: 17
-     CarIdx: 37
-     Lap: 9
-     Time: 105.0451
-     FastestLap: 9
-     FastestTime: 105.0451
-     LastTime: -1.0000
-     LapsLed: 0
-     LapsComplete: 17
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 19
-     ClassPosition: 18
-     CarIdx: 56
-     Lap: 2
-     Time: 105.0529
-     FastestLap: 2
-     FastestTime: 105.0529
-     LastTime: 106.0651
-     LapsLed: 0
-     LapsComplete: 3
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 20
-     ClassPosition: 19
-     CarIdx: 42
-     Lap: 2
-     Time: 105.0893
-     FastestLap: 2
-     FastestTime: 105.0893
-     LastTime: 105.0893
-     LapsLed: 0
-     LapsComplete: 2
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 21
-     ClassPosition: 20
-     CarIdx: 59
-     Lap: 15
-     Time: 105.0968
-     FastestLap: 15
-     FastestTime: 105.0968
-     LastTime: 105.4536
-     LapsLed: 0
-     LapsComplete: 16
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 22
-     ClassPosition: 21
-     CarIdx: 1
-     Lap: 1
-     Time: 105.1385
-     FastestLap: 1
-     FastestTime: 105.1385
-     LastTime: 105.1385
-     LapsLed: 0
-     LapsComplete: 1
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 23
-     ClassPosition: 22
-     CarIdx: 18
-     Lap: 2
-     Time: 105.1835
-     FastestLap: 2
-     FastestTime: 105.1835
-     LastTime: 105.5653
-     LapsLed: 0
-     LapsComplete: 7
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 24
-     ClassPosition: 23
      CarIdx: 3
-     Lap: 7
-     Time: 105.2045
-     FastestLap: 7
-     FastestTime: 105.2045
-     LastTime: 105.9359
-     LapsLed: 0
-     LapsComplete: 9
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 25
-     ClassPosition: 24
-     CarIdx: 51
-     Lap: 5
-     Time: 105.2057
-     FastestLap: 5
-     FastestTime: 105.2057
-     LastTime: 105.2057
-     LapsLed: 0
-     LapsComplete: 5
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 26
-     ClassPosition: 25
-     CarIdx: 20
      Lap: 2
-     Time: 105.2931
+     Time: 124.6383
      FastestLap: 2
-     FastestTime: 105.2931
-     LastTime: 105.2931
+     FastestTime: 124.6383
+     LastTime: 124.6383
      LapsLed: 0
      LapsComplete: 2
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 27
-     ClassPosition: 26
-     CarIdx: 0
-     Lap: 3
-     Time: 105.8021
-     FastestLap: 3
-     FastestTime: 105.8021
-     LastTime: 105.8021
-     LapsLed: 0
-     LapsComplete: 3
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 28
-     ClassPosition: 27
-     CarIdx: 41
-     Lap: 3
-     Time: 105.9175
-     FastestLap: 3
-     FastestTime: 105.9175
-     LastTime: 105.9175
-     LapsLed: 0
-     LapsComplete: 3
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 29
-     ClassPosition: 28
-     CarIdx: 21
-     Lap: 3
-     Time: 105.9248
-     FastestLap: 3
-     FastestTime: 105.9248
-     LastTime: 105.9248
-     LapsLed: 0
-     LapsComplete: 3
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 30
-     ClassPosition: 29
-     CarIdx: 40
-     Lap: 6
-     Time: 105.9319
-     FastestLap: 6
-     FastestTime: 105.9319
-     LastTime: 106.7509
-     LapsLed: 0
-     LapsComplete: 15
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 31
-     ClassPosition: 30
-     CarIdx: 26
-     Lap: 2
-     Time: 105.9367
-     FastestLap: 2
-     FastestTime: 105.9367
-     LastTime: 105.9367
-     LapsLed: 0
-     LapsComplete: 2
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 32
-     ClassPosition: 31
-     CarIdx: 47
-     Lap: 1
-     Time: 105.9666
-     FastestLap: 1
-     FastestTime: 105.9666
-     LastTime: 105.9666
-     LapsLed: 0
-     LapsComplete: 1
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 33
-     ClassPosition: 32
-     CarIdx: 10
-     Lap: 3
-     Time: 106.0105
-     FastestLap: 3
-     FastestTime: 106.0105
-     LastTime: 106.0105
-     LapsLed: 0
-     LapsComplete: 3
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 34
-     ClassPosition: 33
-     CarIdx: 7
-     Lap: 2
-     Time: 106.4155
-     FastestLap: 2
-     FastestTime: 106.4155
-     LastTime: 106.4155
-     LapsLed: 0
-     LapsComplete: 2
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 35
-     ClassPosition: 34
-     CarIdx: 43
-     Lap: 4
-     Time: 106.4399
-     FastestLap: 4
-     FastestTime: 106.4399
-     LastTime: 107.6877
-     LapsLed: 0
-     LapsComplete: 5
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 36
-     ClassPosition: 35
-     CarIdx: 55
-     Lap: 6
-     Time: 106.7425
-     FastestLap: 6
-     FastestTime: 106.7425
-     LastTime: 106.7425
-     LapsLed: 0
-     LapsComplete: 6
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 37
-     ClassPosition: 36
-     CarIdx: 38
-     Lap: 5
-     Time: 106.8936
-     FastestLap: 5
-     FastestTime: 106.8936
-     LastTime: 106.8936
-     LapsLed: 0
-     LapsComplete: 5
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 38
-     ClassPosition: 37
-     CarIdx: 15
-     Lap: 3
-     Time: 106.9166
-     FastestLap: 3
-     FastestTime: 106.9166
-     LastTime: 106.9166
-     LapsLed: 0
-     LapsComplete: 3
-     JokerLapsComplete: 0
-     LapsDriven: 0.000
-     Incidents: 0
-     ReasonOutId: 0
-     ReasonOutStr: Running
-   - Position: 39
-     ClassPosition: 38
-     CarIdx: 27
-     Lap: 4
-     Time: 109.3480
-     FastestLap: 4
-     FastestTime: 109.3480
-     LastTime: 109.3480
-     LapsLed: 0
-     LapsComplete: 4
      JokerLapsComplete: 0
      LapsDriven: 0.000
      Incidents: 0
      ReasonOutId: 0
      ReasonOutStr: Running
    ResultsFastestLap:
-   - CarIdx: 35
-     FastestLap: 6
-     FastestTime: 103.2859
+   - CarIdx: 9
+     FastestLap: 3
+     FastestTime: 91.2211
    ResultsAverageLapTime: -1.0000
    ResultsNumCautionFlags: 0
    ResultsNumCautionLaps: 0
@@ -752,322 +257,328 @@ CameraInfo:
    IsScenic: true
    Cameras:
    - CameraNum: 1
-     CameraName: Scenic_01
+     CameraName: Scenic_00
    - CameraNum: 2
-     CameraName: Scenic_02
+     CameraName: Scenic_01
    - CameraNum: 3
      CameraName: Scenic_03
    - CameraNum: 4
-     CameraName: Scenic_05
-   - CameraNum: 5
      CameraName: Scenic_04
+   - CameraNum: 5
+     CameraName: Scenic_05
    - CameraNum: 6
      CameraName: Scenic_06
    - CameraNum: 7
-     CameraName: Scenic_07
-   - CameraNum: 8
-     CameraName: Scenic_08
-   - CameraNum: 9
-     CameraName: Scenic_09
-   - CameraNum: 10
      CameraName: Scenic_10
+   - CameraNum: 8
+     CameraName: Scenic_07
+   - CameraNum: 9
+     CameraName: Scenic_02
  - GroupNum: 11
    GroupName: TV1
    Cameras:
    - CameraNum: 1
      CameraName: CamTV1_01
    - CameraNum: 2
-     CameraName: CamTV1_02
+     CameraName: CamTV1_01b
    - CameraNum: 3
-     CameraName: CamTV1_03
+     CameraName: CamTV1_02
    - CameraNum: 4
-     CameraName: CamTV1_04
+     CameraName: CamTV1_02b
    - CameraNum: 5
-     CameraName: CamTV1_06
+     CameraName: CamTV1_03
    - CameraNum: 6
-     CameraName: CamTV1_05
+     CameraName: CamTV1_03b
    - CameraNum: 7
-     CameraName: CamTV1_07
+     CameraName: CamTV1_04
    - CameraNum: 8
-     CameraName: CamTV1_13
+     CameraName: CamTV1_04b
    - CameraNum: 9
-     CameraName: CamTV1_10
+     CameraName: CamTV1_06
    - CameraNum: 10
-     CameraName: CamTV1_09
+     CameraName: CamTV1_06b
    - CameraNum: 11
-     CameraName: CamTV1_11
+     CameraName: CamTV1_07
    - CameraNum: 12
-     CameraName: CamTV1_12
+     CameraName: CamTV1_08b
    - CameraNum: 13
-     CameraName: CamTV1_14
+     CameraName: CamTV1_09
    - CameraNum: 14
-     CameraName: CamTV1_00
+     CameraName: CamTV1_10c
    - CameraNum: 15
-     CameraName: CamTV1_08
+     CameraName: CamTV1_10
+   - CameraNum: 16
+     CameraName: CamTV1_11
+   - CameraNum: 17
+     CameraName: CamTV1_05b
+   - CameraNum: 18
+     CameraName: CamTV1_05
+   - CameraNum: 19
+     CameraName: CamTV1_07b
+   - CameraNum: 20
+     CameraName: CamTV1_11b
  - GroupNum: 12
    GroupName: TV2
    Cameras:
    - CameraNum: 1
-     CameraName: CamTV2_04
+     CameraName: CamTV2_01b
    - CameraNum: 2
-     CameraName: CamTV2_13
-   - CameraNum: 3
-     CameraName: CamTV2_06b
-   - CameraNum: 4
-     CameraName: CamTV2_07
-   - CameraNum: 5
-     CameraName: CamTV2_05
-   - CameraNum: 6
-     CameraName: CamTV2_03
-   - CameraNum: 7
      CameraName: CamTV2_01
-   - CameraNum: 8
-     CameraName: CamTV2_06
-   - CameraNum: 9
-     CameraName: CamTV2_09
-   - CameraNum: 10
-     CameraName: CamTV2_15
-   - CameraNum: 11
+   - CameraNum: 3
      CameraName: CamTV2_14
-   - CameraNum: 12
-     CameraName: CamTV2_11
-   - CameraNum: 13
-     CameraName: CamTV2_10
-   - CameraNum: 14
+   - CameraNum: 4
+     CameraName: CamTV2_14b
+   - CameraNum: 5
+     CameraName: CamTV2_13
+   - CameraNum: 6
+     CameraName: CamTV2_12b
+   - CameraNum: 7
      CameraName: CamTV2_12
+   - CameraNum: 8
+     CameraName: CamTV2_11
+   - CameraNum: 9
+     CameraName: CamTV2_11b
+   - CameraNum: 10
+     CameraName: CamTV2_10
+   - CameraNum: 11
+     CameraName: CamTV2_10b
+   - CameraNum: 12
+     CameraName: CamTV2_07
+   - CameraNum: 13
+     CameraName: CamTV2_08b
+   - CameraNum: 14
+     CameraName: CamTV2_09b
    - CameraNum: 15
-     CameraName: CamTV2_16
-   - CameraNum: 16
-     CameraName: CamTV2_17
-   - CameraNum: 17
-     CameraName: CamTV2_02
-   - CameraNum: 18
-     CameraName: CamTV2_00
-   - CameraNum: 19
-     CameraName: CamTV2_18
-   - CameraNum: 20
      CameraName: CamTV2_08
+   - CameraNum: 16
+     CameraName: CamTV2_04
+   - CameraNum: 17
+     CameraName: CamTV2_06
+   - CameraNum: 18
+     CameraName: CamTV2_05b
+   - CameraNum: 19
+     CameraName: CamTV2_03
+   - CameraNum: 20
+     CameraName: CamTV2_02
+   - CameraNum: 21
+     CameraName: CamTV2_00
+   - CameraNum: 22
+     CameraName: CamTV2_00b
+   - CameraNum: 23
+     CameraName: CamTV2_03b
+   - CameraNum: 24
+     CameraName: CamTV2_09
  - GroupNum: 13
    GroupName: TV3
    Cameras:
    - CameraNum: 1
-     CameraName: CamTV3_02
+     CameraName: CamTV3_00
    - CameraNum: 2
-     CameraName: CamTV3_05
+     CameraName: CamTV3_02
    - CameraNum: 3
-     CameraName: CamTV3_10
+     CameraName: CamTV3_02b
    - CameraNum: 4
-     CameraName: CamTV3_11
-   - CameraNum: 5
      CameraName: CamTV3_01
+   - CameraNum: 5
+     CameraName: CamTV3_04b
    - CameraNum: 6
      CameraName: CamTV3_03
    - CameraNum: 7
-     CameraName: CamTV3_04
+     CameraName: CamTV3_03st
    - CameraNum: 8
-     CameraName: CamTV3_06
+     CameraName: CamTV3_04
    - CameraNum: 9
-     CameraName: CamTV3_07
+     CameraName: CamTV3_06
    - CameraNum: 10
-     CameraName: CamTV3_08
+     CameraName: CamTV3_05
    - CameraNum: 11
-     CameraName: CamTV3_09
+     CameraName: CamTV3_07
    - CameraNum: 12
-     CameraName: CamTV3_00
+     CameraName: CamTV3_08
+   - CameraNum: 13
+     CameraName: CamTV3_09
+   - CameraNum: 14
+     CameraName: CamTV3_10
+   - CameraNum: 15
+     CameraName: CamTV3_11
+   - CameraNum: 16
+     CameraName: CamTV3_06b
+   - CameraNum: 17
+     CameraName: CamTV3_12
+   - CameraNum: 18
+     CameraName: CamTV3_03b
  - GroupNum: 14
    GroupName: TV Static
    Cameras:
    - CameraNum: 1
-     CameraName: CamTV4_03
-   - CameraNum: 2
-     CameraName: CamTV4_16
-   - CameraNum: 3
      CameraName: CamTV4_07
-   - CameraNum: 4
-     CameraName: CamTV4_06
-   - CameraNum: 5
-     CameraName: CamTV4_05
-   - CameraNum: 6
-     CameraName: CamTV4_01
-   - CameraNum: 7
-     CameraName: CamTV4_02
-   - CameraNum: 8
-     CameraName: CamTV4_04
-   - CameraNum: 9
+   - CameraNum: 2
      CameraName: CamTV4_08
-   - CameraNum: 10
+   - CameraNum: 3
      CameraName: CamTV4_09
-   - CameraNum: 11
-     CameraName: CamTV4_10
-   - CameraNum: 12
+   - CameraNum: 4
      CameraName: CamTV4_11
-   - CameraNum: 13
+   - CameraNum: 5
      CameraName: CamTV4_12
-   - CameraNum: 14
+   - CameraNum: 6
      CameraName: CamTV4_13
-   - CameraNum: 15
+   - CameraNum: 7
      CameraName: CamTV4_14
-   - CameraNum: 16
-     CameraName: CamTV4_15
-   - CameraNum: 17
+   - CameraNum: 8
+     CameraName: CamTV4_01
+   - CameraNum: 9
      CameraName: CamTV4_00
-   - CameraNum: 18
-     CameraName: CamTV4_17
-   - CameraNum: 19
-     CameraName: CamTV4_18
-   - CameraNum: 20
-     CameraName: CamTV4_19
-   - CameraNum: 21
-     CameraName: CamTV4_20
+   - CameraNum: 10
+     CameraName: CamTV4_15
+   - CameraNum: 11
+     CameraName: CamTV4_16
+   - CameraNum: 12
+     CameraName: CamTV4_02
+   - CameraNum: 13
+     CameraName: CamTV4_03
+   - CameraNum: 14
+     CameraName: CamTV4_05
+   - CameraNum: 15
+     CameraName: CamTV4_04b
+   - CameraNum: 16
+     CameraName: CamTV4_06
+   - CameraNum: 17
+     CameraName: CamTV4_10
  - GroupNum: 15
    GroupName: TV Mixed
    Cameras:
    - CameraNum: 1
-     CameraName: CamTV1_01
-   - CameraNum: 2
-     CameraName: CamTV1_03
-   - CameraNum: 3
-     CameraName: CamTV1_06
-   - CameraNum: 4
-     CameraName: CamTV1_09
-   - CameraNum: 5
-     CameraName: CamTV1_10
-   - CameraNum: 6
-     CameraName: CamTV1_11
-   - CameraNum: 7
-     CameraName: CamTV1_12
-   - CameraNum: 8
-     CameraName: CamTV1_13
-   - CameraNum: 9
-     CameraName: CamTV1_00
-   - CameraNum: 10
-     CameraName: CamTV2_00
-   - CameraNum: 11
-     CameraName: CamTV2_01
-   - CameraNum: 12
-     CameraName: CamTV2_02
-   - CameraNum: 13
-     CameraName: CamTV2_04
-   - CameraNum: 14
-     CameraName: CamTV2_06
-   - CameraNum: 15
-     CameraName: CamTV2_11
-   - CameraNum: 16
-     CameraName: CamTV2_12
-   - CameraNum: 17
-     CameraName: CamTV2_15
-   - CameraNum: 18
-     CameraName: CamTV2_16
-   - CameraNum: 19
-     CameraName: CamTV3_00
-   - CameraNum: 20
      CameraName: CamTV3_01
-   - CameraNum: 21
-     CameraName: CamTV3_03
-   - CameraNum: 22
-     CameraName: CamTV3_04
-   - CameraNum: 23
-     CameraName: CamTV1_08
-   - CameraNum: 24
-     CameraName: CamTV3_07
-   - CameraNum: 25
-     CameraName: CamTV3_10
-   - CameraNum: 26
-     CameraName: CamTV4_00
-   - CameraNum: 27
-     CameraName: CamTV4_08
-   - CameraNum: 28
-     CameraName: CamTV4_10
-   - CameraNum: 29
-     CameraName: CamTV4_12
-   - CameraNum: 30
-     CameraName: CamTV4_17
-   - CameraNum: 31
-     CameraName: CamRoll Bar
-   - CameraNum: 32
+   - CameraNum: 2
+     CameraName: CamTV1_01
+   - CameraNum: 3
+     CameraName: CamTV1_01b
+   - CameraNum: 4
      CameraName: CamTV1_02
-   - CameraNum: 33
+   - CameraNum: 5
+     CameraName: CamTV1_02b
+   - CameraNum: 6
+     CameraName: CamTV1_03
+   - CameraNum: 7
+     CameraName: CamTV1_03b
+   - CameraNum: 8
      CameraName: CamTV1_04
-   - CameraNum: 34
+   - CameraNum: 9
      CameraName: CamTV1_05
-   - CameraNum: 35
-     CameraName: CamTV1_14
-   - CameraNum: 36
-     CameraName: CamTV2_03
-   - CameraNum: 37
-     CameraName: CamTV2_17
-   - CameraNum: 38
-     CameraName: CamTV2_18
-   - CameraNum: 39
-     CameraName: CamTV3_02
-   - CameraNum: 40
-     CameraName: CamTV3_08
-   - CameraNum: 41
-     CameraName: CamTV3_09
-   - CameraNum: 42
-     CameraName: CamTV3_11
-   - CameraNum: 43
-     CameraName: CamTV4_01
-   - CameraNum: 44
-     CameraName: CamTV4_02
-   - CameraNum: 45
-     CameraName: CamTV4_04
-   - CameraNum: 46
-     CameraName: CamTV4_09
-   - CameraNum: 47
-     CameraName: CamTV4_11
-   - CameraNum: 48
-     CameraName: CamTV4_13
-   - CameraNum: 49
-     CameraName: CamTV4_14
-   - CameraNum: 50
-     CameraName: CamTV4_15
-   - CameraNum: 51
-     CameraName: CamTV4_16
-   - CameraNum: 52
-     CameraName: CamTV4_18
-   - CameraNum: 53
-     CameraName: CamTV4_19
-   - CameraNum: 54
-     CameraName: CamTV4_20
-   - CameraNum: 55
+   - CameraNum: 10
+     CameraName: CamTV1_05b
+   - CameraNum: 11
+     CameraName: CamTV1_06
+   - CameraNum: 12
+     CameraName: CamTV1_06b
+   - CameraNum: 13
      CameraName: CamTV1_07
-   - CameraNum: 56
-     CameraName: CamTV2_05
-   - CameraNum: 57
-     CameraName: CamTV2_06b
-   - CameraNum: 58
+   - CameraNum: 14
+     CameraName: CamTV1_07b
+   - CameraNum: 15
+     CameraName: CamTV1_08b
+   - CameraNum: 16
+     CameraName: CamTV1_09
+   - CameraNum: 17
+     CameraName: CamTV1_11
+   - CameraNum: 18
+     CameraName: CamTV1_11b
+   - CameraNum: 19
+     CameraName: CamTV2_00
+   - CameraNum: 20
+     CameraName: CamTV2_00b
+   - CameraNum: 21
+     CameraName: CamTV2_01
+   - CameraNum: 22
+     CameraName: CamTV2_01b
+   - CameraNum: 23
+     CameraName: CamTV2_02
+   - CameraNum: 24
+     CameraName: CamTV2_03
+   - CameraNum: 25
+     CameraName: CamTV2_03b
+   - CameraNum: 26
+     CameraName: CamTV2_04
+   - CameraNum: 27
+     CameraName: CamTV2_05b
+   - CameraNum: 28
+     CameraName: CamTV2_06
+   - CameraNum: 29
      CameraName: CamTV2_07
-   - CameraNum: 59
+   - CameraNum: 30
      CameraName: CamTV2_08
-   - CameraNum: 60
+   - CameraNum: 31
+     CameraName: CamTV2_08b
+   - CameraNum: 32
      CameraName: CamTV2_09
-   - CameraNum: 61
+   - CameraNum: 33
+     CameraName: CamTV2_09b
+   - CameraNum: 34
      CameraName: CamTV2_10
-   - CameraNum: 62
+   - CameraNum: 35
+     CameraName: CamTV2_10b
+   - CameraNum: 36
+     CameraName: CamTV2_11
+   - CameraNum: 37
+     CameraName: CamTV2_11b
+   - CameraNum: 38
+     CameraName: CamTV2_12
+   - CameraNum: 39
+     CameraName: CamTV2_12b
+   - CameraNum: 40
      CameraName: CamTV2_13
-   - CameraNum: 63
+   - CameraNum: 41
      CameraName: CamTV2_14
-   - CameraNum: 64
+   - CameraNum: 42
+     CameraName: CamTV3_00
+   - CameraNum: 43
+     CameraName: CamTV3_03b
+   - CameraNum: 44
+     CameraName: CamTV3_04b
+   - CameraNum: 45
      CameraName: CamTV3_05
-   - CameraNum: 65
-     CameraName: CamTV3_06
-   - CameraNum: 66
-     CameraName: CamTV4_05
-   - CameraNum: 67
-     CameraName: CamTV4_06
-   - CameraNum: 68
-     CameraName: CamTV4_07
+   - CameraNum: 46
+     CameraName: CamTV3_07
+   - CameraNum: 47
+     CameraName: CamTV3_08
+   - CameraNum: 48
+     CameraName: CamTV3_09
+   - CameraNum: 49
+     CameraName: CamTV3_10
+   - CameraNum: 50
+     CameraName: CamTV3_11
+   - CameraNum: 51
+     CameraName: CamTV3_12
+   - CameraNum: 52
+     CameraName: CamTV4_13
+   - CameraNum: 53
+     CameraName: CamTV4_00
+   - CameraNum: 54
+     CameraName: CamTV4_01
+   - CameraNum: 55
+     CameraName: CamTV4_02
+   - CameraNum: 56
+     CameraName: CamTV4_12
+   - CameraNum: 57
+     CameraName: CamRoll Bar
+   - CameraNum: 58
+     CameraName: CamTV3_03
+   - CameraNum: 59
+     CameraName: CamTV1_04b
  - GroupNum: 16
    GroupName: Pit Lane
    Cameras:
    - CameraNum: 1
      CameraName: CamPit Lane
+   - CameraNum: 2
+     CameraName: CamPit Lane 3
+   - CameraNum: 3
+     CameraName: CamPit Lane 2
  - GroupNum: 17
    GroupName: Pit Lane 2
    Cameras:
    - CameraNum: 1
-     CameraName: CamPit Lane2
+     CameraName: CamPit Lane 4
  - GroupNum: 18
    GroupName: Blimp
    Cameras:
@@ -1128,7 +639,7 @@ RadioInfo:
    - FrequencyNum: 2
      FrequencyName: "@TEAM"
      Priority: 60
-     CarIdx: 44
+     CarIdx: 53
      EntryIdx: -1
      ClubID: 0
      CanScan: 1
@@ -1151,7 +662,7 @@ RadioInfo:
      FrequencyName: "@PRIVATE"
      Priority: 70
      CarIdx: -1
-     EntryIdx: 44
+     EntryIdx: 53
      ClubID: 0
      CanScan: 1
      CanSquawk: 1
@@ -1160,7 +671,7 @@ RadioInfo:
      IsDeletable: 0
 
 DriverInfo:
- DriverCarIdx: 44
+ DriverCarIdx: 53
  DriverUserID: 422654
  PaceCarIdx: -1
  DriverHeadPosX: -0.489
@@ -1181,8 +692,8 @@ DriverInfo:
  DriverCarSLLastRPM: 6925.000
  DriverCarSLBlinkRPM: 6950.000
  DriverCarVersion: 2025.06.02.02
- DriverPitTrkPct: 0.020891
- DriverCarEstLapTime: 100.6856
+ DriverPitTrkPct: 0.958075
+ DriverCarEstLapTime: 84.2210
  DriverSetupName: fixed.sto
  DriverSetupIsModified: 0
  DriverSetupLoadTypeName: fixed
@@ -1196,22 +707,22 @@ DriverInfo:
    TireCompoundType: "Wet"
  Drivers:
  - CarIdx: 0
-   UserName: Drees Nice
-   AbbrevName: Nice, D
-   Initials: DN
-   UserID: 159117
+   UserName: Bailey Martin2
+   AbbrevName: Martin2, B
+   Initials: BM
+   UserID: 717231
    TeamID: 0
-   TeamName: Drees Nice
+   TeamName: Bailey Martin2
    CarNumber: "1"
    CarNumberRaw: 1
-   CarPath: fordmustanggt3
+   CarPath: lamborghinievogt3
    CarClassID: 2708
-   CarID: 185
+   CarID: 133
    CarIsPaceCar: 0
    CarIsAI: 0
    CarIsElectric: 0
-   CarScreenName: Ford Mustang GT3
-   CarScreenNameShort: Ford Mustang GT3
+   CarScreenName: Lamborghini Huracan GT3 EVO
+   CarScreenNameShort: Lamborghini GT3
    CarCfg: -1
    CarCfgName: 
    CarCfgCustomPaintExt: 
@@ -1223,68 +734,16 @@ DriverInfo:
    CarClassPowerAdjust: 0.000 %
    CarClassDryTireSetLimit: 0 %
    CarClassColor: 0xffffff
-   CarClassEstLapTime: 101.0550
-   IRating: 5043
-   LicLevel: 18
-   LicSubLevel: 269
-   LicString: A 2.69
-   LicColor: 0x0153db
+   CarClassEstLapTime: 84.1349
+   IRating: 921
+   LicLevel: 2
+   LicSubLevel: 250
+   LicString: R 2.50
+   LicColor: 0xfc0706
    IsSpectator: 0
-   CarDesignStr: 15,000000,707070,ffffff
-   HelmetDesignStr: 47,000000,707070,ffffff
-   SuitDesignStr: 2,000000,000000,000000
-   BodyType: 0
-   FaceType: 8
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Belgium
-   FlairID: 23
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 1
-   UserName: John Ehlen
-   AbbrevName: Ehlen, J
-   Initials: JE
-   UserID: 367997
-   TeamID: 0
-   TeamName: John Ehlen
-   CarNumber: "2"
-   CarNumberRaw: 2
-   CarPath: fordmustanggt3
-   CarClassID: 2708
-   CarID: 185
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: Ford Mustang GT3
-   CarScreenNameShort: Ford Mustang GT3
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 101.0550
-   IRating: 7748
-   LicLevel: 18
-   LicSubLevel: 266
-   LicString: A 2.66
-   LicColor: 0x0153db
-   IsSpectator: 0
-   CarDesignStr: 24,ff190a,969696,000000
-   HelmetDesignStr: 6,ff190a,969696,000000
-   SuitDesignStr: 24,da1807,111111,5e5e5e
+   CarDesignStr: 5,5ba23a,faff00,000000
+   HelmetDesignStr: 21,5ba23a,faff00,000000
+   SuitDesignStr: 34,639136,fff500,000000
    BodyType: 0
    FaceType: 4
    HelmetType: 0
@@ -1293,29 +752,81 @@ DriverInfo:
    CarSponsor_2: 0
    ClubName: None
    ClubID: 0
-   FlairName: Germany
-   FlairID: 77
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 1
+   UserName: Devon Lineman
+   AbbrevName: Lineman, D
+   Initials: DL
+   UserID: 1246070
+   TeamID: 0
+   TeamName: Devon Lineman
+   CarNumber: "98"
+   CarNumberRaw: 98
+   CarPath: mclaren720sgt3
+   CarClassID: 2708
+   CarID: 188
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: McLaren 720S GT3 EVO
+   CarScreenNameShort: McLaren 720S GT3 EVO
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 83.6931
+   IRating: 1237
+   LicLevel: 2
+   LicSubLevel: 242
+   LicString: R 2.42
+   LicColor: 0xfc0706
+   IsSpectator: 0
+   CarDesignStr: 11,ff0000,000000,000000.000000
+   HelmetDesignStr: 5,ffffff,ffffff,ffffff
+   SuitDesignStr: 1,0a0a0a,545859,ffffff
+   BodyType: 1
+   FaceType: 0
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,ff0000,000000
+   CarSponsor_1: 285
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
    DivisionName: Division 1
    DivisionID: 0
    CurDriverIncidentCount: -1
    TeamIncidentCount: -1
  - CarIdx: 2
-   UserName: Marko Mörk
-   AbbrevName: Mörk, M
-   Initials: MM
-   UserID: 690255
+   UserName: Brian Chase
+   AbbrevName: Chase, B
+   Initials: BC
+   UserID: 366397
    TeamID: 0
-   TeamName: Marko Mörk
-   CarNumber: "3"
-   CarNumberRaw: 3
-   CarPath: ferrari296gt3
+   TeamName: Brian Chase
+   CarNumber: "116"
+   CarNumberRaw: 116
+   CarPath: chevyvettez06rgt3
    CarClassID: 2708
-   CarID: 173
+   CarID: 184
    CarIsPaceCar: 0
    CarIsAI: 0
    CarIsElectric: 0
-   CarScreenName: Ferrari 296 GT3
-   CarScreenNameShort: Ferrari 296 GT3
+   CarScreenName: Chevrolet Corvette Z06 GT3.R
+   CarScreenNameShort: Corvette GT3.R
    CarCfg: -1
    CarCfgName: 
    CarCfgCustomPaintExt: 
@@ -1327,91 +838,39 @@ DriverInfo:
    CarClassPowerAdjust: 0.000 %
    CarClassDryTireSetLimit: 0 %
    CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.5522
-   IRating: 3251
-   LicLevel: 20
-   LicSubLevel: 445
-   LicString: A 4.45
-   LicColor: 0x0153db
+   CarClassEstLapTime: 84.6194
+   IRating: 1090
+   LicLevel: 14
+   LicSubLevel: 250
+   LicString: B 2.50
+   LicColor: 0x00c702
    IsSpectator: 0
-   CarDesignStr: 7,000000,c400ff,d100f4
-   HelmetDesignStr: 67,000000,c400ff,d100f4
-   SuitDesignStr: 12,000000,f9f9f9,f645f5
-   BodyType: 1
-   FaceType: 0
+   CarDesignStr: 0,0f0000,ed2129,ffffff
+   HelmetDesignStr: 46,0f0000,ed2129,ffffff
+   SuitDesignStr: 2,00020a,ed2129,ffffff
+   BodyType: 0
+   FaceType: 8
    HelmetType: 0
    CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
+   CarSponsor_1: 107
+   CarSponsor_2: 73
    ClubName: None
    ClubID: 0
-   FlairName: Sweden
-   FlairID: 203
+   FlairName: United States
+   FlairID: 223
    DivisionName: Division 1
    DivisionID: 0
    CurDriverIncidentCount: -1
    TeamIncidentCount: -1
  - CarIdx: 3
-   UserName: Milton Zuñiga
-   AbbrevName: Zuñiga, M
-   Initials: MZ
-   UserID: 656216
+   UserName: Gregory Lentz
+   AbbrevName: Lentz, G
+   Initials: GL
+   UserID: 1196538
    TeamID: 0
-   TeamName: Milton Zuñiga
+   TeamName: Gregory Lentz
    CarNumber: "4"
    CarNumberRaw: 4
-   CarPath: mercedesamgevogt3
-   CarClassID: 2708
-   CarID: 156
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: Mercedes-AMG GT3 2020
-   CarScreenNameShort: Mercedes GT3 2020
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 101.4363
-   IRating: 1965
-   LicLevel: 18
-   LicSubLevel: 295
-   LicString: A 2.95
-   LicColor: 0x0153db
-   IsSpectator: 0
-   CarDesignStr: 16,236dc4,111111,4af30f
-   HelmetDesignStr: 9,111111,2b9a02,236dc4
-   SuitDesignStr: 35,0c0c0c,04c206,0508fc
-   BodyType: 0
-   FaceType: 0
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Colombia
-   FlairID: 48
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 4
-   UserName: Jonathan Segal
-   AbbrevName: Segal, J
-   Initials: JS
-   UserID: 1009061
-   TeamID: 0
-   TeamName: Jonathan Segal
-   CarNumber: "5"
-   CarNumberRaw: 5
    CarPath: porsche992rgt3
    CarClassID: 2708
    CarID: 169
@@ -1431,16 +890,16 @@ DriverInfo:
    CarClassPowerAdjust: 0.000 %
    CarClassDryTireSetLimit: 0 %
    CarClassColor: 0xffffff
-   CarClassEstLapTime: 101.9815
-   IRating: 2120
-   LicLevel: 18
-   LicSubLevel: 233
-   LicString: A 2.33
-   LicColor: 0x0153db
+   CarClassEstLapTime: 84.9030
+   IRating: 944
+   LicLevel: 2
+   LicSubLevel: 204
+   LicString: R 2.04
+   LicColor: 0xfc0706
    IsSpectator: 0
-   CarDesignStr: 0,606060,000000,b9b9b9;000000
-   HelmetDesignStr: 60,004c08,b9b9b9,000000
-   SuitDesignStr: 3,000000,000000,0a4c00
+   CarDesignStr: 0,000000,8f00ff,8f00ff
+   HelmetDesignStr: 14,000000,d4af37,ffffff
+   SuitDesignStr: 27,000000,ffffff,d4af37
    BodyType: 0
    FaceType: 0
    HelmetType: 0
@@ -1455,431 +914,67 @@ DriverInfo:
    DivisionID: 0
    CurDriverIncidentCount: -1
    TeamIncidentCount: -1
- - CarIdx: 5
-   UserName: Nuno Magalhaes
-   AbbrevName: Magalhaes, N
-   Initials: NM
-   UserID: 907100
+ - CarIdx: 4
+   UserName: Jim Locking
+   AbbrevName: Locking, J
+   Initials: JL
+   UserID: 17283
    TeamID: 0
-   TeamName: Nuno Magalhaes
+   TeamName: Jim Locking
+   CarNumber: "91"
+   CarNumberRaw: 91
+   CarPath: chevyvettez06rgt3
+   CarClassID: 2708
+   CarID: 184
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Chevrolet Corvette Z06 GT3.R
+   CarScreenNameShort: Corvette GT3.R
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.6194
+   IRating: 1523
+   LicLevel: 20
+   LicSubLevel: 412
+   LicString: A 4.12
+   LicColor: 0x0153db
+   IsSpectator: 0
+   CarDesignStr: 2,ff0000,00ff00,0000ff
+   HelmetDesignStr: 30,181816,264eff,f50a0a
+   SuitDesignStr: 26,ed2129,090707,f7ec26
+   BodyType: 0
+   FaceType: 0
+   HelmetType: 0
+   CarNumberDesignStr: 0,4,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: Canada
+   FlairID: 39
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 5
+   UserName: Dylan J Robinson
+   AbbrevName: Robinson, D
+   Initials: DR
+   UserID: 614195
+   TeamID: 0
+   TeamName: Dylan J Robinson
    CarNumber: "6"
    CarNumberRaw: 6
-   CarPath: mclaren720sgt3
-   CarClassID: 2708
-   CarID: 188
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: McLaren 720S GT3 EVO
-   CarScreenNameShort: McLaren 720S GT3 EVO
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.0668
-   IRating: 3519
-   LicLevel: 19
-   LicSubLevel: 304
-   LicString: A 3.04
-   LicColor: 0x0153db
-   IsSpectator: 0
-   CarDesignStr: 23,0ada00,ffffff,111111
-   HelmetDesignStr: 1,0ada00,ffffff,111111
-   SuitDesignStr: 1,0ada00,ffffff,111111
-   BodyType: 1
-   FaceType: 0
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Portugal
-   FlairID: 168
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 6
-   UserName: Dlivio O Sargeant
-   AbbrevName: Sargeant, D
-   Initials: DS
-   UserID: 855472
-   TeamID: 0
-   TeamName: Dlivio O Sargeant
-   CarNumber: "7"
-   CarNumberRaw: 7
-   CarPath: porsche992rgt3
-   CarClassID: 2708
-   CarID: 169
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: Porsche 911 GT3 R (992)
-   CarScreenNameShort: Porsche 911 GT3 R (992)
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 101.9815
-   IRating: 3138
-   LicLevel: 19
-   LicSubLevel: 355
-   LicString: A 3.55
-   LicColor: 0x0153db
-   IsSpectator: 0
-   CarDesignStr: 4,000000,000000,111111
-   HelmetDesignStr: 63,000000,000000,111111
-   SuitDesignStr: 0,000000,000000,111111
-   BodyType: 0
-   FaceType: 10
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Barbados
-   FlairID: 22
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 7
-   UserName: Manuel Schmitt
-   AbbrevName: Schmitt, M
-   Initials: MS
-   UserID: 458941
-   TeamID: 0
-   TeamName: Manuel Schmitt
-   CarNumber: "8"
-   CarNumberRaw: 8
-   CarPath: mclaren720sgt3
-   CarClassID: 2708
-   CarID: 188
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: McLaren 720S GT3 EVO
-   CarScreenNameShort: McLaren 720S GT3 EVO
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.0668
-   IRating: 1691
-   LicLevel: 15
-   LicSubLevel: 373
-   LicString: B 3.73
-   LicColor: 0x00c702
-   IsSpectator: 0
-   CarDesignStr: 1,ff0000,00ff00,0000ff
-   HelmetDesignStr: 66,f5c124,e90c15,ffffff
-   SuitDesignStr: 4,dd0810,ffffff,000000
-   BodyType: 0
-   FaceType: 0
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Germany
-   FlairID: 77
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 8
-   UserName: Moritz Neumann
-   AbbrevName: Neumann, M
-   Initials: MN
-   UserID: 403693
-   TeamID: 0
-   TeamName: Moritz Neumann
-   CarNumber: "9"
-   CarNumberRaw: 9
-   CarPath: lamborghinievogt3
-   CarClassID: 2708
-   CarID: 133
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: Lamborghini Huracan GT3 EVO
-   CarScreenNameShort: Lamborghini GT3
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.8872
-   IRating: 2648
-   LicLevel: 20
-   LicSubLevel: 454
-   LicString: A 4.54
-   LicColor: 0x0153db
-   IsSpectator: 0
-   CarDesignStr: 14,000000,00fff0,525f7c,ffffff
-   HelmetDesignStr: 56,d8ff15,d8ff15,d8ff15
-   SuitDesignStr: 29,b8b7b7,f5e1a2,000000
-   BodyType: 0
-   FaceType: 0
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 106
-   CarSponsor_2: 2
-   ClubName: None
-   ClubID: 0
-   FlairName: Germany
-   FlairID: 77
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 9
-   UserName: Jorge Lage
-   AbbrevName: Lage, J
-   Initials: JL
-   UserID: 1075889
-   TeamID: 0
-   TeamName: Jorge Lage
-   CarNumber: "10"
-   CarNumberRaw: 10
-   CarPath: mclaren720sgt3
-   CarClassID: 2708
-   CarID: 188
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: McLaren 720S GT3 EVO
-   CarScreenNameShort: McLaren 720S GT3 EVO
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.0668
-   IRating: 2462
-   LicLevel: 19
-   LicSubLevel: 355
-   LicString: A 3.55
-   LicColor: 0x0153db
-   IsSpectator: 0
-   CarDesignStr: 4,111111,f9f9f9,ffb800
-   HelmetDesignStr: 49,111111,f9f9f9,ffb800
-   SuitDesignStr: 4,000000,ffffff,f1b825
-   BodyType: 0
-   FaceType: 0
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Portugal
-   FlairID: 168
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 10
-   UserName: Markus Getschmann
-   AbbrevName: Getschmann, M
-   Initials: MG
-   UserID: 987588
-   TeamID: 0
-   TeamName: Markus Getschmann
-   CarNumber: "11"
-   CarNumberRaw: 11
-   CarPath: mclaren720sgt3
-   CarClassID: 2708
-   CarID: 188
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: McLaren 720S GT3 EVO
-   CarScreenNameShort: McLaren 720S GT3 EVO
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.0668
-   IRating: 2064
-   LicLevel: 20
-   LicSubLevel: 476
-   LicString: A 4.76
-   LicColor: 0x0153db
-   IsSpectator: 0
-   CarDesignStr: 1,ff0000,00ff00,0000ff
-   HelmetDesignStr: 1,5e5e5e,135324,111111
-   SuitDesignStr: 1,5e5e5e,135324,111111
-   BodyType: 0
-   FaceType: 0
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Germany
-   FlairID: 77
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 11
-   UserName: Tom Bland2
-   AbbrevName: Bland2, T
-   Initials: TB
-   UserID: 483097
-   TeamID: 0
-   TeamName: Tom Bland2
-   CarNumber: "12"
-   CarNumberRaw: 12
-   CarPath: mclaren720sgt3
-   CarClassID: 2708
-   CarID: 188
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: McLaren 720S GT3 EVO
-   CarScreenNameShort: McLaren 720S GT3 EVO
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.0668
-   IRating: 7581
-   LicLevel: 19
-   LicSubLevel: 375
-   LicString: A 3.75
-   LicColor: 0x0153db
-   IsSpectator: 0
-   CarDesignStr: 13,ffffff,705c00,f30505
-   HelmetDesignStr: 18,ffffff,705c00,f30505
-   SuitDesignStr: 21,c79007,e70404,111111
-   BodyType: 0
-   FaceType: 8
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: United Kingdom
-   FlairID: 222
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 12
-   UserName: Peter van Zoelen
-   AbbrevName: Zoelen, P
-   Initials: PZ
-   UserID: 498231
-   TeamID: 0
-   TeamName: Peter van Zoelen
-   CarNumber: "13"
-   CarNumberRaw: 13
-   CarPath: mclaren720sgt3
-   CarClassID: 2708
-   CarID: 188
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: McLaren 720S GT3 EVO
-   CarScreenNameShort: McLaren 720S GT3 EVO
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.0668
-   IRating: 2124
-   LicLevel: 17
-   LicSubLevel: 139
-   LicString: A 1.39
-   LicColor: 0x0153db
-   IsSpectator: 0
-   CarDesignStr: 5,f7f4f4,f14550,a39f9f
-   HelmetDesignStr: 56,f7f4f4,f14550,a39f9f
-   SuitDesignStr: 25,f4f5f7,f45431,ffffff
-   BodyType: 0
-   FaceType: 4
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Netherlands
-   FlairID: 146
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 13
-   UserName: Misael ValTor
-   AbbrevName: 
-   Initials: 
-   UserID: 935332
-   TeamID: 0
-   TeamName: Misael ValTor
-   CarNumber: "718"
-   CarNumberRaw: 718
    CarPath: fordmustanggt3
    CarClassID: 2708
    CarID: 185
@@ -1899,47 +994,47 @@ DriverInfo:
    CarClassPowerAdjust: 0.000 %
    CarClassDryTireSetLimit: 0 %
    CarClassColor: 0xffffff
-   CarClassEstLapTime: 101.0550
-   IRating: 2779
-   LicLevel: 20
-   LicSubLevel: 474
-   LicString: A 4.74
-   LicColor: 0x0153db
+   CarClassEstLapTime: 84.4643
+   IRating: 2157
+   LicLevel: 15
+   LicSubLevel: 319
+   LicString: B 3.19
+   LicColor: 0x00c702
    IsSpectator: 0
-   CarDesignStr: 5,edff00,000000,edff00,000000
-   HelmetDesignStr: 45,000000,edff00,edff00
-   SuitDesignStr: 20,000000,edff00,000000
+   CarDesignStr: 22,000000,ffffff,ff0000
+   HelmetDesignStr: 9,000000,ffffff,ff0000
+   SuitDesignStr: 3,000000,ffffff,ffffff
    BodyType: 0
    FaceType: 0
    HelmetType: 0
-   CarNumberDesignStr: 27,0,edff00,000000,ffffff
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
    CarSponsor_1: 0
    CarSponsor_2: 0
    ClubName: None
    ClubID: 0
-   FlairName: Spain
-   FlairID: 198
+   FlairName: United States
+   FlairID: 223
    DivisionName: Division 1
    DivisionID: 0
    CurDriverIncidentCount: -1
    TeamIncidentCount: -1
- - CarIdx: 14
-   UserName: Zoran Kordic
-   AbbrevName: Kordic, Z
-   Initials: ZK
-   UserID: 142705
+ - CarIdx: 6
+   UserName: Carlos Martinez14
+   AbbrevName: Martinez14, C
+   Initials: CM
+   UserID: 1001601
    TeamID: 0
-   TeamName: Zoran Kordic
-   CarNumber: "15"
-   CarNumberRaw: 15
-   CarPath: lamborghinievogt3
+   TeamName: Carlos Martinez14
+   CarNumber: "7"
+   CarNumberRaw: 7
+   CarPath: fordmustanggt3
    CarClassID: 2708
-   CarID: 133
+   CarID: 185
    CarIsPaceCar: 0
    CarIsAI: 0
    CarIsElectric: 0
-   CarScreenName: Lamborghini Huracan GT3 EVO
-   CarScreenNameShort: Lamborghini GT3
+   CarScreenName: Ford Mustang GT3
+   CarScreenNameShort: Ford Mustang GT3
    CarCfg: -1
    CarCfgName: 
    CarCfgCustomPaintExt: 
@@ -1951,39 +1046,195 @@ DriverInfo:
    CarClassPowerAdjust: 0.000 %
    CarClassDryTireSetLimit: 0 %
    CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.8872
-   IRating: 2533
-   LicLevel: 14
-   LicSubLevel: 273
-   LicString: B 2.73
-   LicColor: 0x00c702
+   CarClassEstLapTime: 84.4643
+   IRating: 1236
+   LicLevel: 18
+   LicSubLevel: 267
+   LicString: A 2.67
+   LicColor: 0x0153db
    IsSpectator: 0
-   CarDesignStr: 17,ff8000,0c0c0c,47c7fc;484627
-   HelmetDesignStr: 42,e3ff00,20b665,000000
-   SuitDesignStr: 10,d56509,101d98,1e1863
+   CarDesignStr: 17,fff1f1,6a0e24,1a293a
+   HelmetDesignStr: 44,fff1f1,6a0e24,1a293a
+   SuitDesignStr: 26,6a0b0b,fafafa,253e05
    BodyType: 0
-   FaceType: 0
+   FaceType: 6
    HelmetType: 0
-   CarNumberDesignStr: 6,2,495394,777777,000000
-   CarSponsor_1: 132
-   CarSponsor_2: 246
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
    ClubName: None
    ClubID: 0
-   FlairName: Croatia
-   FlairID: 52
+   FlairName: United States
+   FlairID: 223
    DivisionName: Division 1
    DivisionID: 0
    CurDriverIncidentCount: -1
    TeamIncidentCount: -1
- - CarIdx: 15
-   UserName: Nahuel Pastor2
-   AbbrevName: Pastor2, N
-   Initials: NP
-   UserID: 896176
+ - CarIdx: 7
+   UserName: Bill Wu
+   AbbrevName: 
+   Initials: 
+   UserID: 830541
    TeamID: 0
-   TeamName: Nahuel Pastor2
-   CarNumber: "16"
-   CarNumberRaw: 16
+   TeamName: Bill Wu
+   CarNumber: "55"
+   CarNumberRaw: 55
+   CarPath: bmwm4gt3
+   CarClassID: 2708
+   CarID: 132
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: BMW M4 GT3
+   CarScreenNameShort: BMW M4 GT3
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.2210
+   IRating: 1342
+   LicLevel: 11
+   LicSubLevel: 351
+   LicString: C 3.51
+   LicColor: 0xfeec04
+   IsSpectator: 0
+   CarDesignStr: 20,000d72,040862,faff00.d0c200
+   HelmetDesignStr: 19,004f8f,d94e00,d5e801
+   SuitDesignStr: 35,004b89,d3770a,f3ff12
+   BodyType: 0
+   FaceType: 6
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 2
+   CarSponsor_2: 2
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 8
+   UserName: Emily Love
+   AbbrevName: Love, E
+   Initials: EL
+   UserID: 867717
+   TeamID: 0
+   TeamName: Emily Love
+   CarNumber: "13"
+   CarNumberRaw: 13
+   CarPath: acuransxevo22gt3
+   CarClassID: 2708
+   CarID: 194
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Acura NSX GT3 EVO 22
+   CarScreenNameShort: Acura NSX GT3 EVO 22
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 83.3612
+   IRating: 1548
+   LicLevel: 18
+   LicSubLevel: 234
+   LicString: A 2.34
+   LicColor: 0x0153db
+   IsSpectator: 0
+   CarDesignStr: 9,ff7ece,ffffff,79beff,ff4699
+   HelmetDesignStr: 48,ff6ce2,519cff,ffffff
+   SuitDesignStr: 34,ff75e6,518dff,ffffff
+   BodyType: 1
+   FaceType: 3
+   HelmetType: 0
+   CarNumberDesignStr: 36,0,ffffff,79beff,ff7ece
+   CarSponsor_1: 222
+   CarSponsor_2: 222
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 9
+   UserName: Dave Barkley
+   AbbrevName: Barkley, D
+   Initials: DB
+   UserID: 948363
+   TeamID: 0
+   TeamName: Dave Barkley
+   CarNumber: "46"
+   CarNumberRaw: 46
+   CarPath: chevyvettez06rgt3
+   CarClassID: 2708
+   CarID: 184
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Chevrolet Corvette Z06 GT3.R
+   CarScreenNameShort: Corvette GT3.R
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.6194
+   IRating: 2723
+   LicLevel: 20
+   LicSubLevel: 491
+   LicString: A 4.91
+   LicColor: 0x0153db
+   IsSpectator: 0
+   CarDesignStr: 23,00abff,00abff,00abff,c4ff00
+   HelmetDesignStr: 39,ffffff,ffffff,ffffff
+   SuitDesignStr: 1,ffffff,ffffff,ffffff
+   BodyType: 0
+   FaceType: 0
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 10
+   UserName: Michael E Fox
+   AbbrevName: Fox, M
+   Initials: MF
+   UserID: 1188180
+   TeamID: 0
+   TeamName: Michael E Fox
+   CarNumber: "11"
+   CarNumberRaw: 11
    CarPath: ferrari296gt3
    CarClassID: 2708
    CarID: 173
@@ -2003,16 +1254,224 @@ DriverInfo:
    CarClassPowerAdjust: 0.000 %
    CarClassDryTireSetLimit: 0 %
    CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.5522
-   IRating: 1826
+   CarClassEstLapTime: 84.0539
+   IRating: 1199
+   LicLevel: 14
+   LicSubLevel: 218
+   LicString: B 2.18
+   LicColor: 0x00c702
+   IsSpectator: 0
+   CarDesignStr: 16,000000,3bff00,0a0a0a
+   HelmetDesignStr: 19,000000,3bff00,0a0a0a
+   SuitDesignStr: 5,000000,14ff00,0a0a0a
+   BodyType: 0
+   FaceType: 6
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 11
+   UserName: Aden Shaffer
+   AbbrevName: Shaffer, A
+   Initials: AS
+   UserID: 777518
+   TeamID: 0
+   TeamName: Aden Shaffer
+   CarNumber: "12"
+   CarNumberRaw: 12
+   CarPath: porsche992rgt3
+   CarClassID: 2708
+   CarID: 169
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Porsche 911 GT3 R (992)
+   CarScreenNameShort: Porsche 911 GT3 R (992)
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.9030
+   IRating: 1169
+   LicLevel: 2
+   LicSubLevel: 237
+   LicString: R 2.37
+   LicColor: 0xfc0706
+   IsSpectator: 0
+   CarDesignStr: 0,3a205c,3a205c,3a205c;c48700
+   HelmetDesignStr: 56,000000,000000,000000
+   SuitDesignStr: 9,000000,000000,000000
+   BodyType: 0
+   FaceType: 8
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 12
+   UserName: Zachary T Cox
+   AbbrevName: Cox, Z
+   Initials: ZC
+   UserID: 1210393
+   TeamID: 0
+   TeamName: Zachary T Cox
+   CarNumber: "14"
+   CarNumberRaw: 14
+   CarPath: bmwm4gt3
+   CarClassID: 2708
+   CarID: 132
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: BMW M4 GT3
+   CarScreenNameShort: BMW M4 GT3
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.2210
+   IRating: 1134
+   LicLevel: 6
+   LicSubLevel: 206
+   LicString: D 2.06
+   LicColor: 0xfc8a27
+   IsSpectator: 0
+   CarDesignStr: 19,000000,000000,ff0000
+   HelmetDesignStr: 28,000000,000000,ff0000
+   SuitDesignStr: 33,000000,000000,000000
+   BodyType: 0
+   FaceType: 8
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 13
+   UserName: Bel Wells
+   AbbrevName: 
+   Initials: 
+   UserID: 612494
+   TeamID: 0
+   TeamName: Bel Wells
+   CarNumber: "15"
+   CarNumberRaw: 15
+   CarPath: acuransxevo22gt3
+   CarClassID: 2708
+   CarID: 194
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Acura NSX GT3 EVO 22
+   CarScreenNameShort: Acura NSX GT3 EVO 22
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 83.3612
+   IRating: 3116
    LicLevel: 20
-   LicSubLevel: 456
-   LicString: A 4.56
+   LicSubLevel: 429
+   LicString: A 4.29
    LicColor: 0x0153db
    IsSpectator: 0
    CarDesignStr: 1,ff0000,00ff00,0000ff
-   HelmetDesignStr: 1,efd600,d7162d,111111
-   SuitDesignStr: 1,efd600,d7162d,111111
+   HelmetDesignStr: 1,111111,284a94,b82f37
+   SuitDesignStr: 2,111111,c137af,14e310
+   BodyType: 1
+   FaceType: 3
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 14
+   UserName: Benjamin Jones16
+   AbbrevName: Jones16, B
+   Initials: BJ
+   UserID: 1205624
+   TeamID: 0
+   TeamName: Benjamin Jones16
+   CarNumber: "16"
+   CarNumberRaw: 16
+   CarPath: mclaren720sgt3
+   CarClassID: 2708
+   CarID: 188
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: McLaren 720S GT3 EVO
+   CarScreenNameShort: McLaren 720S GT3 EVO
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 83.6931
+   IRating: 1391
+   LicLevel: 11
+   LicSubLevel: 327
+   LicString: C 3.27
+   LicColor: 0xfeec04
+   IsSpectator: 0
+   CarDesignStr: 5,2a3795,eeeeee,ed2229
+   HelmetDesignStr: 3,2a3795,eeeeee,ed2229
+   SuitDesignStr: 22,2a3795,ed2229,eeeeee
    BodyType: 0
    FaceType: 0
    HelmetType: 0
@@ -2021,19 +1480,19 @@ DriverInfo:
    CarSponsor_2: 0
    ClubName: None
    ClubID: 0
-   FlairName: Spain
-   FlairID: 198
+   FlairName: United States
+   FlairID: 223
    DivisionName: Division 1
    DivisionID: 0
    CurDriverIncidentCount: -1
    TeamIncidentCount: -1
- - CarIdx: 16
-   UserName: Mark Karpes
-   AbbrevName: Karpes, M
-   Initials: MK
-   UserID: 1033116
+ - CarIdx: 15
+   UserName: Mike Pisc
+   AbbrevName: Pisc, M
+   Initials: MP
+   UserID: 383224
    TeamID: 0
-   TeamName: Mark Karpes
+   TeamName: Mike Pisc
    CarNumber: "17"
    CarNumberRaw: 17
    CarPath: ferrari296gt3
@@ -2055,17 +1514,17 @@ DriverInfo:
    CarClassPowerAdjust: 0.000 %
    CarClassDryTireSetLimit: 0 %
    CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.5522
-   IRating: 974
-   LicLevel: 15
-   LicSubLevel: 355
-   LicString: B 3.55
-   LicColor: 0x00c702
+   CarClassEstLapTime: 84.0539
+   IRating: 2056
+   LicLevel: 9
+   LicSubLevel: 176
+   LicString: C 1.76
+   LicColor: 0xfeec04
    IsSpectator: 0
-   CarDesignStr: 23,ef7406,000000,ffffff
-   HelmetDesignStr: 66,ef7406,000000,ffffff
-   SuitDesignStr: 33,ff9600,000000,ffffff
-   BodyType: 1
+   CarDesignStr: 1,ff0000,00ff00,0000ff,000000
+   HelmetDesignStr: 1,111111,b82f37,284a94
+   SuitDesignStr: 1,111111,b82f37,284a94
+   BodyType: 0
    FaceType: 0
    HelmetType: 0
    CarNumberDesignStr: 0,0,ffffff,777777,000000
@@ -2073,29 +1532,29 @@ DriverInfo:
    CarSponsor_2: 0
    ClubName: None
    ClubID: 0
-   FlairName: Netherlands
-   FlairID: 146
+   FlairName: United States
+   FlairID: 223
    DivisionName: Division 1
    DivisionID: 0
    CurDriverIncidentCount: -1
    TeamIncidentCount: -1
- - CarIdx: 17
-   UserName: Leonardo Marques
-   AbbrevName: 
-   Initials: 
-   UserID: 245148
+ - CarIdx: 16
+   UserName: Justin Koch
+   AbbrevName: Koch, J
+   Initials: JK
+   UserID: 508869
    TeamID: 0
-   TeamName: Leonardo Marques
-   CarNumber: "28"
-   CarNumberRaw: 28
-   CarPath: audir8lmsevo2gt3
+   TeamName: Justin Koch
+   CarNumber: "18"
+   CarNumberRaw: 18
+   CarPath: mclaren720sgt3
    CarClassID: 2708
-   CarID: 176
+   CarID: 188
    CarIsPaceCar: 0
    CarIsAI: 0
    CarIsElectric: 0
-   CarScreenName: Audi R8 LMS EVO II GT3
-   CarScreenNameShort: Audi R8 LMS EVO II GT3
+   CarScreenName: McLaren 720S GT3 EVO
+   CarScreenNameShort: McLaren 720S GT3 EVO
    CarCfg: -1
    CarCfgName: 
    CarCfgCustomPaintExt: 
@@ -2107,16 +1566,16 @@ DriverInfo:
    CarClassPowerAdjust: 0.000 %
    CarClassDryTireSetLimit: 0 %
    CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.8180
-   IRating: 6365
-   LicLevel: 19
-   LicSubLevel: 350
-   LicString: A 3.50
+   CarClassEstLapTime: 83.6931
+   IRating: 1187
+   LicLevel: 18
+   LicSubLevel: 245
+   LicString: A 2.45
    LicColor: 0x0153db
    IsSpectator: 0
-   CarDesignStr: 19,359dd4,000000,aa43f4,006a17
-   HelmetDesignStr: 59,359dd4,000000,aa43f4
-   SuitDesignStr: 3,359dd4,080808,aa43f4
+   CarDesignStr: 20,ffffff,000000,fffa01
+   HelmetDesignStr: 66,ffffff,000000,fffa01
+   SuitDesignStr: 29,ffffff,000000,00fdff
    BodyType: 0
    FaceType: 4
    HelmetType: 0
@@ -2125,177 +1584,21 @@ DriverInfo:
    CarSponsor_2: 0
    ClubName: None
    ClubID: 0
-   FlairName: Portugal
-   FlairID: 168
+   FlairName: United States
+   FlairID: 223
    DivisionName: Division 1
    DivisionID: 0
    CurDriverIncidentCount: -1
    TeamIncidentCount: -1
- - CarIdx: 18
-   UserName: Frederic Mortier
-   AbbrevName: Mortier, F
-   Initials: FM
-   UserID: 1054699
-   TeamID: 0
-   TeamName: Frederic Mortier
-   CarNumber: "76"
-   CarNumberRaw: 76
-   CarPath: ferrari296gt3
-   CarClassID: 2708
-   CarID: 173
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: Ferrari 296 GT3
-   CarScreenNameShort: Ferrari 296 GT3
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.5522
-   IRating: 1500
-   LicLevel: 18
-   LicSubLevel: 244
-   LicString: A 2.44
-   LicColor: 0x0153db
-   IsSpectator: 0
-   CarDesignStr: 21,ffffff,792eae,2b6ccd,ffffff
-   HelmetDesignStr: 68,ffffff,ffffff,ffffff
-   SuitDesignStr: 30,ffffff,ffffff,ffffff
-   BodyType: 0
-   FaceType: 0
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Spain
-   FlairID: 198
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 19
-   UserName: Alvaro Castaño
-   AbbrevName: Castaño, A
-   Initials: AC
-   UserID: 213653
-   TeamID: 0
-   TeamName: Alvaro Castaño
-   CarNumber: "20"
-   CarNumberRaw: 20
-   CarPath: mercedesamgevogt3
-   CarClassID: 2708
-   CarID: 156
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: Mercedes-AMG GT3 2020
-   CarScreenNameShort: Mercedes GT3 2020
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 101.4363
-   IRating: 3115
-   LicLevel: 19
-   LicSubLevel: 349
-   LicString: A 3.49
-   LicColor: 0x0153db
-   IsSpectator: 0
-   CarDesignStr: 5,ff0000,00ff00,0000ff
-   HelmetDesignStr: 58,4554c4,030f35,e0e0e1
-   SuitDesignStr: 3,ffffff,4554c4,ffffff
-   BodyType: 0
-   FaceType: 0
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Spain
-   FlairID: 198
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 20
-   UserName: Jesús Romera
-   AbbrevName: Romera, J
+ - CarIdx: 17
+   UserName: John Renfro
+   AbbrevName: Renfro, J
    Initials: JR
-   UserID: 851148
+   UserID: 990023
    TeamID: 0
-   TeamName: Jesús Romera
-   CarNumber: "21"
-   CarNumberRaw: 21
-   CarPath: bmwm4gt3
-   CarClassID: 2708
-   CarID: 132
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: BMW M4 GT3
-   CarScreenNameShort: BMW M4 GT3
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.6856
-   IRating: 3422
-   LicLevel: 17
-   LicSubLevel: 146
-   LicString: A 1.46
-   LicColor: 0x0153db
-   IsSpectator: 0
-   CarDesignStr: 1,ff0000,00ff00,0000ff
-   HelmetDesignStr: 59,020000,111111,ffffff
-   SuitDesignStr: 1,00d9b2,121212,ffffff
-   BodyType: 0
-   FaceType: 0
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Spain
-   FlairID: 198
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 21
-   UserName: Dane Baird
-   AbbrevName: Baird, D
-   Initials: DB
-   UserID: 334613
-   TeamID: 0
-   TeamName: Dane Baird
-   CarNumber: "22"
-   CarNumberRaw: 22
+   TeamName: John Renfro
+   CarNumber: "19"
+   CarNumberRaw: 19
    CarPath: porsche992rgt3
    CarClassID: 2708
    CarID: 169
@@ -2315,16 +1618,68 @@ DriverInfo:
    CarClassPowerAdjust: 0.000 %
    CarClassDryTireSetLimit: 0 %
    CarClassColor: 0xffffff
-   CarClassEstLapTime: 101.9815
-   IRating: 2353
-   LicLevel: 15
-   LicSubLevel: 355
-   LicString: B 3.55
+   CarClassEstLapTime: 84.9030
+   IRating: 899
+   LicLevel: 14
+   LicSubLevel: 257
+   LicString: B 2.57
    LicColor: 0x00c702
    IsSpectator: 0
-   CarDesignStr: 12,ffffff,ef4036,000000
-   HelmetDesignStr: 28,ff0060,000000,000000
-   SuitDesignStr: 27,000000,000000,ff00d6
+   CarDesignStr: 2,5e5e5e,111111,135324
+   HelmetDesignStr: 1,5e5e5e,111111,135324
+   SuitDesignStr: 1,5e5e5e,111111,135324
+   BodyType: 0
+   FaceType: 0
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 18
+   UserName: Renee French
+   AbbrevName: French, R
+   Initials: RF
+   UserID: 1247413
+   TeamID: 0
+   TeamName: Renee French
+   CarNumber: "20"
+   CarNumberRaw: 20
+   CarPath: ferrari296gt3
+   CarClassID: 2708
+   CarID: 173
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Ferrari 296 GT3
+   CarScreenNameShort: Ferrari 296 GT3
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.0539
+   IRating: 688
+   LicLevel: 6
+   LicSubLevel: 212
+   LicString: D 2.12
+   LicColor: 0xfc8a27
+   IsSpectator: 0
+   CarDesignStr: 2,ff0000,00ff00,0000ff,ffffff
+   HelmetDesignStr: 8,300080,000000,0d00ff
+   SuitDesignStr: 25,0003ff,391c83,111111
    BodyType: 0
    FaceType: 4
    HelmetType: 0
@@ -2333,21 +1688,437 @@ DriverInfo:
    CarSponsor_2: 0
    ClubName: None
    ClubID: 0
-   FlairName: United Kingdom
-   FlairID: 222
+   FlairName: Canada
+   FlairID: 39
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 19
+   UserName: Richie Deschauer
+   AbbrevName: Deschauer, R
+   Initials: RD
+   UserID: 576184
+   TeamID: 0
+   TeamName: Richie Deschauer
+   CarNumber: "99"
+   CarNumberRaw: 99
+   CarPath: chevyvettez06rgt3
+   CarClassID: 2708
+   CarID: 184
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Chevrolet Corvette Z06 GT3.R
+   CarScreenNameShort: Corvette GT3.R
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.6194
+   IRating: 2420
+   LicLevel: 11
+   LicSubLevel: 370
+   LicString: C 3.70
+   LicColor: 0xfeec04
+   IsSpectator: 0
+   CarDesignStr: 2,ff0000,00ff00,0000ff;ffffff
+   HelmetDesignStr: 60,bf5959,ffad64,a32094
+   SuitDesignStr: 27,111111,ffffff,959595
+   BodyType: 0
+   FaceType: 6
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 20
+   UserName: Preston Fiser
+   AbbrevName: Fiser, P
+   Initials: PF
+   UserID: 744951
+   TeamID: 0
+   TeamName: Preston Fiser
+   CarNumber: "21"
+   CarNumberRaw: 21
+   CarPath: chevyvettez06rgt3
+   CarClassID: 2708
+   CarID: 184
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Chevrolet Corvette Z06 GT3.R
+   CarScreenNameShort: Corvette GT3.R
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.6194
+   IRating: 1413
+   LicLevel: 18
+   LicSubLevel: 249
+   LicString: A 2.49
+   LicColor: 0x0153db
+   IsSpectator: 0
+   CarDesignStr: 10,ff0000,000000,ffffff
+   HelmetDesignStr: 6,ff0000,000000,ffffff
+   SuitDesignStr: 8,ff0000,000000,fafafa
+   BodyType: 0
+   FaceType: 8
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 21
+   UserName: Alexandre Crespo
+   AbbrevName: Crespo, A
+   Initials: AC
+   UserID: 249754
+   TeamID: 0
+   TeamName: Alexandre Crespo
+   CarNumber: "22"
+   CarNumberRaw: 22
+   CarPath: mclaren720sgt3
+   CarClassID: 2708
+   CarID: 188
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: McLaren 720S GT3 EVO
+   CarScreenNameShort: McLaren 720S GT3 EVO
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 83.6931
+   IRating: 4702
+   LicLevel: 11
+   LicSubLevel: 311
+   LicString: C 3.11
+   LicColor: 0xfeec04
+   IsSpectator: 0
+   CarDesignStr: 22,d4e610,050506,e9f147
+   HelmetDesignStr: 59,d4e610,050506,e9f147
+   SuitDesignStr: 30,000000,ed2129,000000
+   BodyType: 0
+   FaceType: 6
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: Brazil
+   FlairID: 31
    DivisionName: Division 1
    DivisionID: 0
    CurDriverIncidentCount: -1
    TeamIncidentCount: -1
  - CarIdx: 22
-   UserName: Paris Charles
-   AbbrevName: 
-   Initials: 
-   UserID: 622042
+   UserName: Bruno Alves4
+   AbbrevName: Alves4, B
+   Initials: BA
+   UserID: 839599
    TeamID: 0
-   TeamName: Paris Charles
+   TeamName: Bruno Alves4
    CarNumber: "23"
    CarNumberRaw: 23
+   CarPath: mclaren720sgt3
+   CarClassID: 2708
+   CarID: 188
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: McLaren 720S GT3 EVO
+   CarScreenNameShort: McLaren 720S GT3 EVO
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 83.6931
+   IRating: 773
+   LicLevel: 14
+   LicSubLevel: 210
+   LicString: B 2.10
+   LicColor: 0x00c702
+   IsSpectator: 0
+   CarDesignStr: 1,ff0000,00ff00,0000ff
+   HelmetDesignStr: 44,fad304,030303,060606
+   SuitDesignStr: 5,000000,fae205,f1ef08
+   BodyType: 0
+   FaceType: 10
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: Brazil
+   FlairID: 31
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 23
+   UserName: Roseller Enot
+   AbbrevName: Enot, R
+   Initials: RE
+   UserID: 1226658
+   TeamID: 0
+   TeamName: Roseller Enot
+   CarNumber: "24"
+   CarNumberRaw: 24
+   CarPath: porsche992rgt3
+   CarClassID: 2708
+   CarID: 169
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Porsche 911 GT3 R (992)
+   CarScreenNameShort: Porsche 911 GT3 R (992)
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.9030
+   IRating: 1484
+   LicLevel: 11
+   LicSubLevel: 319
+   LicString: C 3.19
+   LicColor: 0xfeec04
+   IsSpectator: 0
+   CarDesignStr: 10,000000,006fff,000000,ffffff
+   HelmetDesignStr: 1,000000,006fff,000000
+   SuitDesignStr: 0,000000,000000,0029ff
+   BodyType: 0
+   FaceType: 4
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: Philippines
+   FlairID: 165
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 24
+   UserName: Colton Riggs
+   AbbrevName: Riggs, C
+   Initials: CR
+   UserID: 1232872
+   TeamID: 0
+   TeamName: Colton Riggs
+   CarNumber: "25"
+   CarNumberRaw: 25
+   CarPath: ferrari296gt3
+   CarClassID: 2708
+   CarID: 173
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Ferrari 296 GT3
+   CarScreenNameShort: Ferrari 296 GT3
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.0539
+   IRating: 620
+   LicLevel: 2
+   LicSubLevel: 228
+   LicString: R 2.28
+   LicColor: 0xfc0706
+   IsSpectator: 0
+   CarDesignStr: 5,cf0b0b,000000,faff00,000000
+   HelmetDesignStr: 28,c9c9c9,0e7c27,b41e1e
+   SuitDesignStr: 32,ffffff,b01212,34a518
+   BodyType: 1
+   FaceType: 8
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 25
+   UserName: Michael Sweeney
+   AbbrevName: Sweeney, M
+   Initials: MS
+   UserID: 34685
+   TeamID: 0
+   TeamName: Michael Sweeney
+   CarNumber: "71"
+   CarNumberRaw: 71
+   CarPath: ferrari296gt3
+   CarClassID: 2708
+   CarID: 173
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Ferrari 296 GT3
+   CarScreenNameShort: Ferrari 296 GT3
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.0539
+   IRating: 3365
+   LicLevel: 15
+   LicSubLevel: 317
+   LicString: B 3.17
+   LicColor: 0x00c702
+   IsSpectator: 0
+   CarDesignStr: 23,645e5e,3dc282,00f7ff;a7ffef
+   HelmetDesignStr: 9,645e5e,3dc282,00f7ff
+   SuitDesignStr: 29,645e5e,3dc282,07f7ff
+   BodyType: 0
+   FaceType: 6
+   HelmetType: 0
+   CarNumberDesignStr: 0,1,fff6f6,ffffff,fffbfb
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 26
+   UserName: Shane J. Williams
+   AbbrevName: Williams, S
+   Initials: SW
+   UserID: 413210
+   TeamID: 0
+   TeamName: Shane J. Williams
+   CarNumber: "27"
+   CarNumberRaw: 27
+   CarPath: chevyvettez06rgt3
+   CarClassID: 2708
+   CarID: 184
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Chevrolet Corvette Z06 GT3.R
+   CarScreenNameShort: Corvette GT3.R
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.6194
+   IRating: 871
+   LicLevel: 11
+   LicSubLevel: 318
+   LicString: C 3.18
+   LicColor: 0xfeec04
+   IsSpectator: 0
+   CarDesignStr: 19,ffffff,0099ff,000000
+   HelmetDesignStr: 62,ffffff,0099ff,000000
+   SuitDesignStr: 3,ffffff,ff7300,d4ff00
+   BodyType: 1
+   FaceType: 0
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 27
+   UserName: Yigitcan Celik
+   AbbrevName: Celik, Y
+   Initials: YC
+   UserID: 695876
+   TeamID: 0
+   TeamName: Yigitcan Celik
+   CarNumber: "28"
+   CarNumberRaw: 28
    CarPath: bmwm4gt3
    CarClassID: 2708
    CarID: 132
@@ -2367,307 +2138,47 @@ DriverInfo:
    CarClassPowerAdjust: 0.000 %
    CarClassDryTireSetLimit: 0 %
    CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.6856
-   IRating: 6624
-   LicLevel: 19
-   LicSubLevel: 331
-   LicString: A 3.31
+   CarClassEstLapTime: 84.2210
+   IRating: 1637
+   LicLevel: 18
+   LicSubLevel: 261
+   LicString: A 2.61
    LicColor: 0x0153db
    IsSpectator: 0
-   CarDesignStr: 0,ffffff,ff0045,ff0045;ffffff
-   HelmetDesignStr: 32,fafafa,000000,878787
-   SuitDesignStr: 35,ffffff,ff0045,ffffff
-   BodyType: 0
-   FaceType: 10
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: United Kingdom
-   FlairID: 222
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 23
-   UserName: Harvey Paffett
-   AbbrevName: 
-   Initials: 
-   UserID: 420888
-   TeamID: 0
-   TeamName: Harvey Paffett
-   CarNumber: "24"
-   CarNumberRaw: 24
-   CarPath: mclaren720sgt3
-   CarClassID: 2708
-   CarID: 188
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: McLaren 720S GT3 EVO
-   CarScreenNameShort: McLaren 720S GT3 EVO
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.0668
-   IRating: 2339
-   LicLevel: 13
-   LicSubLevel: 168
-   LicString: B 1.68
-   LicColor: 0x00c702
-   IsSpectator: 0
-   CarDesignStr: 10,a011a5,ffffff,e0b7e1,010101
-   HelmetDesignStr: 60,a011a5,ffffff,e0b7e1
-   SuitDesignStr: 26,a011a5,ffffff,e0b7e1
-   BodyType: 0
+   CarDesignStr: 4,000143,000000,01a3f3;01a3f3
+   HelmetDesignStr: 30,000149,000000,01a3f3
+   SuitDesignStr: 3,000149,000000,01a3f3
+   BodyType: 1
    FaceType: 0
    HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,010101,010101
-   CarSponsor_1: 0
-   CarSponsor_2: 0
+   CarNumberDesignStr: 37,0,01a3f3,000000,000149
+   CarSponsor_1: 83
+   CarSponsor_2: 63
    ClubName: None
    ClubID: 0
-   FlairName: United Kingdom
-   FlairID: 222
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 24
-   UserName: Aleix Nogué
-   AbbrevName: 
-   Initials: 
-   UserID: 861279
-   TeamID: 0
-   TeamName: Aleix Nogué
-   CarNumber: "25"
-   CarNumberRaw: 25
-   CarPath: fordmustanggt3
-   CarClassID: 2708
-   CarID: 185
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: Ford Mustang GT3
-   CarScreenNameShort: Ford Mustang GT3
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 101.0550
-   IRating: 7748
-   LicLevel: 20
-   LicSubLevel: 499
-   LicString: A 4.99
-   LicColor: 0x0153db
-   IsSpectator: 0
-   CarDesignStr: 24,14ff00,000000,000000
-   HelmetDesignStr: 28,14ff00,000000,000000
-   SuitDesignStr: 18,000000,000000,000000
-   BodyType: 0
-   FaceType: 10
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Spain
-   FlairID: 198
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 25
-   UserName: Kristian Perry
-   AbbrevName: 
-   Initials: 
-   UserID: 1105949
-   TeamID: 0
-   TeamName: Kristian Perry
-   CarNumber: "74"
-   CarNumberRaw: 74
-   CarPath: ferrari296gt3
-   CarClassID: 2708
-   CarID: 173
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: Ferrari 296 GT3
-   CarScreenNameShort: Ferrari 296 GT3
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.5522
-   IRating: 1133
-   LicLevel: 7
-   LicSubLevel: 339
-   LicString: D 3.39
-   LicColor: 0xfc8a27
-   IsSpectator: 0
-   CarDesignStr: 19,fa3939,000000,ff2c06;ef1212
-   HelmetDesignStr: 24,7639f9,000000,fff1f1
-   SuitDesignStr: 31,65009b,000000,ffffff
-   BodyType: 0
-   FaceType: 10
-   HelmetType: 0
-   CarNumberDesignStr: 15,1,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Jamaica
-   FlairID: 103
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 26
-   UserName: Hugo Suarez Fernandez2
-   AbbrevName: Fernandez2, H
-   Initials: HF
-   UserID: 580394
-   TeamID: 0
-   TeamName: Hugo Suarez Fernandez2
-   CarNumber: "27"
-   CarNumberRaw: 27
-   CarPath: ferrari296gt3
-   CarClassID: 2708
-   CarID: 173
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: Ferrari 296 GT3
-   CarScreenNameShort: Ferrari 296 GT3
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.5522
-   IRating: 3183
-   LicLevel: 20
-   LicSubLevel: 499
-   LicString: A 4.99
-   LicColor: 0x0153db
-   IsSpectator: 0
-   CarDesignStr: 9,ffffff,fc4c4c,8f0101
-   HelmetDesignStr: 56,ffffff,fc4c4c,8f0101
-   SuitDesignStr: 1,ffffff,fc4c4c,8f0101
-   BodyType: 0
-   FaceType: 0
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Spain
-   FlairID: 198
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 27
-   UserName: Carlos Alba
-   AbbrevName: Alba, C
-   Initials: CA
-   UserID: 237977
-   TeamID: 0
-   TeamName: Carlos Alba
-   CarNumber: "29"
-   CarNumberRaw: 29
-   CarPath: ferrari296gt3
-   CarClassID: 2708
-   CarID: 173
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: Ferrari 296 GT3
-   CarScreenNameShort: Ferrari 296 GT3
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.5522
-   IRating: 1463
-   LicLevel: 7
-   LicSubLevel: 366
-   LicString: D 3.66
-   LicColor: 0xfc8a27
-   IsSpectator: 0
-   CarDesignStr: 3,030303,040404,070707.000000
-   HelmetDesignStr: 63,040404,040404,070707
-   SuitDesignStr: 24,0a0a0a,0c0e0d,666666
-   BodyType: 0
-   FaceType: 0
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,6bf30a,0c0c0c,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Spain
-   FlairID: 198
+   FlairName: Turkey
+   FlairID: 215
    DivisionName: Division 1
    DivisionID: 0
    CurDriverIncidentCount: -1
    TeamIncidentCount: -1
  - CarIdx: 28
-   UserName: James Lydon
-   AbbrevName: Lydon, J
-   Initials: JL
-   UserID: 307112
+   UserName: Kory Arnold
+   AbbrevName: Arnold, K
+   Initials: KA
+   UserID: 748858
    TeamID: 0
-   TeamName: James Lydon
-   CarNumber: "30"
-   CarNumberRaw: 30
-   CarPath: mercedesamgevogt3
+   TeamName: Kory Arnold
+   CarNumber: "29"
+   CarNumberRaw: 29
+   CarPath: audir8lmsevo2gt3
    CarClassID: 2708
-   CarID: 156
+   CarID: 176
    CarIsPaceCar: 0
    CarIsAI: 0
    CarIsElectric: 0
-   CarScreenName: Mercedes-AMG GT3 2020
-   CarScreenNameShort: Mercedes GT3 2020
+   CarScreenName: Audi R8 LMS EVO II GT3
+   CarScreenNameShort: Audi R8 LMS EVO II GT3
    CarCfg: -1
    CarCfgName: 
    CarCfgCustomPaintExt: 
@@ -2679,143 +2190,39 @@ DriverInfo:
    CarClassPowerAdjust: 0.000 %
    CarClassDryTireSetLimit: 0 %
    CarClassColor: 0xffffff
-   CarClassEstLapTime: 101.4363
-   IRating: 1249
-   LicLevel: 13
-   LicSubLevel: 162
-   LicString: B 1.62
-   LicColor: 0x00c702
+   CarClassEstLapTime: 84.1054
+   IRating: 1433
+   LicLevel: 10
+   LicSubLevel: 254
+   LicString: C 2.54
+   LicColor: 0xfeec04
    IsSpectator: 0
-   CarDesignStr: 13,111111,101a84,d7162d
-   HelmetDesignStr: 17,111111,101a84,d7162d
-   SuitDesignStr: 5,111111,d7162d,542c2c
+   CarDesignStr: 9,d5ff00,111111,5e5e5e,000000
+   HelmetDesignStr: 1,135324,111111,5e5e5e
+   SuitDesignStr: 1,2f418c,111111,5e5e5e
    BodyType: 0
-   FaceType: 0
+   FaceType: 4
    HelmetType: 0
    CarNumberDesignStr: 0,0,ffffff,777777,000000
    CarSponsor_1: 0
    CarSponsor_2: 0
    ClubName: None
    ClubID: 0
-   FlairName: United Kingdom
-   FlairID: 222
+   FlairName: United States
+   FlairID: 223
    DivisionName: Division 1
    DivisionID: 0
    CurDriverIncidentCount: -1
    TeamIncidentCount: -1
  - CarIdx: 29
-   UserName: Carlos Rodriguez Fernandez
-   AbbrevName: 
-   Initials: 
-   UserID: 147913
+   UserName: Liam Habul
+   AbbrevName: Habul, L
+   Initials: LH
+   UserID: 847762
    TeamID: 0
-   TeamName: Carlos Rodriguez Fernandez
-   CarNumber: "14"
-   CarNumberRaw: 14
-   CarPath: ferrari296gt3
-   CarClassID: 2708
-   CarID: 173
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: Ferrari 296 GT3
-   CarScreenNameShort: Ferrari 296 GT3
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.5522
-   IRating: 2652
-   LicLevel: 18
-   LicSubLevel: 254
-   LicString: A 2.54
-   LicColor: 0x0153db
-   IsSpectator: 0
-   CarDesignStr: 1,ff0000,00ff00,0000ff,ffffff
-   HelmetDesignStr: 61,ed2129,cccccc,666666
-   SuitDesignStr: 23,f01919,cccccc,666666
-   BodyType: 0
-   FaceType: 0
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Spain
-   FlairID: 198
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 30
-   UserName: Ihar Zalatukha
-   AbbrevName: 
-   Initials: 
-   UserID: 1153757
-   TeamID: 0
-   TeamName: Ihar Zalatukha
-   CarNumber: "31"
-   CarNumberRaw: 31
-   CarPath: ferrari296gt3
-   CarClassID: 2708
-   CarID: 173
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: Ferrari 296 GT3
-   CarScreenNameShort: Ferrari 296 GT3
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.5522
-   IRating: 1971
-   LicLevel: 19
-   LicSubLevel: 336
-   LicString: A 3.36
-   LicColor: 0x0153db
-   IsSpectator: 0
-   CarDesignStr: 0,2a3795,ed2129,ffffff
-   HelmetDesignStr: 31,379813,ffda34,ffda34
-   SuitDesignStr: 3,94da5d,f4e66a,487ed5
-   BodyType: 0
-   FaceType: 0
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,3964e8
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Kazakhstan
-   FlairID: 107
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 31
-   UserName: TJ Mclean
-   AbbrevName: 
-   Initials: 
-   UserID: 311722
-   TeamID: 0
-   TeamName: TJ Mclean
-   CarNumber: "32"
-   CarNumberRaw: 32
+   TeamName: Liam Habul
+   CarNumber: "30"
+   CarNumberRaw: 30
    CarPath: mclaren720sgt3
    CarClassID: 2708
    CarID: 188
@@ -2835,47 +2242,47 @@ DriverInfo:
    CarClassPowerAdjust: 0.000 %
    CarClassDryTireSetLimit: 0 %
    CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.0668
-   IRating: 7101
-   LicLevel: 14
-   LicSubLevel: 230
-   LicString: B 2.30
+   CarClassEstLapTime: 83.6931
+   IRating: 542
+   LicLevel: 16
+   LicSubLevel: 462
+   LicString: B 4.62
    LicColor: 0x00c702
    IsSpectator: 0
-   CarDesignStr: 11,97cdfe,000000,f77231
-   HelmetDesignStr: 51,97cdfe,000000,f77231
-   SuitDesignStr: 1,ffffff,ffffff,d49fdb
+   CarDesignStr: 4,000000,0057ff,ff7300,000000
+   HelmetDesignStr: 19,0d27ee,f19d0d,d5911d
+   SuitDesignStr: 33,050300,eff407,ef9905
    BodyType: 0
-   FaceType: 10
+   FaceType: 0
    HelmetType: 0
    CarNumberDesignStr: 0,0,ffffff,777777,000000
    CarSponsor_1: 0
    CarSponsor_2: 0
    ClubName: None
    ClubID: 0
-   FlairName: Thailand
-   FlairID: 208
+   FlairName: United States
+   FlairID: 223
    DivisionName: Division 1
    DivisionID: 0
    CurDriverIncidentCount: -1
    TeamIncidentCount: -1
- - CarIdx: 32
-   UserName: Rhys A Marshall
-   AbbrevName: Marshall, R
-   Initials: RM
-   UserID: 354535
+ - CarIdx: 30
+   UserName: Ryan Chase2
+   AbbrevName: Chase2, R
+   Initials: RC
+   UserID: 1189420
    TeamID: 0
-   TeamName: Rhys A Marshall
-   CarNumber: "83"
-   CarNumberRaw: 83
-   CarPath: fordmustanggt3
+   TeamName: Ryan Chase2
+   CarNumber: "875"
+   CarNumberRaw: 875
+   CarPath: ferrari296gt3
    CarClassID: 2708
-   CarID: 185
+   CarID: 173
    CarIsPaceCar: 0
    CarIsAI: 0
    CarIsElectric: 0
-   CarScreenName: Ford Mustang GT3
-   CarScreenNameShort: Ford Mustang GT3
+   CarScreenName: Ferrari 296 GT3
+   CarScreenNameShort: Ferrari 296 GT3
    CarCfg: -1
    CarCfgName: 
    CarCfgCustomPaintExt: 
@@ -2887,37 +2294,141 @@ DriverInfo:
    CarClassPowerAdjust: 0.000 %
    CarClassDryTireSetLimit: 0 %
    CarClassColor: 0xffffff
-   CarClassEstLapTime: 101.0550
-   IRating: 1881
-   LicLevel: 19
-   LicSubLevel: 360
-   LicString: A 3.60
-   LicColor: 0x0153db
+   CarClassEstLapTime: 84.0539
+   IRating: 1264
+   LicLevel: 11
+   LicSubLevel: 312
+   LicString: C 3.12
+   LicColor: 0xfeec04
    IsSpectator: 0
-   CarDesignStr: 4,d0ff34,d0ff34,27282d,d0ff34
-   HelmetDesignStr: 47,d0ff34,d0ff34,27282d
-   SuitDesignStr: 25,d0ff34,d0ff34,27282d
+   CarDesignStr: 3,0b007f,f2f508,ff00ea;ff00ea
+   HelmetDesignStr: 19,0b007f,f2f508,ff00ea
+   SuitDesignStr: 33,0b007f,f2f508,ff00ea
    BodyType: 0
-   FaceType: 0
+   FaceType: 4
    HelmetType: 0
-   CarNumberDesignStr: 0,0,d0ff34,d0ff34,27282d
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
    CarSponsor_1: 0
    CarSponsor_2: 0
    ClubName: None
    ClubID: 0
-   FlairName: United Kingdom
-   FlairID: 222
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 31
+   UserName: Tracy Lyons
+   AbbrevName: Lyons, T
+   Initials: TL
+   UserID: 820616
+   TeamID: 0
+   TeamName: Tracy Lyons
+   CarNumber: "07"
+   CarNumberRaw: 2007
+   CarPath: chevyvettez06rgt3
+   CarClassID: 2708
+   CarID: 184
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Chevrolet Corvette Z06 GT3.R
+   CarScreenNameShort: Corvette GT3.R
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.6194
+   IRating: 946
+   LicLevel: 2
+   LicSubLevel: 264
+   LicString: R 2.64
+   LicColor: 0xfc0706
+   IsSpectator: 0
+   CarDesignStr: 2,ff0000,00ff00,0000ff,000000
+   HelmetDesignStr: 63,000000,000000,d6f100
+   SuitDesignStr: 35,f1fd00,000000,fa0505
+   BodyType: 0
+   FaceType: 4
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 32
+   UserName: Nathan Wagner
+   AbbrevName: Wagner, N
+   Initials: NW
+   UserID: 392323
+   TeamID: 0
+   TeamName: Nathan Wagner
+   CarNumber: "33"
+   CarNumberRaw: 33
+   CarPath: porsche992rgt3
+   CarClassID: 2708
+   CarID: 169
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Porsche 911 GT3 R (992)
+   CarScreenNameShort: Porsche 911 GT3 R (992)
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.9030
+   IRating: 1257
+   LicLevel: 14
+   LicSubLevel: 261
+   LicString: B 2.61
+   LicColor: 0x00c702
+   IsSpectator: 0
+   CarDesignStr: 10,000000,780586,ffffff
+   HelmetDesignStr: 28,111111,0ada00,ae089e
+   SuitDesignStr: 4,909890,0ada00,8b068d
+   BodyType: 0
+   FaceType: 0
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
    DivisionName: Division 1
    DivisionID: 0
    CurDriverIncidentCount: -1
    TeamIncidentCount: -1
  - CarIdx: 33
-   UserName: Michael Jamieson
-   AbbrevName: Jamieson, M
-   Initials: MJ
-   UserID: 669730
+   UserName: Jacob Fyvie2
+   AbbrevName: 
+   Initials: 
+   UserID: 1252242
    TeamID: 0
-   TeamName: Michael Jamieson
+   TeamName: Jacob Fyvie2
    CarNumber: "34"
    CarNumberRaw: 34
    CarPath: porsche992rgt3
@@ -2939,16 +2450,16 @@ DriverInfo:
    CarClassPowerAdjust: 0.000 %
    CarClassDryTireSetLimit: 0 %
    CarClassColor: 0xffffff
-   CarClassEstLapTime: 101.9815
-   IRating: 2296
-   LicLevel: 18
-   LicSubLevel: 275
-   LicString: A 2.75
-   LicColor: 0x0153db
+   CarClassEstLapTime: 84.9030
+   IRating: 1359
+   LicLevel: 6
+   LicSubLevel: 241
+   LicString: D 2.41
+   LicColor: 0xfc8a27
    IsSpectator: 0
-   CarDesignStr: 15,000000,ffffff,fa01f8
-   HelmetDesignStr: 42,000000,ffffff,fa01f8
-   SuitDesignStr: 21,000000,b10bc5,03fff0
+   CarDesignStr: 24,ffffff,9a989a,ed1c2e
+   HelmetDesignStr: 1,ffffff,9a989a,ed1c2e
+   SuitDesignStr: 1,ffffff,9a989a,ed1c2e
    BodyType: 0
    FaceType: 0
    HelmetType: 0
@@ -2957,21 +2468,21 @@ DriverInfo:
    CarSponsor_2: 0
    ClubName: None
    ClubID: 0
-   FlairName: Germany
-   FlairID: 77
+   FlairName: Canada
+   FlairID: 39
    DivisionName: Division 1
    DivisionID: 0
    CurDriverIncidentCount: -1
    TeamIncidentCount: -1
  - CarIdx: 34
-   UserName: David Griffin8
-   AbbrevName: Griffin8, D
-   Initials: DG
-   UserID: 594942
+   UserName: Majid Gharbawi
+   AbbrevName: Gharbawi, M
+   Initials: MG
+   UserID: 767996
    TeamID: 0
-   TeamName: David Griffin8
-   CarNumber: "18"
-   CarNumberRaw: 18
+   TeamName: Majid Gharbawi
+   CarNumber: "35"
+   CarNumberRaw: 35
    CarPath: porsche992rgt3
    CarClassID: 2708
    CarID: 169
@@ -2991,247 +2502,39 @@ DriverInfo:
    CarClassPowerAdjust: 0.000 %
    CarClassDryTireSetLimit: 0 %
    CarClassColor: 0xffffff
-   CarClassEstLapTime: 101.9815
-   IRating: 2521
+   CarClassEstLapTime: 84.9030
+   IRating: 1815
    LicLevel: 19
-   LicSubLevel: 344
-   LicString: A 3.44
+   LicSubLevel: 355
+   LicString: A 3.55
    LicColor: 0x0153db
    IsSpectator: 0
-   CarDesignStr: 1,ff0000,00ff00,0000ff
-   HelmetDesignStr: 25,050d28,3c782d,ffffff
-   SuitDesignStr: 13,111111,ff6e47,e50000
+   CarDesignStr: 0,0b6f1b,077907,ffffff,f3f3f3
+   HelmetDesignStr: 53,ffffff,136504,111111
+   SuitDesignStr: 35,ffffff,11660a,111111
    BodyType: 0
-   FaceType: 0
+   FaceType: 6
    HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
+   CarNumberDesignStr: 0,0,777777,000000,ffffff
+   CarSponsor_1: 180
    CarSponsor_2: 0
    ClubName: None
    ClubID: 0
-   FlairName: United States
-   FlairID: 223
+   FlairName: Saudi Arabia
+   FlairID: 185
    DivisionName: Division 1
    DivisionID: 0
    CurDriverIncidentCount: -1
    TeamIncidentCount: -1
  - CarIdx: 35
-   UserName: Alexey Shelobanov
-   AbbrevName: Shelobanov, A
-   Initials: AS
-   UserID: 304554
+   UserName: John Simpson8
+   AbbrevName: Simpson8, J
+   Initials: JS
+   UserID: 848677
    TeamID: 0
-   TeamName: Alexey Shelobanov
-   CarNumber: "404"
-   CarNumberRaw: 404
-   CarPath: mclaren720sgt3
-   CarClassID: 2708
-   CarID: 188
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: McLaren 720S GT3 EVO
-   CarScreenNameShort: McLaren 720S GT3 EVO
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.0668
-   IRating: 5748
-   LicLevel: 20
-   LicSubLevel: 499
-   LicString: A 4.99
-   LicColor: 0x0153db
-   IsSpectator: 0
-   CarDesignStr: 22,000000,000000,000000
-   HelmetDesignStr: 67,000692,2f2f2f,ff0054
-   SuitDesignStr: 22,000000,000000,000000
-   BodyType: 0
-   FaceType: 4
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Unaffiliated
-   FlairID: 1
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 36
-   UserName: Herve Fraiiture
-   AbbrevName: Fraiiture, H
-   Initials: HF
-   UserID: 406608
-   TeamID: 0
-   TeamName: Herve Fraiiture
-   CarNumber: "37"
-   CarNumberRaw: 37
-   CarPath: bmwm4gt3
-   CarClassID: 2708
-   CarID: 132
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: BMW M4 GT3
-   CarScreenNameShort: BMW M4 GT3
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.6856
-   IRating: 3001
-   LicLevel: 19
-   LicSubLevel: 396
-   LicString: A 3.96
-   LicColor: 0x0153db
-   IsSpectator: 0
-   CarDesignStr: 21,ffc500,3e3e3e,ffffff,000000
-   HelmetDesignStr: 68,f2f4f7,136fe9,000000
-   SuitDesignStr: 0,fbfbfc,0d70f3,464545
-   BodyType: 0
-   FaceType: 8
-   HelmetType: 0
-   CarNumberDesignStr: 44,1,303030,303030,ffc500
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Belgium
-   FlairID: 23
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 37
-   UserName: Rudy Breedveld
-   AbbrevName: Breedveld, R
-   Initials: RB
-   UserID: 433162
-   TeamID: 0
-   TeamName: Rudy Breedveld
-   CarNumber: "38"
-   CarNumberRaw: 38
-   CarPath: mercedesamgevogt3
-   CarClassID: 2708
-   CarID: 156
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: Mercedes-AMG GT3 2020
-   CarScreenNameShort: Mercedes GT3 2020
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 101.4363
-   IRating: 1652
-   LicLevel: 20
-   LicSubLevel: 460
-   LicString: A 4.60
-   LicColor: 0x0153db
-   IsSpectator: 0
-   CarDesignStr: 28,2a3795,ed2129,ffffff
-   HelmetDesignStr: 35,f50000,ffffff,002eb9
-   SuitDesignStr: 22,03fffb,001775,ffffff
-   BodyType: 0
-   FaceType: 0
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Netherlands
-   FlairID: 146
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 38
-   UserName: Javi Perez3
-   AbbrevName: Perez3, J
-   Initials: JP
-   UserID: 937802
-   TeamID: 0
-   TeamName: Javi Perez3
-   CarNumber: "39"
-   CarNumberRaw: 39
-   CarPath: ferrari296gt3
-   CarClassID: 2708
-   CarID: 173
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: Ferrari 296 GT3
-   CarScreenNameShort: Ferrari 296 GT3
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.5522
-   IRating: 1333
-   LicLevel: 18
-   LicSubLevel: 215
-   LicString: A 2.15
-   LicColor: 0x0153db
-   IsSpectator: 0
-   CarDesignStr: 0,ffffff,ffffff,fc0a0a,f9f5f5
-   HelmetDesignStr: 19,ededed,ed0c0c,fff800
-   SuitDesignStr: 10,ffffff,fc0706,111111
-   BodyType: 0
-   FaceType: 0
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Spain
-   FlairID: 198
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 39
-   UserName: Tiffany Toledano
-   AbbrevName: Toledano, T
-   Initials: TT
-   UserID: 419789
-   TeamID: 0
-   TeamName: Tiffany Toledano
-   CarNumber: "40"
-   CarNumberRaw: 40
+   TeamName: John Simpson8
+   CarNumber: "363"
+   CarNumberRaw: 363
    CarPath: fordmustanggt3
    CarClassID: 2708
    CarID: 185
@@ -3251,195 +2554,143 @@ DriverInfo:
    CarClassPowerAdjust: 0.000 %
    CarClassDryTireSetLimit: 0 %
    CarClassColor: 0xffffff
-   CarClassEstLapTime: 101.0550
-   IRating: 2520
-   LicLevel: 20
-   LicSubLevel: 484
-   LicString: A 4.84
+   CarClassEstLapTime: 84.4643
+   IRating: 530
+   LicLevel: 14
+   LicSubLevel: 225
+   LicString: B 2.25
+   LicColor: 0x00c702
+   IsSpectator: 0
+   CarDesignStr: 19,0c0a80,070868,207ce2;08107b
+   HelmetDesignStr: 9,ff0909,000000,f4f2f2
+   SuitDesignStr: 3,080808,948f8f,ffffff
+   BodyType: 1
+   FaceType: 8
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 36
+   UserName: Matt Stallcup
+   AbbrevName: Stallcup, M
+   Initials: MS
+   UserID: 954142
+   TeamID: 0
+   TeamName: Matt Stallcup
+   CarNumber: "37"
+   CarNumberRaw: 37
+   CarPath: fordmustanggt3
+   CarClassID: 2708
+   CarID: 185
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Ford Mustang GT3
+   CarScreenNameShort: Ford Mustang GT3
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.4643
+   IRating: 2593
+   LicLevel: 18
+   LicSubLevel: 254
+   LicString: A 2.54
    LicColor: 0x0153db
    IsSpectator: 0
-   CarDesignStr: 21,ffffff,00baff,0040ff
-   HelmetDesignStr: 35,ffffff,00baff,0040ff
-   SuitDesignStr: 27,000000,ffffff,ff0404
+   CarDesignStr: 24,000000,00fff0,bd00ff
+   HelmetDesignStr: 36,646bba,00be20,e200d3
+   SuitDesignStr: 20,000000,bd00ff,00fff0
+   BodyType: 0
+   FaceType: 0
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 37
+   UserName: Seth Dawson
+   AbbrevName: Dawson, S
+   Initials: SD
+   UserID: 1072747
+   TeamID: 0
+   TeamName: Seth Dawson
+   CarNumber: "45"
+   CarNumberRaw: 45
+   CarPath: ferrari296gt3
+   CarClassID: 2708
+   CarID: 173
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Ferrari 296 GT3
+   CarScreenNameShort: Ferrari 296 GT3
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.0539
+   IRating: 2030
+   LicLevel: 18
+   LicSubLevel: 225
+   LicString: A 2.25
+   LicColor: 0x0153db
+   IsSpectator: 0
+   CarDesignStr: 23,000000,65c12b,7b7b7b.515151
+   HelmetDesignStr: 35,656565,ffffff,65c12b
+   SuitDesignStr: 0,000000,000000,000000
    BodyType: 1
-   FaceType: 3
+   FaceType: 8
    HelmetType: 0
    CarNumberDesignStr: 0,0,ffffff,777777,000000
    CarSponsor_1: 0
    CarSponsor_2: 0
    ClubName: None
    ClubID: 0
-   FlairName: Spain
-   FlairID: 198
+   FlairName: United States
+   FlairID: 223
    DivisionName: Division 1
    DivisionID: 0
    CurDriverIncidentCount: -1
    TeamIncidentCount: -1
- - CarIdx: 40
-   UserName: Ozz Luevano
-   AbbrevName: Luevano, O
-   Initials: OL
-   UserID: 993447
+ - CarIdx: 38
+   UserName: Kenzie Van Der Werken
+   AbbrevName: Werken, K
+   Initials: KW
+   UserID: 1035871
    TeamID: 0
-   TeamName: Ozz Luevano
-   CarNumber: "36"
-   CarNumberRaw: 36
-   CarPath: ferrari296gt3
-   CarClassID: 2708
-   CarID: 173
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: Ferrari 296 GT3
-   CarScreenNameShort: Ferrari 296 GT3
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.5522
-   IRating: 1137
-   LicLevel: 15
-   LicSubLevel: 300
-   LicString: B 3.00
-   LicColor: 0x00c702
-   IsSpectator: 0
-   CarDesignStr: 10,a942fa,000000,32133b
-   HelmetDesignStr: 12,8fff00,cccccc,111111
-   SuitDesignStr: 21,000000,ef9000,b06f00
-   BodyType: 0
-   FaceType: 0
-   HelmetType: 0
-   CarNumberDesignStr: 35,1,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Mexico
-   FlairID: 134
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 41
-   UserName: Helder E Moreira
-   AbbrevName: Moreira, H
-   Initials: HM
-   UserID: 785266
-   TeamID: 0
-   TeamName: Helder E Moreira
-   CarNumber: "42"
-   CarNumberRaw: 42
-   CarPath: ferrari296gt3
-   CarClassID: 2708
-   CarID: 173
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: Ferrari 296 GT3
-   CarScreenNameShort: Ferrari 296 GT3
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.5522
-   IRating: 2629
-   LicLevel: 14
-   LicSubLevel: 217
-   LicString: B 2.17
-   LicColor: 0x00c702
-   IsSpectator: 0
-   CarDesignStr: 1,ff0000,00ff00,0000ff
-   HelmetDesignStr: 22,e5d336,ffffff,ffffff
-   SuitDesignStr: 34,ffffff,ffffff,c7b40c
-   BodyType: 0
-   FaceType: 0
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Portugal
-   FlairID: 168
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 42
-   UserName: Alessandro Tessitore
-   AbbrevName: Tessitore, A
-   Initials: AT
-   UserID: 321182
-   TeamID: 0
-   TeamName: Alessandro Tessitore
-   CarNumber: "04"
-   CarNumberRaw: 2004
-   CarPath: bmwm4gt3
-   CarClassID: 2708
-   CarID: 132
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: BMW M4 GT3
-   CarScreenNameShort: BMW M4 GT3
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.6856
-   IRating: 2893
-   LicLevel: 15
-   LicSubLevel: 350
-   LicString: B 3.50
-   LicColor: 0x00c702
-   IsSpectator: 0
-   CarDesignStr: 12,2a3795,ed2129,ffffff
-   HelmetDesignStr: 67,0c165f,ed2129,ffffff
-   SuitDesignStr: 5,0c165f,ffffff,ed2129
-   BodyType: 0
-   FaceType: 0
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Italy
-   FlairID: 101
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 43
-   UserName: Jack Van Bennekom
-   AbbrevName: Bennekom, J
-   Initials: JB
-   UserID: 1004647
-   TeamID: 0
-   TeamName: Jack Van Bennekom
-   CarNumber: "72"
-   CarNumberRaw: 72
+   TeamName: Kenzie Van Der Werken
+   CarNumber: "817"
+   CarNumberRaw: 817
    CarPath: porsche992rgt3
    CarClassID: 2708
    CarID: 169
@@ -3459,20 +2710,20 @@ DriverInfo:
    CarClassPowerAdjust: 0.000 %
    CarClassDryTireSetLimit: 0 %
    CarClassColor: 0xffffff
-   CarClassEstLapTime: 101.9815
-   IRating: 1807
-   LicLevel: 19
-   LicSubLevel: 353
-   LicString: A 3.53
-   LicColor: 0x0153db
+   CarClassEstLapTime: 84.9030
+   IRating: 2310
+   LicLevel: 10
+   LicSubLevel: 237
+   LicString: C 2.37
+   LicColor: 0xfeec04
    IsSpectator: 0
-   CarDesignStr: 0,2a3795,ed2129,ffffff,000000
-   HelmetDesignStr: 0,e2fc0a,004f0c,000000
-   SuitDesignStr: 1,fc0000,c6ee04,0e0e0e
-   BodyType: 1
+   CarDesignStr: 21,111111,3300ff,ffffff
+   HelmetDesignStr: 54,111111,3300ff,ffffff
+   SuitDesignStr: 21,111111,1905fc,ffffff
+   BodyType: 0
    FaceType: 0
    HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,000000,000000
+   CarNumberDesignStr: 9,0,ffffff,777777,000000
    CarSponsor_1: 0
    CarSponsor_2: 0
    ClubName: None
@@ -3483,15 +2734,743 @@ DriverInfo:
    DivisionID: 0
    CurDriverIncidentCount: -1
    TeamIncidentCount: -1
+ - CarIdx: 39
+   UserName: Aaron Robinson4
+   AbbrevName: Robinson4, A
+   Initials: AR
+   UserID: 372970
+   TeamID: 0
+   TeamName: Aaron Robinson4
+   CarNumber: "40"
+   CarNumberRaw: 40
+   CarPath: lamborghinievogt3
+   CarClassID: 2708
+   CarID: 133
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Lamborghini Huracan GT3 EVO
+   CarScreenNameShort: Lamborghini GT3
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.1349
+   IRating: 1389
+   LicLevel: 19
+   LicSubLevel: 351
+   LicString: A 3.51
+   LicColor: 0x0153db
+   IsSpectator: 0
+   CarDesignStr: 1,111111,0300c2,ffee47
+   HelmetDesignStr: 23,111111,3735ab,272727
+   SuitDesignStr: 15,111111,0300c2,77766d
+   BodyType: 0
+   FaceType: 2
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 40
+   UserName: Carson Osborne
+   AbbrevName: Osborne, C
+   Initials: CO
+   UserID: 859972
+   TeamID: 0
+   TeamName: Carson Osborne
+   CarNumber: "41"
+   CarNumberRaw: 41
+   CarPath: fordmustanggt3
+   CarClassID: 2708
+   CarID: 185
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Ford Mustang GT3
+   CarScreenNameShort: Ford Mustang GT3
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.4643
+   IRating: 775
+   LicLevel: 5
+   LicSubLevel: 177
+   LicString: D 1.77
+   LicColor: 0xfc8a27
+   IsSpectator: 0
+   CarDesignStr: 14,fff7f7,545353,022d4a
+   HelmetDesignStr: 59,fff7f7,545353,022d4a
+   SuitDesignStr: 7,ffffff,fff9f9,ff00e1
+   BodyType: 0
+   FaceType: 0
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 41
+   UserName: Brian Neal6
+   AbbrevName: Neal6, B
+   Initials: BN
+   UserID: 1235762
+   TeamID: 0
+   TeamName: Brian Neal6
+   CarNumber: "66"
+   CarNumberRaw: 66
+   CarPath: porsche992rgt3
+   CarClassID: 2708
+   CarID: 169
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Porsche 911 GT3 R (992)
+   CarScreenNameShort: Porsche 911 GT3 R (992)
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.9030
+   IRating: 1786
+   LicLevel: 6
+   LicSubLevel: 282
+   LicString: D 2.82
+   LicColor: 0xfc8a27
+   IsSpectator: 0
+   CarDesignStr: 15,ffffff,000000,ffe300,ffffff
+   HelmetDesignStr: 18,ffffff,000000,ffe300
+   SuitDesignStr: 1,ffffff,231f20,ef3e22
+   BodyType: 0
+   FaceType: 0
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 42
+   UserName: Douglas Antônio Teixeira De Fátima
+   AbbrevName: Fátima, D
+   Initials: DF
+   UserID: 1058059
+   TeamID: 0
+   TeamName: Douglas Antônio Teixeira De Fátima
+   CarNumber: "43"
+   CarNumberRaw: 43
+   CarPath: ferrari296gt3
+   CarClassID: 2708
+   CarID: 173
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Ferrari 296 GT3
+   CarScreenNameShort: Ferrari 296 GT3
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.0539
+   IRating: 1715
+   LicLevel: 14
+   LicSubLevel: 225
+   LicString: B 2.25
+   LicColor: 0x00c702
+   IsSpectator: 0
+   CarDesignStr: 19,ed0000,f5f5f5,000000;000000
+   HelmetDesignStr: 1,fd0808,0a0a0a,111111
+   SuitDesignStr: 26,000000,ecf0f4,9e0316
+   BodyType: 0
+   FaceType: 4
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,1d650f,040202,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: Brazil
+   FlairID: 31
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 43
+   UserName: Jesse Gonzalez
+   AbbrevName: 
+   Initials: 
+   UserID: 529007
+   TeamID: 0
+   TeamName: Jesse Gonzalez
+   CarNumber: "44"
+   CarNumberRaw: 44
+   CarPath: fordmustanggt3
+   CarClassID: 2708
+   CarID: 185
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Ford Mustang GT3
+   CarScreenNameShort: Ford Mustang GT3
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.4643
+   IRating: 3523
+   LicLevel: 15
+   LicSubLevel: 364
+   LicString: B 3.64
+   LicColor: 0x00c702
+   IsSpectator: 0
+   CarDesignStr: 20,8d2424,252846,252846
+   HelmetDesignStr: 22,8d2424,252846,252846
+   SuitDesignStr: 34,252846,282b3b,b0b0b0
+   BodyType: 0
+   FaceType: 0
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
  - CarIdx: 44
+   UserName: Erik Cloutier
+   AbbrevName: Cloutier, E
+   Initials: EC
+   UserID: 829873
+   TeamID: 0
+   TeamName: Erik Cloutier
+   CarNumber: "47"
+   CarNumberRaw: 47
+   CarPath: fordmustanggt3
+   CarClassID: 2708
+   CarID: 185
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Ford Mustang GT3
+   CarScreenNameShort: Ford Mustang GT3
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.4643
+   IRating: 1156
+   LicLevel: 13
+   LicSubLevel: 124
+   LicString: B 1.24
+   LicColor: 0x00c702
+   IsSpectator: 0
+   CarDesignStr: 4,ff2800,000000,ffffff
+   HelmetDesignStr: 4,ff2800,000000,ffffff
+   SuitDesignStr: 7,ff0000,000000,ffffff
+   BodyType: 1
+   FaceType: 0
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: Canada
+   FlairID: 39
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 45
+   UserName: Joe Simmons5
+   AbbrevName: Simmons5, J
+   Initials: JS
+   UserID: 1106622
+   TeamID: 0
+   TeamName: Joe Simmons5
+   CarNumber: "48"
+   CarNumberRaw: 48
+   CarPath: ferrari296gt3
+   CarClassID: 2708
+   CarID: 173
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Ferrari 296 GT3
+   CarScreenNameShort: Ferrari 296 GT3
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.0539
+   IRating: 983
+   LicLevel: 15
+   LicSubLevel: 347
+   LicString: B 3.47
+   LicColor: 0x00c702
+   IsSpectator: 0
+   CarDesignStr: 22,e11cb6,e91be1,e821ec
+   HelmetDesignStr: 19,121113,000000,24a51d
+   SuitDesignStr: 35,000000,131111,22f2ad
+   BodyType: 0
+   FaceType: 0
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,3f80cc,b4792a,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 46
+   UserName: lucas Silva
+   AbbrevName: Silva, l
+   Initials: lS
+   UserID: 146018
+   TeamID: 0
+   TeamName: lucas Silva
+   CarNumber: "49"
+   CarNumberRaw: 49
+   CarPath: acuransxevo22gt3
+   CarClassID: 2708
+   CarID: 194
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Acura NSX GT3 EVO 22
+   CarScreenNameShort: Acura NSX GT3 EVO 22
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 83.3612
+   IRating: 2245
+   LicLevel: 18
+   LicSubLevel: 265
+   LicString: A 2.65
+   LicColor: 0x0153db
+   IsSpectator: 0
+   CarDesignStr: 25,ecf62c,32cd32,2a3795
+   HelmetDesignStr: 14,ecf62c,32cd32,2a3795
+   SuitDesignStr: 7,e8f304,000000,ffffff
+   BodyType: 0
+   FaceType: 0
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: Brazil
+   FlairID: 31
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 47
+   UserName: Samuel Graton
+   AbbrevName: Graton, S
+   Initials: SG
+   UserID: 354816
+   TeamID: 0
+   TeamName: Samuel Graton
+   CarNumber: "50"
+   CarNumberRaw: 50
+   CarPath: fordmustanggt3
+   CarClassID: 2708
+   CarID: 185
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Ford Mustang GT3
+   CarScreenNameShort: Ford Mustang GT3
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.4643
+   IRating: 4363
+   LicLevel: 18
+   LicSubLevel: 251
+   LicString: A 2.51
+   LicColor: 0x0153db
+   IsSpectator: 0
+   CarDesignStr: 7,ffffff,ec6c5b,000000
+   HelmetDesignStr: 40,ffffff,ec6c5b,000000
+   SuitDesignStr: 26,ffffff,ec6c5b,000000
+   BodyType: 0
+   FaceType: 0
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 48
+   UserName: Aleksi Kaipainen
+   AbbrevName: 
+   Initials: 
+   UserID: 452050
+   TeamID: 0
+   TeamName: Aleksi Kaipainen
+   CarNumber: "96"
+   CarNumberRaw: 96
+   CarPath: lamborghinievogt3
+   CarClassID: 2708
+   CarID: 133
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Lamborghini Huracan GT3 EVO
+   CarScreenNameShort: Lamborghini GT3
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.1349
+   IRating: 5043
+   LicLevel: 18
+   LicSubLevel: 262
+   LicString: A 2.62
+   LicColor: 0x0153db
+   IsSpectator: 0
+   CarDesignStr: 16,097307,e2ee08,42760e
+   HelmetDesignStr: 64,ffcc00,137f0d,000000
+   SuitDesignStr: 15,000000,e70b08,e6e6e5
+   BodyType: 0
+   FaceType: 0
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 2
+   CarSponsor_2: 2
+   ClubName: None
+   ClubID: 0
+   FlairName: Finland
+   FlairID: 70
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 49
+   UserName: Travis Bender2
+   AbbrevName: Bender2, T
+   Initials: TB
+   UserID: 861474
+   TeamID: 0
+   TeamName: Travis Bender2
+   CarNumber: "069"
+   CarNumberRaw: 3069
+   CarPath: acuransxevo22gt3
+   CarClassID: 2708
+   CarID: 194
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Acura NSX GT3 EVO 22
+   CarScreenNameShort: Acura NSX GT3 EVO 22
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 83.3612
+   IRating: 1373
+   LicLevel: 19
+   LicSubLevel: 320
+   LicString: A 3.20
+   LicColor: 0x0153db
+   IsSpectator: 0
+   CarDesignStr: 22,000000,595959,7200e3;ffffff
+   HelmetDesignStr: 49,000000,595959,7200e3
+   SuitDesignStr: 0,020101,5a5a5a,9600ff
+   BodyType: 0
+   FaceType: 4
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 50
+   UserName: Juan Velez3
+   AbbrevName: Velez3, J
+   Initials: JV
+   UserID: 925104
+   TeamID: 0
+   TeamName: Juan Velez3
+   CarNumber: "51"
+   CarNumberRaw: 51
+   CarPath: chevyvettez06rgt3
+   CarClassID: 2708
+   CarID: 184
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Chevrolet Corvette Z06 GT3.R
+   CarScreenNameShort: Corvette GT3.R
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.6194
+   IRating: 1005
+   LicLevel: 10
+   LicSubLevel: 228
+   LicString: C 2.28
+   LicColor: 0xfeec04
+   IsSpectator: 0
+   CarDesignStr: 16,dd2007,f7f7f7,054e0f,fffdfd
+   HelmetDesignStr: 57,dd2007,f7f7f7,054e0f
+   SuitDesignStr: 10,000000,000000,4cfc7d
+   BodyType: 0
+   FaceType: 6
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,000000,f1eeee,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: Mexico
+   FlairID: 134
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 51
+   UserName: Gabriel Maza2
+   AbbrevName: Maza2, G
+   Initials: GM
+   UserID: 1041041
+   TeamID: 0
+   TeamName: Gabriel Maza2
+   CarNumber: "52"
+   CarNumberRaw: 52
+   CarPath: fordmustanggt3
+   CarClassID: 2708
+   CarID: 185
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Ford Mustang GT3
+   CarScreenNameShort: Ford Mustang GT3
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.4643
+   IRating: 1473
+   LicLevel: 10
+   LicSubLevel: 236
+   LicString: C 2.36
+   LicColor: 0xfeec04
+   IsSpectator: 0
+   CarDesignStr: 1,ff0000,00ff00,0000ff
+   HelmetDesignStr: 42,0094ff,ffffff,eddd09
+   SuitDesignStr: 22,4d78e5,ffdf09,ffffff
+   BodyType: 0
+   FaceType: 0
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: Argentina
+   FlairID: 13
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 52
+   UserName: Sam Havely
+   AbbrevName: Havely, S
+   Initials: SH
+   UserID: 1232883
+   TeamID: 0
+   TeamName: Sam Havely
+   CarNumber: "53"
+   CarNumberRaw: 53
+   CarPath: porsche992rgt3
+   CarClassID: 2708
+   CarID: 169
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Porsche 911 GT3 R (992)
+   CarScreenNameShort: Porsche 911 GT3 R (992)
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.9030
+   IRating: 983
+   LicLevel: 2
+   LicSubLevel: 267
+   LicString: R 2.67
+   LicColor: 0xfc0706
+   IsSpectator: 0
+   CarDesignStr: 10,ffffff,f26722,808080
+   HelmetDesignStr: 1,ffffff,f26722,808080
+   SuitDesignStr: 1,ffffff,f26722,808080
+   BodyType: 0
+   FaceType: 0
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: United States
+   FlairID: 223
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 53
    UserName: Sylvain Melin
    AbbrevName: Melin, S
    Initials: SM
    UserID: 422654
    TeamID: 0
    TeamName: Sylvain Melin
-   CarNumber: "45"
-   CarNumberRaw: 45
+   CarNumber: "54"
+   CarNumberRaw: 54
    CarPath: bmwm4gt3
    CarClassID: 2708
    CarID: 132
@@ -3511,7 +3490,7 @@ DriverInfo:
    CarClassPowerAdjust: 0.000 %
    CarClassDryTireSetLimit: 0 %
    CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.6856
+   CarClassEstLapTime: 84.2210
    IRating: 2314
    LicLevel: 20
    LicSubLevel: 471
@@ -3535,15 +3514,67 @@ DriverInfo:
    DivisionID: 0
    CurDriverIncidentCount: 0
    TeamIncidentCount: 0
- - CarIdx: 45
-   UserName: Illan Menendez
-   AbbrevName: Menendez, I
-   Initials: IM
-   UserID: 264966
+ - CarIdx: 54
+   UserName: Joao Aquino
+   AbbrevName: 
+   Initials: 
+   UserID: 1037719
    TeamID: 0
-   TeamName: Illan Menendez
-   CarNumber: "46"
-   CarNumberRaw: 46
+   TeamName: Joao Aquino
+   CarNumber: "56"
+   CarNumberRaw: 56
+   CarPath: porsche992rgt3
+   CarClassID: 2708
+   CarID: 169
+   CarIsPaceCar: 0
+   CarIsAI: 0
+   CarIsElectric: 0
+   CarScreenName: Porsche 911 GT3 R (992)
+   CarScreenNameShort: Porsche 911 GT3 R (992)
+   CarCfg: -1
+   CarCfgName: 
+   CarCfgCustomPaintExt: 
+   CarClassShortName: GT3 Class
+   CarClassRelSpeed: 52
+   CarClassLicenseLevel: 0
+   CarClassMaxFuelPct: 1.000 %
+   CarClassWeightPenalty: 0.000 kg
+   CarClassPowerAdjust: 0.000 %
+   CarClassDryTireSetLimit: 0 %
+   CarClassColor: 0xffffff
+   CarClassEstLapTime: 84.9030
+   IRating: 2031
+   LicLevel: 14
+   LicSubLevel: 282
+   LicString: B 2.82
+   LicColor: 0x00c702
+   IsSpectator: 0
+   CarDesignStr: 1,ff0000,00ff00,0000ff
+   HelmetDesignStr: 59,a5a5a5,139ba5,000000
+   SuitDesignStr: 1,000000,ff0000,000000
+   BodyType: 0
+   FaceType: 4
+   HelmetType: 0
+   CarNumberDesignStr: 0,0,ffffff,777777,000000
+   CarSponsor_1: 0
+   CarSponsor_2: 0
+   ClubName: None
+   ClubID: 0
+   FlairName: Brazil
+   FlairID: 31
+   DivisionName: Division 1
+   DivisionID: 0
+   CurDriverIncidentCount: -1
+   TeamIncidentCount: -1
+ - CarIdx: 55
+   UserName: Ilson Oliveira
+   AbbrevName: Oliveira, I
+   Initials: IO
+   UserID: 876447
+   TeamID: 0
+   TeamName: Ilson Oliveira
+   CarNumber: "57"
+   CarNumberRaw: 57
    CarPath: acuransxevo22gt3
    CarClassID: 2708
    CarID: 194
@@ -3563,47 +3594,47 @@ DriverInfo:
    CarClassPowerAdjust: 0.000 %
    CarClassDryTireSetLimit: 0 %
    CarClassColor: 0xffffff
-   CarClassEstLapTime: 99.7685
-   IRating: 2793
-   LicLevel: 18
-   LicSubLevel: 255
-   LicString: A 2.55
-   LicColor: 0x0153db
+   CarClassEstLapTime: 83.3612
+   IRating: 1624
+   LicLevel: 15
+   LicSubLevel: 304
+   LicString: B 3.04
+   LicColor: 0x00c702
    IsSpectator: 0
-   CarDesignStr: 3,000000,000000,979797
-   HelmetDesignStr: 22,000000,000000,979797
-   SuitDesignStr: 17,050505,979797,979797
+   CarDesignStr: 16,d8e519,0c4817,202fb6
+   HelmetDesignStr: 65,d8e519,0c4817,202fb6
+   SuitDesignStr: 30,dce614,1a43d2,1719d8
    BodyType: 1
-   FaceType: 4
+   FaceType: 8
    HelmetType: 0
    CarNumberDesignStr: 0,0,ffffff,777777,000000
    CarSponsor_1: 0
    CarSponsor_2: 0
    ClubName: None
    ClubID: 0
-   FlairName: Spain
-   FlairID: 198
+   FlairName: Brazil
+   FlairID: 31
    DivisionName: Division 1
    DivisionID: 0
    CurDriverIncidentCount: -1
    TeamIncidentCount: -1
- - CarIdx: 46
-   UserName: Danijel Vulovic
-   AbbrevName: Vulovic, D
-   Initials: DV
-   UserID: 1007521
+ - CarIdx: 56
+   UserName: Tory Gilbert
+   AbbrevName: Gilbert, T
+   Initials: TG
+   UserID: 145479
    TeamID: 0
-   TeamName: Danijel Vulovic
-   CarNumber: "47"
-   CarNumberRaw: 47
-   CarPath: mclaren720sgt3
+   TeamName: Tory Gilbert
+   CarNumber: "58"
+   CarNumberRaw: 58
+   CarPath: ferrari296gt3
    CarClassID: 2708
-   CarID: 188
+   CarID: 173
    CarIsPaceCar: 0
    CarIsAI: 0
    CarIsElectric: 0
-   CarScreenName: McLaren 720S GT3 EVO
-   CarScreenNameShort: McLaren 720S GT3 EVO
+   CarScreenName: Ferrari 296 GT3
+   CarScreenNameShort: Ferrari 296 GT3
    CarCfg: -1
    CarCfgName: 
    CarCfgCustomPaintExt: 
@@ -3615,172 +3646,16 @@ DriverInfo:
    CarClassPowerAdjust: 0.000 %
    CarClassDryTireSetLimit: 0 %
    CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.0668
-   IRating: 1819
-   LicLevel: 13
-   LicSubLevel: 124
-   LicString: B 1.24
-   LicColor: 0x00c702
+   CarClassEstLapTime: 84.0539
+   IRating: 1026
+   LicLevel: 10
+   LicSubLevel: 250
+   LicString: C 2.50
+   LicColor: 0xfeec04
    IsSpectator: 0
-   CarDesignStr: 16,000000,f20505,000000,ebff00
-   HelmetDesignStr: 35,ffffff,b72c2c,ffffff
-   SuitDesignStr: 27,fd0000,ff0000,000000
-   BodyType: 0
-   FaceType: 0
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Germany
-   FlairID: 77
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 47
-   UserName: Xavier Goncalves
-   AbbrevName: Goncalves, X
-   Initials: XG
-   UserID: 303336
-   TeamID: 0
-   TeamName: Xavier Goncalves
-   CarNumber: "48"
-   CarNumberRaw: 48
-   CarPath: mclaren720sgt3
-   CarClassID: 2708
-   CarID: 188
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: McLaren 720S GT3 EVO
-   CarScreenNameShort: McLaren 720S GT3 EVO
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.0668
-   IRating: 1752
-   LicLevel: 15
-   LicSubLevel: 374
-   LicString: B 3.74
-   LicColor: 0x00c702
-   IsSpectator: 0
-   CarDesignStr: 0,fc652e,fc652e,fc652e,3b3b3b
-   HelmetDesignStr: 23,43beac,5a66ae,020204
-   SuitDesignStr: 13,020204,43beac,5a66ae
-   BodyType: 0
-   FaceType: 0
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Portugal
-   FlairID: 168
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 49
-   UserName: Linas Petkevicius
-   AbbrevName: Petkevicius, L
-   Initials: LP
-   UserID: 327390
-   TeamID: 0
-   TeamName: Linas Petkevicius
-   CarNumber: "245"
-   CarNumberRaw: 245
-   CarPath: fordmustanggt3
-   CarClassID: 2708
-   CarID: 185
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: Ford Mustang GT3
-   CarScreenNameShort: Ford Mustang GT3
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 101.0550
-   IRating: 2914
-   LicLevel: 15
-   LicSubLevel: 360
-   LicString: B 3.60
-   LicColor: 0x00c702
-   IsSpectator: 0
-   CarDesignStr: 0,12d5ef,f9f5f5,faf7f7,535754
-   HelmetDesignStr: 63,f6eeee,060606,45f5f5
-   SuitDesignStr: 7,4ed4d8,080808,f4f9f4
-   BodyType: 0
-   FaceType: 0
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,f9f5f5,5ee863,010202
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Lithuania
-   FlairID: 119
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 50
-   UserName: Dominic Martina
-   AbbrevName: Martina, D
-   Initials: DM
-   UserID: 686271
-   TeamID: 0
-   TeamName: Dominic Martina
-   CarNumber: "51"
-   CarNumberRaw: 51
-   CarPath: fordmustanggt3
-   CarClassID: 2708
-   CarID: 185
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: Ford Mustang GT3
-   CarScreenNameShort: Ford Mustang GT3
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 101.0550
-   IRating: 1776
-   LicLevel: 18
-   LicSubLevel: 271
-   LicString: A 2.71
-   LicColor: 0x0153db
-   IsSpectator: 0
-   CarDesignStr: 25,e478ff,3ff7dc,e478ff,cd1f2d
-   HelmetDesignStr: 19,e478ff,3ff7dc,e478ff
-   SuitDesignStr: 14,111111,50ffe5,ff7efb
+   CarDesignStr: 1,ff0000,00ff00,0000ff
+   HelmetDesignStr: 30,0bff03,0f2699,ffffff
+   SuitDesignStr: 26,59ed05,2a3795,ffffff
    BodyType: 0
    FaceType: 0
    HelmetType: 0
@@ -3795,335 +3670,23 @@ DriverInfo:
    DivisionID: 0
    CurDriverIncidentCount: -1
    TeamIncidentCount: -1
- - CarIdx: 51
-   UserName: Roman Cheglakov
-   AbbrevName: Cheglakov, R
-   Initials: RC
-   UserID: 1047413
-   TeamID: 0
-   TeamName: Roman Cheglakov
-   CarNumber: "52"
-   CarNumberRaw: 52
-   CarPath: mclaren720sgt3
-   CarClassID: 2708
-   CarID: 188
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: McLaren 720S GT3 EVO
-   CarScreenNameShort: McLaren 720S GT3 EVO
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.0668
-   IRating: 1534
-   LicLevel: 10
-   LicSubLevel: 233
-   LicString: C 2.33
-   LicColor: 0xfeec04
-   IsSpectator: 0
-   CarDesignStr: 24,1a65f7,ffffff,f64848
-   HelmetDesignStr: 22,1a65f7,ffffff,f64848
-   SuitDesignStr: 1,ffffff,4bd3fd,013990
-   BodyType: 0
-   FaceType: 0
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Kazakhstan
-   FlairID: 107
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 52
-   UserName: Luca Redolfini
-   AbbrevName: Redolfini, L
-   Initials: LR
-   UserID: 1062652
-   TeamID: 0
-   TeamName: Luca Redolfini
-   CarNumber: "03"
-   CarNumberRaw: 2003
-   CarPath: bmwm4gt3
-   CarClassID: 2708
-   CarID: 132
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: BMW M4 GT3
-   CarScreenNameShort: BMW M4 GT3
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.6856
-   IRating: 2003
-   LicLevel: 19
-   LicSubLevel: 345
-   LicString: A 3.45
-   LicColor: 0x0153db
-   IsSpectator: 0
-   CarDesignStr: 1,ff0000,00ff00,0000ff
-   HelmetDesignStr: 60,ffffff,d34621,6f756f
-   SuitDesignStr: 13,000000,ffffff,beaa56
-   BodyType: 0
-   FaceType: 8
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Italy
-   FlairID: 101
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 53
-   UserName: Riccardo Battaglia2
-   AbbrevName: Battaglia2, R
-   Initials: RB
-   UserID: 1170043
-   TeamID: 0
-   TeamName: Riccardo Battaglia2
-   CarNumber: "54"
-   CarNumberRaw: 54
-   CarPath: ferrari296gt3
-   CarClassID: 2708
-   CarID: 173
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: Ferrari 296 GT3
-   CarScreenNameShort: Ferrari 296 GT3
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.5522
-   IRating: 1404
-   LicLevel: 6
-   LicSubLevel: 219
-   LicString: D 2.19
-   LicColor: 0xfc8a27
-   IsSpectator: 0
-   CarDesignStr: 23,154890,d12139,0a0a0a
-   HelmetDesignStr: 1,154890,d12139,0a0a0a
-   SuitDesignStr: 1,154890,d12139,0a0a0a
-   BodyType: 0
-   FaceType: 8
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Italy
-   FlairID: 101
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 54
-   UserName: Peter Mason14
-   AbbrevName: Mason14, P
-   Initials: PM
-   UserID: 597125
-   TeamID: 0
-   TeamName: Peter Mason14
-   CarNumber: "55"
-   CarNumberRaw: 55
-   CarPath: bmwm4gt3
-   CarClassID: 2708
-   CarID: 132
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: BMW M4 GT3
-   CarScreenNameShort: BMW M4 GT3
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.6856
-   IRating: 1109
-   LicLevel: 7
-   LicSubLevel: 336
-   LicString: D 3.36
-   LicColor: 0xfc8a27
-   IsSpectator: 0
-   CarDesignStr: 22,eeeeee,2a3795,000000
-   HelmetDesignStr: 61,2a3795,000000,eeeeee
-   SuitDesignStr: 13,2a3795,000000,eeeeee
-   BodyType: 0
-   FaceType: 4
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: United Kingdom
-   FlairID: 222
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 55
-   UserName: Mariano Esteban Meoniz
-   AbbrevName: Meoniz, M
-   Initials: MM
-   UserID: 680204
-   TeamID: 0
-   TeamName: Mariano Esteban Meoniz
-   CarNumber: "56"
-   CarNumberRaw: 56
-   CarPath: ferrari296gt3
-   CarClassID: 2708
-   CarID: 173
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: Ferrari 296 GT3
-   CarScreenNameShort: Ferrari 296 GT3
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.5522
-   IRating: 1778
-   LicLevel: 20
-   LicSubLevel: 447
-   LicString: A 4.47
-   LicColor: 0x0153db
-   IsSpectator: 0
-   CarDesignStr: 1,ff0000,00ff00,0000ff
-   HelmetDesignStr: 1,135324,5e5e5e,111111
-   SuitDesignStr: 1,135324,5e5e5e,111111
-   BodyType: 0
-   FaceType: 0
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Argentina
-   FlairID: 13
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
- - CarIdx: 56
-   UserName: Mehmet Mert
-   AbbrevName: Mert, M
-   Initials: MM
-   UserID: 939669
-   TeamID: 0
-   TeamName: Mehmet Mert
-   CarNumber: "57"
-   CarNumberRaw: 57
-   CarPath: mclaren720sgt3
-   CarClassID: 2708
-   CarID: 188
-   CarIsPaceCar: 0
-   CarIsAI: 0
-   CarIsElectric: 0
-   CarScreenName: McLaren 720S GT3 EVO
-   CarScreenNameShort: McLaren 720S GT3 EVO
-   CarCfg: -1
-   CarCfgName: 
-   CarCfgCustomPaintExt: 
-   CarClassShortName: GT3 Class
-   CarClassRelSpeed: 52
-   CarClassLicenseLevel: 0
-   CarClassMaxFuelPct: 1.000 %
-   CarClassWeightPenalty: 0.000 kg
-   CarClassPowerAdjust: 0.000 %
-   CarClassDryTireSetLimit: 0 %
-   CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.0668
-   IRating: 3519
-   LicLevel: 11
-   LicSubLevel: 352
-   LicString: C 3.52
-   LicColor: 0xfeec04
-   IsSpectator: 0
-   CarDesignStr: 17,ffffff,000000,ffffff
-   HelmetDesignStr: 56,ffffff,f4de1a,000000
-   SuitDesignStr: 12,f4de1a,000000,ffffff
-   BodyType: 0
-   FaceType: 0
-   HelmetType: 0
-   CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
-   ClubName: None
-   ClubID: 0
-   FlairName: Turkey
-   FlairID: 215
-   DivisionName: Division 1
-   DivisionID: 0
-   CurDriverIncidentCount: -1
-   TeamIncidentCount: -1
  - CarIdx: 57
-   UserName: Miroslav Svoboda
-   AbbrevName: Svoboda, M
-   Initials: MS
-   UserID: 89039
+   UserName: Alan Gormley
+   AbbrevName: Gormley, A
+   Initials: AG
+   UserID: 891448
    TeamID: 0
-   TeamName: Miroslav Svoboda
-   CarNumber: "58"
-   CarNumberRaw: 58
-   CarPath: fordmustanggt3
+   TeamName: Alan Gormley
+   CarNumber: "59"
+   CarNumberRaw: 59
+   CarPath: chevyvettez06rgt3
    CarClassID: 2708
-   CarID: 185
+   CarID: 184
    CarIsPaceCar: 0
    CarIsAI: 0
    CarIsElectric: 0
-   CarScreenName: Ford Mustang GT3
-   CarScreenNameShort: Ford Mustang GT3
+   CarScreenName: Chevrolet Corvette Z06 GT3.R
+   CarScreenNameShort: Corvette GT3.R
    CarCfg: -1
    CarCfgName: 
    CarCfgCustomPaintExt: 
@@ -4135,47 +3698,47 @@ DriverInfo:
    CarClassPowerAdjust: 0.000 %
    CarClassDryTireSetLimit: 0 %
    CarClassColor: 0xffffff
-   CarClassEstLapTime: 101.0550
-   IRating: 4811
-   LicLevel: 19
-   LicSubLevel: 353
-   LicString: A 3.53
-   LicColor: 0x0153db
+   CarClassEstLapTime: 84.6194
+   IRating: 1190
+   LicLevel: 6
+   LicSubLevel: 253
+   LicString: D 2.53
+   LicColor: 0xfc8a27
    IsSpectator: 0
-   CarDesignStr: 0,000000,000000,ffffff;000000
-   HelmetDesignStr: 35,1306ff,000000,ff0000
-   SuitDesignStr: 0,0c0098,0c0098,ffffff
+   CarDesignStr: 6,000000,960a0a,a4a4a4
+   HelmetDesignStr: 57,000000,960a0a,a4a4a4
+   SuitDesignStr: 35,f00000,ffffff,000000
    BodyType: 0
-   FaceType: 4
+   FaceType: 0
    HelmetType: 0
    CarNumberDesignStr: 0,0,ffffff,777777,000000
    CarSponsor_1: 0
    CarSponsor_2: 0
    ClubName: None
    ClubID: 0
-   FlairName: Czechia
-   FlairID: 54
+   FlairName: United States
+   FlairID: 223
    DivisionName: Division 1
    DivisionID: 0
    CurDriverIncidentCount: -1
    TeamIncidentCount: -1
  - CarIdx: 58
-   UserName: Gabor Beres
-   AbbrevName: Beres, G
-   Initials: GB
-   UserID: 125827
+   UserName: Leonardo S Oliveira
+   AbbrevName: 
+   Initials: 
+   UserID: 1082177
    TeamID: 0
-   TeamName: Gabor Beres
-   CarNumber: "59"
-   CarNumberRaw: 59
-   CarPath: lamborghinievogt3
+   TeamName: Leonardo S Oliveira
+   CarNumber: "60"
+   CarNumberRaw: 60
+   CarPath: bmwm4gt3
    CarClassID: 2708
-   CarID: 133
+   CarID: 132
    CarIsPaceCar: 0
    CarIsAI: 0
    CarIsElectric: 0
-   CarScreenName: Lamborghini Huracan GT3 EVO
-   CarScreenNameShort: Lamborghini GT3
+   CarScreenName: BMW M4 GT3
+   CarScreenNameShort: BMW M4 GT3
    CarCfg: -1
    CarCfgName: 
    CarCfgCustomPaintExt: 
@@ -4187,47 +3750,47 @@ DriverInfo:
    CarClassPowerAdjust: 0.000 %
    CarClassDryTireSetLimit: 0 %
    CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.8872
-   IRating: 1081
-   LicLevel: 6
-   LicSubLevel: 249
-   LicString: D 2.49
-   LicColor: 0xfc8a27
+   CarClassEstLapTime: 84.2210
+   IRating: 1654
+   LicLevel: 14
+   LicSubLevel: 254
+   LicString: B 2.54
+   LicColor: 0x00c702
    IsSpectator: 0
-   CarDesignStr: 17,372a75,f1732e,ffffff
-   HelmetDesignStr: 4,372a75,f1732e,ffffff
-   SuitDesignStr: 1,372a75,f1732e,ffffff
+   CarDesignStr: 18,000000,000000,000000,000000
+   HelmetDesignStr: 0,000000,000000,000000
+   SuitDesignStr: 1,000000,000000,000000
    BodyType: 0
    FaceType: 0
    HelmetType: 0
    CarNumberDesignStr: 0,0,ffffff,777777,000000
-   CarSponsor_1: 0
-   CarSponsor_2: 0
+   CarSponsor_1: 250
+   CarSponsor_2: 223
    ClubName: None
    ClubID: 0
-   FlairName: Hungary
-   FlairID: 93
+   FlairName: Brazil
+   FlairID: 31
    DivisionName: Division 1
    DivisionID: 0
    CurDriverIncidentCount: -1
    TeamIncidentCount: -1
  - CarIdx: 59
-   UserName: Valentinas Marcenkovas
-   AbbrevName: Marcenkovas, V
-   Initials: VM
-   UserID: 234039
+   UserName: Robert Geis
+   AbbrevName: Geis, R
+   Initials: RG
+   UserID: 715630
    TeamID: 0
-   TeamName: Valentinas Marcenkovas
-   CarNumber: "60"
-   CarNumberRaw: 60
-   CarPath: ferrari296gt3
+   TeamName: Robert Geis
+   CarNumber: "61"
+   CarNumberRaw: 61
+   CarPath: mclaren720sgt3
    CarClassID: 2708
-   CarID: 173
+   CarID: 188
    CarIsPaceCar: 0
    CarIsAI: 0
    CarIsElectric: 0
-   CarScreenName: Ferrari 296 GT3
-   CarScreenNameShort: Ferrari 296 GT3
+   CarScreenName: McLaren 720S GT3 EVO
+   CarScreenNameShort: McLaren 720S GT3 EVO
    CarCfg: -1
    CarCfgName: 
    CarCfgCustomPaintExt: 
@@ -4239,26 +3802,26 @@ DriverInfo:
    CarClassPowerAdjust: 0.000 %
    CarClassDryTireSetLimit: 0 %
    CarClassColor: 0xffffff
-   CarClassEstLapTime: 100.5522
-   IRating: 3958
-   LicLevel: 18
-   LicSubLevel: 230
-   LicString: A 2.30
-   LicColor: 0x0153db
+   CarClassEstLapTime: 83.6931
+   IRating: 1161
+   LicLevel: 14
+   LicSubLevel: 253
+   LicString: B 2.53
+   LicColor: 0x00c702
    IsSpectator: 0
-   CarDesignStr: 0,ffffff,000000,2a3795
-   HelmetDesignStr: 52,ffffff,2a3795,000000
-   SuitDesignStr: 2,ffffff,ffffff,2a3795
+   CarDesignStr: 2,ff0000,00ff00,0000ff
+   HelmetDesignStr: 8,ff0000,4e0a49,fac506
+   SuitDesignStr: 32,ff0000,ffed00,000000
    BodyType: 0
-   FaceType: 0
+   FaceType: 8
    HelmetType: 0
    CarNumberDesignStr: 0,0,ffffff,777777,000000
    CarSponsor_1: 0
    CarSponsor_2: 0
    ClubName: None
    ClubID: 0
-   FlairName: Lithuania
-   FlairID: 119
+   FlairName: United States
+   FlairID: 223
    DivisionName: Division 1
    DivisionID: 0
    CurDriverIncidentCount: -1
@@ -4269,13 +3832,11 @@ SplitTimeInfo:
  - SectorNum: 0
    SectorStartPct: 0.000000
  - SectorNum: 1
-   SectorStartPct: 0.298486
+   SectorStartPct: 0.259885
  - SectorNum: 2
-   SectorStartPct: 0.472260
+   SectorStartPct: 0.509689
  - SectorNum: 3
-   SectorStartPct: 0.684610
- - SectorNum: 4
-   SectorStartPct: 0.838991
+   SectorStartPct: 0.694809
 
 CarSetup:
  UpdateCount: 2

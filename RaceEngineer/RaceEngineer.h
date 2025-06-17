@@ -5,11 +5,7 @@
 class RaceEngineer : public aug::Application
 {
 public:
-	RaceEngineer(const std::string& name, uint16_t width, uint16_t height, bool bResizable, bool bVisible)
-		: aug::Application(name, width, height, bResizable, bVisible)
-	{
-		InitImGui();
-	}
+	RaceEngineer(const std::string& name, uint16_t width, uint16_t height, bool bResizable, bool bVisible);
 
 	virtual void Render(VkCommandBuffer commandBuffer) override;
 
@@ -21,5 +17,10 @@ public:
 
 protected:
 	IRModel m_IRModel;
+
+	ImFont* m_pTitleFont;
+	ImFont* m_pBodyFont;
+	ImFont* m_pEmojiFont;
+	ImFont* m_pFlagFont;
 };
 

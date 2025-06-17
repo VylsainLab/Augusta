@@ -59,5 +59,8 @@
     <ClInclude Include="irsdk\irsdk_client.h">
       <Filter>irsdk</Filter>
     </ClInclude>
+    <ClInclude Include="Nations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

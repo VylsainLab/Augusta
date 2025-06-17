@@ -109,14 +109,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../Dependencies/;../../Dependencies/GLFW/include;../include;C:\VulkanSDK\1.4.304.1\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Dependencies/;../../Dependencies/imgui-docking/;../../Dependencies/GLFW/include;../include;C:\VulkanSDK\1.4.304.1\Include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../../Dependencies/glfw/lib-vc2022;../../Dependencies/assimp;../lib;C:\VulkanSDK\1.4.304.1\Lib;C:\VulkanSDK\1.4.304.1\Bin;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp.lib;vulkan-1.lib;glfw3.lib;shaderc_combinedd.lib;Augusta.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../Dependencies/freetype/win64/;../../Dependencies/glfw/lib-vc2022;../../Dependencies/assimp;../lib;C:\VulkanSDK\1.4.304.1\Lib;C:\VulkanSDK\1.4.304.1\Bin;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>freetype.lib;assimp.lib;vulkan-1.lib;glfw3.lib;shaderc_combinedd.lib;Augusta.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

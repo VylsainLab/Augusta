@@ -1,17 +1,39 @@
-#include "RaceEngineer.h"
+﻿#include "RaceEngineer.h"
+#include "Nations.h"
 
 #define SL(x) x;ImGui::SameLine();
+
+RaceEngineer::RaceEngineer(const std::string& name, uint16_t width, uint16_t height, bool bResizable, bool bVisible)
+    : aug::Application(name, width, height, bResizable, bVisible)
+{
+    InitImGui();
+
+    ImGuiIO& io = ImGui::GetIO();
+    m_pBodyFont = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Orbitron-Bold.ttf", 18, NULL, io.Fonts->GetGlyphRangesDefault());
+
+    static ImWchar ranges[] = { 0x1, 0x1FFFF, 0 };
+    static ImFontConfig cfg;
+    cfg.OversampleH = cfg.OversampleV = 1;
+    cfg.MergeMode = false;
+    cfg.FontBuilderFlags |= ImGuiFreeTypeBuilderFlags_LoadColor;
+    m_pEmojiFont = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\seguiemj.ttf", 16.0f, &cfg, ranges);
+
+    cfg.GlyphOffset.y = -5;
+    m_pFlagFont = io.Fonts->AddFontFromFileTTF("D:\\Programming\\Dependencies\\Fonts\\flags color world.ttf", 24.0f, &cfg, ranges);
+}
 
 void RaceEngineer::Render(VkCommandBuffer commandBuffer)
 {
     m_IRModel.Update();
+    sSession& session = m_IRModel.m_sSessionData;
 
+    ImGui::PushFont(m_pBodyFont);
     ImGui::ShowDemoWindow();
 
     ImGui::Begin("Debug String");    
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_HorizontalScrollbar;
     ImGui::BeginChild("ChildL", ImVec2(ImGui::GetContentRegionAvail()), ImGuiChildFlags_None, window_flags);
-    ImGui::TextUnformatted(m_IRModel.m_strSessionYaml.data(),m_IRModel.m_strSessionYaml.data() + m_IRModel.m_strSessionYaml.size());
+    ImGui::TextUnformatted(session._strSessionYaml.data(),session._strSessionYaml.data() + session._strSessionYaml.size());
     ImGui::EndChild();
     ImGui::End();    
 
@@ -35,6 +57,7 @@ void RaceEngineer::Render(VkCommandBuffer commandBuffer)
     }
 
     ImGui::End();
+    ImGui::PopFont();
 }
 
 void RaceEngineer::DrawTelemetry()
@@ -61,6 +84,8 @@ void RaceEngineer::DrawTelemetry()
 
 void RaceEngineer::DrawSession()
 {
+    sSession& session = m_IRModel.m_sSessionData;
+
     ImGui::SetNextWindowPos(ImVec2(100.0f, 100.0f), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize, ImGuiCond_FirstUseEver);
 
@@ -71,7 +96,7 @@ void RaceEngineer::DrawSession()
     else
         ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Disconnected");
 
-    switch (m_IRModel.m_eSessionType)
+    switch (session._eSessionType)
     {
     case PRACTICE:
         SL(ImGui::Text("PRACTICE:"))
@@ -87,21 +112,21 @@ void RaceEngineer::DrawSession()
         break;
     }
 
-    float time = m_IRModel.GetFloat("SessionTime");
-    int h = time / 3600;
-    int m = fmod(time / 60,60);
-    int s = fmod(time, 60);
-    float total = m_IRModel.GetFloat("SessionTimeTotal");
-    int th = total / 3600;
-    int tm = fmod(total / 60,60);
+    int h = session.fSessionTime / 3600;
+    int m = fmod(session.fSessionTime / 60,60);
+    int s = fmod(session.fSessionTime, 60);
+    int th = session.fSessionTimeTotal / 3600;
+    int tm = fmod(session.fSessionTimeTotal / 60,60);
     ImGui::Text("%02d:%02d:%02d / %02d:%02dh", h,m,s, th,tm );
 
-    SL(ImGui::Text("DRIVERS: %d",m_IRModel.m_mDrivers.size()))
+    SL(ImGui::Text("DRIVERS: %d", session._mDrivers.size()))
     ImGui::End();
 }
 
 void RaceEngineer::DrawStandings()
 {
+    sSession& session = m_IRModel.m_sSessionData;
+
     ImGui::SetNextWindowPos(ImVec2(100.0f, 100.0f), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize, ImGuiCond_FirstUseEver);
     ImGui::Begin("Standings");
@@ -116,7 +141,7 @@ void RaceEngineer::DrawStandings()
     ImGui::TableSetupScrollFreeze(0, 1); // Make row always visible
     ImGui::TableHeadersRow();
 
-    for (auto driver : m_IRModel.m_mDrivers)
+    for (auto driver : session._mDrivers)
     {
         ImGui::TableNextRow();
         ImGui::TableNextColumn();
@@ -126,11 +151,28 @@ void RaceEngineer::DrawStandings()
         ImGui::Text("%d", driver.second.uiCarNumber);
 
         ImGui::TableNextColumn();
-        ImGui::Text("%s", driver.second.szName.c_str());
+        if (!mFlags[driver.second.strCountry].empty())
+        {
+            ImGui::PushFont(m_pFlagFont);
+            SL(ImGui::Text(mFlags[driver.second.strCountry].c_str()))
+            ImGui::PopFont();
+        }
+        else
+        {
+            ImGui::PushFont(m_pEmojiFont);
+            SL(ImGui::Text(u8"\u2753"))
+            ImGui::PopFont();
+            //ImGui::Text(driver.second.strCountry.c_str());
+        }
+
+        //ImGui::TableNextColumn();
+        ImGui::Text("%s", driver.second.strName.c_str());
 
         ImGui::TableNextColumn();
-        ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::ColorConvertFloat4ToU32(ImVec4(driver.second.aLicColor[0], driver.second.aLicColor[1], driver.second.aLicColor[2], driver.second.aLicColor[3])));
-        ImGui::Text("%s", driver.second.strLicence.c_str());
+        ImVec4 color(driver.second.aLicColor[0], driver.second.aLicColor[1], driver.second.aLicColor[2], driver.second.aLicColor[3]);
+        ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::ColorConvertFloat4ToU32(color));
+        bool bLight = (color.x + color.y + color.z) < 1.5;
+        ImGui::TextColored( ImVec4(bLight,bLight,bLight,1.0f), "%s", driver.second.strLicence.c_str());
 
         ImGui::TableNextColumn();
         ImGui::Text("%.02fk", float(driver.second.uiIRating)/1000);        

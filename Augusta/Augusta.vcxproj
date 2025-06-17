@@ -27,6 +27,7 @@
     <ClInclude Include="..\..\Dependencies\imgui-docking\imstb_rectpack.h" />
     <ClInclude Include="..\..\Dependencies\imgui-docking\imstb_textedit.h" />
     <ClInclude Include="..\..\Dependencies\imgui-docking\imstb_truetype.h" />
+    <ClInclude Include="..\..\Dependencies\imgui-docking\misc\freetype\imgui_freetype.h" />
     <ClInclude Include="..\include\Augusta\Application.h" />
     <ClInclude Include="..\include\Augusta\AssimpParser.h" />
     <ClInclude Include="..\include\Augusta\Buffer.h" />
@@ -51,6 +52,7 @@
     <ClCompile Include="..\..\Dependencies\imgui-docking\imgui_draw.cpp" />
     <ClCompile Include="..\..\Dependencies\imgui-docking\imgui_tables.cpp" />
     <ClCompile Include="..\..\Dependencies\imgui-docking\imgui_widgets.cpp" />
+    <ClCompile Include="..\..\Dependencies\imgui-docking\misc\freetype\imgui_freetype.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\AssimpParser.cpp" />
     <ClCompile Include="src\Buffer.cpp" />
@@ -141,11 +143,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>PLUTOSVG_BUILD_STATIC;_CRT_SECURE_NO_WARNINGS;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../../Dependencies/;../../Dependencies/GLFW/include;../../Dependencies/imgui-docking/;../include;C:\VulkanSDK\1.4.304.1\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Dependencies/;../../Dependencies/plutosvg/include/;../../Dependencies/freetype/include;../../Dependencies/GLFW/include;../../Dependencies/imgui-docking/;../include;C:\VulkanSDK\1.4.304.1\Include</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -155,6 +157,9 @@
     </Link>
     <Lib>
       <OutputFile>../lib/$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>../../Dependencies/plutosvg/plutosvg.lib;../../Dependencies/plutosvg/plutovg.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
