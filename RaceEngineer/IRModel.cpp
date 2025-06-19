@@ -1,6 +1,7 @@
 #include "IRModel.h"
 
 #define IR_MAX_DRIVERS 64
+#define IR_MAX_TIRE_COMPOUND 4
 
 OnlineReader::OnlineReader()
 {
@@ -112,80 +113,11 @@ void IRModel::Update()
 		m_pCurrentReader = &m_DiskReader;
 
 	ReadData();
-	/*irsdkClient& irsdk = irsdkClient::instance();
-	irsdk.waitForData(16);
-
-	m_bConnected = irsdk.isConnected();
-
-	if (m_bConnected)
-	{
-		if (irsdk.wasSessionStrUpdated())
-		{
-			m_strSessionYaml = irsdk.getSessionStr();
-			FILE* pFile = fopen("session.yaml", "w");
-			if (pFile)
-			{
-				fwrite(m_strSessionYaml.data(), m_strSessionYaml.size(), 1, pFile);
-				fclose(pFile);
-			}
-
-			char szData[256];
-			if (irsdk.getSessionStrVal("SessionInfo:Sessions:SessionType:", szData, sizeof(szData)))
-			{
-				if (_stricmp(szData, "Practice"))
-					m_eSessionType == PRACTICE;
-				else if (_stricmp(szData, "Qualify"))
-					m_eSessionType == QUALI;
-				else if (_stricmp(szData, "Race"))
-					m_eSessionType == RACE;
-			}
-
-			char szPath[64];
-			for (uint8_t i = 0; i < IR_MAX_DRIVERS; ++i)
-			{
-				sprintf(szPath, "DriverInfo:Drivers:CarIdx:{%d}UserName:", i);
-				if (!irsdk.getSessionStrVal(szPath, szData, sizeof(szData)))
-					continue;
-
-				m_mDrivers[i].szName = szData;
-
-				sprintf(szPath, "DriverInfo:Drivers:CarIdx:{%d}CarNumberRaw:", i);
-				irsdk.getSessionStrVal(szPath, szData, sizeof(szData));
-				m_mDrivers[i].uiCarNumber = atoi(szData);
-
-				sprintf(szPath, "DriverInfo:Drivers:CarIdx:{%d}IRating:", i);
-				irsdk.getSessionStrVal(szPath, szData, sizeof(szData));
-				m_mDrivers[i].uiIRating = atoi(szData);
-
-				sprintf(szPath, "DriverInfo:Drivers:CarIdx:{%d}LicString:", i);
-				irsdk.getSessionStrVal(szPath, szData, sizeof(szData));
-				m_mDrivers[i].strLicence = szData;
-
-				sprintf(szPath, "DriverInfo:Drivers:CarIdx:{%d}LicColor:", i);
-				irsdk.getSessionStrVal(szPath, szData, sizeof(szData));
-				HEXAtoFloat4(szData,1.0,m_mDrivers[i].aLicColor);
-			}
-		}		
-
-		for (auto& var : m_mIrsdkVars)
-			if (!var.second.isValid())
-				var.second.setVarName(var.first.c_str());
-	}
-	else
-	{
-		if (!m_irDiskClient.isFileOpen())
-		{
-			if (m_irDiskClient.openFile(DEBUG_IBT_PATH))
-			{
-				m_strSessionYaml = m_irDiskClient.getSessionStr();
-			}
-		}
-	}*/
 }
 
 void IRModel::ReadData()
 {
-	if (!m_pCurrentReader)
+	if (!m_pCurrentReader || (!m_bConnected && m_bDiskRead))
 		return;
 
 	m_pCurrentReader->ReadData(m_sSessionData);
@@ -246,6 +178,18 @@ void IRModel::ReadData()
 		m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData));
 		HEXAtoFloat4(szData, 1.0, m_sSessionData._mDrivers[i].aLicColor);
 	}
+
+	for (uint8_t i = 0; i < IR_MAX_TIRE_COMPOUND; ++i)
+	{
+		sprintf(szPath, "DriverInfo:DriverTires:TireIndex:{%d}TireCompoundType:", i);
+		if (!m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData)))
+			continue;
+
+		m_sSessionData.strAvailableTires += szData[1];
+	}
+	m_sSessionData.strAvailableTires = "HMSW";
+
+	m_bDiskRead = true;
 }
 
 

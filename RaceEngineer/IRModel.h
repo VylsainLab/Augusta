@@ -5,7 +5,7 @@
 #include <string>
 #include <map>
 
-#define DEBUG_IBT_PATH "D:\\Programming\\Augusta\\RaceEngineer\\Sample\\bmwm4gt3_okayama full 2025-06-15 19-15-20.ibt"//"C:\\Users\\melin\\OneDrive\\Documents\\iRacing\\telemetry\\superformulalights324_bathurst 2025-06-02 21-59-08.ibt"
+#define DEBUG_IBT_PATH "D:\\Git\\Augusta\\RaceEngineer\\Sample\\bmwm4gt3_okayama full 2025-06-15 19-15-20.ibt"//"C:\\Users\\melin\\OneDrive\\Documents\\iRacing\\telemetry\\superformulalights324_bathurst 2025-06-02 21-59-08.ibt"
 
 enum eSessionType
 {
@@ -32,6 +32,7 @@ struct sSession
 	float fSessionTime = 0;
 	float fSessionTimeTotal = 0;
 	std::map<uint32_t, sDriver> _mDrivers;
+	std::string strAvailableTires;
 };
 
 class IReader
@@ -92,6 +93,7 @@ public:
 	void ReadData();
 
 	bool m_bConnected;
+	bool m_bDiskRead = false;
 	sSession m_sSessionData;
 
 	

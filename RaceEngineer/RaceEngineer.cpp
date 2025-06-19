@@ -9,17 +9,17 @@ RaceEngineer::RaceEngineer(const std::string& name, uint16_t width, uint16_t hei
     InitImGui();
 
     ImGuiIO& io = ImGui::GetIO();
-    m_pBodyFont = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Orbitron-Bold.ttf", 18, NULL, io.Fonts->GetGlyphRangesDefault());
+    m_pBodyFont = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Calibri.ttf", 18, NULL, io.Fonts->GetGlyphRangesDefault());
 
     static ImWchar ranges[] = { 0x1, 0x1FFFF, 0 };
     static ImFontConfig cfg;
     cfg.OversampleH = cfg.OversampleV = 1;
     cfg.MergeMode = false;
     cfg.FontBuilderFlags |= ImGuiFreeTypeBuilderFlags_LoadColor;
-    m_pEmojiFont = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\seguiemj.ttf", 16.0f, &cfg, ranges);
+    m_pEmojiFont = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\seguiemj.ttf", 24.0f, &cfg, ranges);
 
     cfg.GlyphOffset.y = -5;
-    m_pFlagFont = io.Fonts->AddFontFromFileTTF("D:\\Programming\\Dependencies\\Fonts\\flags color world.ttf", 24.0f, &cfg, ranges);
+    m_pFlagFont = io.Fonts->AddFontFromFileTTF("D:\\Git\\Dependencies\\Fonts\\flags color world.ttf", 24.0f, &cfg, ranges);
 }
 
 void RaceEngineer::Render(VkCommandBuffer commandBuffer)
@@ -119,7 +119,32 @@ void RaceEngineer::DrawSession()
     int tm = fmod(session.fSessionTimeTotal / 60,60);
     ImGui::Text("%02d:%02d:%02d / %02d:%02dh", h,m,s, th,tm );
 
-    SL(ImGui::Text("DRIVERS: %d", session._mDrivers.size()))
+    ImGui::Text("DRIVERS: %d", session._mDrivers.size());
+
+    SL(ImGui::Text("TIRES: "));
+    ImGui::PushFont(m_pEmojiFont);
+    for (char &c : session.strAvailableTires)
+    {
+        switch (c)
+        {
+        case 'H':
+            SL(ImGui::TextColored(ImVec4(1., 1., 1., 1.), u8"\u25ce"));
+            break;
+        case 'M':
+            SL(ImGui::TextColored(ImVec4(1., 1., 0., 1.), u8"\u25ce"));
+            break;
+        case 'S':
+            SL(ImGui::TextColored(ImVec4(1., 0., 0., 1.), u8"\u25ce"));
+            break;
+        case 'W':
+            SL(ImGui::TextColored(ImVec4(0.5, 0.5, 1., 1.), u8"\u25ce"));
+            break;
+        default:
+            break;
+        }
+    }
+    ImGui::PopFont();
+
     ImGui::End();
 }
 
