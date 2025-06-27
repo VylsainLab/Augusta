@@ -83,6 +83,47 @@ double DiskReader::GetDouble(const char* szName)
 void DiskReader::ReadData(sSession& session)
 {
 	session._strSessionYaml = m_irDiskClient.getSessionStr();
+
+	FILE* pFile = fopen("available_data.txt", "w");
+	if (pFile)
+	{
+		fprintf(pFile,"\nNumVars = %d", m_irDiskClient.getNumVars());
+		for (int i = 0; i < m_irDiskClient.getNumVars(); ++i)
+		{
+			const char* szName = m_irDiskClient.getVarName(i);
+			irsdk_VarType iType = m_irDiskClient.getVarType(i);
+			std::string strType;
+			switch (iType)
+			{
+			case irsdk_char:
+				strType = "Char";
+				break;
+			case irsdk_bool:
+				strType = "Bool";
+				break;
+			case irsdk_int:
+				strType = "Int";
+				break;
+			case irsdk_bitField:
+				strType = "BitField";
+				break;
+			case irsdk_float:
+				strType = "Float";
+				break;
+			case irsdk_double:
+				strType = "Double";
+				break;
+			default:
+				strType = "Unknown";
+				break;
+			}
+			const char* szDesc = m_irDiskClient.getVarDesc(i);
+			int iCount = m_irDiskClient.getVarCount(i);
+			const char* szUnit = m_irDiskClient.getVarUnit(i);
+			fprintf(pFile,"\n%d %s %s [%d] (%s) : %s", i, szName, szUnit, iCount, strType.c_str(), szDesc);
+		}
+		fclose(pFile);
+	}
 }
 
 
@@ -145,11 +186,11 @@ void IRModel::ReadData()
 	m_sSessionData.fSessionTime = m_pCurrentReader->GetFloat("SessionTime");
 	m_sSessionData.fSessionTimeTotal = m_pCurrentReader->GetFloat("SessionTimeTotal");
 
-	/*m_sSessionData._sWeather.fTrackTemp = m_pCurrentReader->GetFloat("TrackSurfaceTemp");
-	m_sSessionData._sWeather.fAirTemp = m_pCurrentReader->GetFloat("TrackAirTemp");
-	m_sSessionData._sWeather.fWindSpeed = m_pCurrentReader->GetFloat("TrackWindVel");
-	m_sSessionData._sWeather.fWindDirection = m_pCurrentReader->GetFloat("TrackWindDir") * M_PI / 180.;
-	m_sSessionData._sWeather.fRainProbablility = m_pCurrentReader->GetFloat("TrackPrecipitation");*/
+	m_sSessionData._sWeather.fTrackTemp = m_pCurrentReader->GetFloat("TrackTempCrew");
+	m_sSessionData._sWeather.fAirTemp = m_pCurrentReader->GetFloat("AirTemp");
+	m_sSessionData._sWeather.fWindSpeed = m_pCurrentReader->GetFloat("WindVel");
+	m_sSessionData._sWeather.fWindDirection = m_pCurrentReader->GetFloat("WindDir") * M_PI / 180.;
+	m_sSessionData._sWeather.fRainProbablility = m_pCurrentReader->GetFloat("Precipitation");
 
 	//DRIVERS
 	char szPath[128];
