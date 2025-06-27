@@ -7,6 +7,9 @@
 
 #define DEBUG_IBT_PATH "D:\\Git\\Augusta\\RaceEngineer\\Sample\\bmwm4gt3_okayama full 2025-06-15 19-15-20.ibt"//"C:\\Users\\melin\\OneDrive\\Documents\\iRacing\\telemetry\\superformulalights324_bathurst 2025-06-02 21-59-08.ibt"
 
+#define IR_MAX_DRIVERS 64
+#define IR_MAX_TIRE_COMPOUND 4
+
 enum eSessionType
 {
 	PRACTICE,
@@ -16,6 +19,7 @@ enum eSessionType
 
 struct sDriver
 {
+	uint8_t uiPosition;
 	std::string strName;
 	std::string strCountry;
 	uint32_t uiCarNumber;
@@ -23,6 +27,17 @@ struct sDriver
 	std::string strLicence;
 	float aLicColor[4];
 	float fSafetyRating;
+	float fFastestLap;
+	float fLastLap;
+};
+
+struct sWeather
+{
+	float fTrackTemp = 30.f;
+	float fAirTemp = 20.f;
+	float fWindSpeed = 2.5f;
+	float fWindDirection = 92.f;
+	float fRainProbablility = 23.f;
 };
 
 struct sSession
@@ -31,9 +46,13 @@ struct sSession
 	eSessionType _eSessionType;
 	float fSessionTime = 0;
 	float fSessionTimeTotal = 0;
+	sWeather _sWeather;
 	std::map<uint32_t, sDriver> _mDrivers;
+	sDriver* aPositions[IR_MAX_DRIVERS] = { nullptr };
 	std::string strAvailableTires;
 };
+
+
 
 class IReader
 {

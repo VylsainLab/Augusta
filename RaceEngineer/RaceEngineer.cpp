@@ -1,5 +1,6 @@
 ﻿#include "RaceEngineer.h"
 #include "Nations.h"
+#include <algorithm>
 
 #define SL(x) x;ImGui::SameLine();
 
@@ -66,20 +67,14 @@ void RaceEngineer::DrawTelemetry()
 
     DrawStandings();
 
-    ImGui::SetNextWindowPos(ImVec2(100.0f, 100.0f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize, ImGuiCond_FirstUseEver);
-    ImGui::Begin("Weather");
-    ImGui::End();
+    //DrawWeather();
 
     ImGui::SetNextWindowPos(ImVec2(100.0f, 100.0f), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize, ImGuiCond_FirstUseEver);
     ImGui::Begin("FuelCalculator");
     ImGui::End();
 
-    ImGui::SetNextWindowPos(ImVec2(100.0f, 100.0f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize, ImGuiCond_FirstUseEver);
-    ImGui::Begin("TrackMap");
-    ImGui::End();
+    DrawTrackMap();
 }
 
 void RaceEngineer::DrawSession()
@@ -156,30 +151,37 @@ void RaceEngineer::DrawStandings()
     ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize, ImGuiCond_FirstUseEver);
     ImGui::Begin("Standings");
 
-    ImGui::BeginTable("Standings", 5, ImGuiTableFlags_RowBg);
+    ImGui::BeginTable("Standings", 7, ImGuiTableFlags_RowBg);
 
     ImGui::TableSetupColumn("#", ImGuiTableColumnFlags_WidthFixed);
     ImGui::TableSetupColumn("Number", ImGuiTableColumnFlags_WidthFixed);
     ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed);
     ImGui::TableSetupColumn("Licence", ImGuiTableColumnFlags_WidthFixed);
     ImGui::TableSetupColumn("iRating", ImGuiTableColumnFlags_WidthFixed);
+    ImGui::TableSetupColumn("Fastest", ImGuiTableColumnFlags_WidthFixed);
+    ImGui::TableSetupColumn("Last", ImGuiTableColumnFlags_WidthFixed);
     ImGui::TableSetupScrollFreeze(0, 1); // Make row always visible
     ImGui::TableHeadersRow();
 
-    for (auto driver : session._mDrivers)
+    ImVec4 fastest(0.75,0.,0.75,1.);
+    ImVec4 other(1.,1.,1.,1.);
+    for (auto driver : session.aPositions)
     {
+        if (driver == nullptr)
+            continue;
+
         ImGui::TableNextRow();
         ImGui::TableNextColumn();
-        ImGui::Text("%d", driver.first);
+        ImGui::Text("%d", driver->uiPosition);
 
         ImGui::TableNextColumn();
-        ImGui::Text("%d", driver.second.uiCarNumber);
+        ImGui::Text("%d", driver->uiCarNumber);
 
         ImGui::TableNextColumn();
-        if (!mFlags[driver.second.strCountry].empty())
+        if (!mFlags[driver->strCountry].empty())
         {
             ImGui::PushFont(m_pFlagFont);
-            SL(ImGui::Text(mFlags[driver.second.strCountry].c_str()))
+            SL(ImGui::Text(mFlags[driver->strCountry].c_str()))
             ImGui::PopFont();
         }
         else
@@ -190,21 +192,67 @@ void RaceEngineer::DrawStandings()
             //ImGui::Text(driver.second.strCountry.c_str());
         }
 
-        //ImGui::TableNextColumn();
-        ImGui::Text("%s", driver.second.strName.c_str());
+        ImGui::Text("%s", driver->strName.c_str());
 
         ImGui::TableNextColumn();
-        ImVec4 color(driver.second.aLicColor[0], driver.second.aLicColor[1], driver.second.aLicColor[2], driver.second.aLicColor[3]);
+        ImVec4 color(driver->aLicColor[0], driver->aLicColor[1], driver->aLicColor[2], driver->aLicColor[3]);
         ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::ColorConvertFloat4ToU32(color));
         bool bLight = (color.x + color.y + color.z) < 1.5;
-        ImGui::TextColored( ImVec4(bLight,bLight,bLight,1.0f), "%s", driver.second.strLicence.c_str());
+        ImGui::TextColored( ImVec4(bLight,bLight,bLight,1.0f), "%s", driver->strLicence.c_str());
 
         ImGui::TableNextColumn();
-        ImGui::Text("%.02fk", float(driver.second.uiIRating)/1000);        
+        ImGui::Text("%.02fk", float(driver->uiIRating)/1000);
+
+        ImGui::TableNextColumn();
+        if(driver->fFastestLap>0.)
+            ImGui::TextColored(driver->uiPosition==1?fastest:other, "%d:%.03f", int(driver->fFastestLap / 60), fmod(driver->fFastestLap, 60.));
+
+        ImGui::TableNextColumn();
+        if (driver->fLastLap > 0.)
+            ImGui::Text("%d:%.03f", int(driver->fLastLap/60), fmod(driver->fLastLap,60.));
     }
     ImGui::EndTable();
 
     ImGui::End();
+}
+
+void RaceEngineer::DrawWeather()
+{
+    sSession& session = m_IRModel.m_sSessionData;
+
+    ImGui::SetNextWindowPos(ImVec2(100.0f, 100.0f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize, ImGuiCond_FirstUseEver);
+    ImGui::Begin("Weather");
+    ImGui::Text(u8"Track temp: %.02f\u00B0C", session._sWeather.fTrackTemp);
+    ImGui::Text(u8"Air temp: %.02f\u00B0C", session._sWeather.fAirTemp);
+    ImGui::Text(u8"Wind: %.02fm/s %.0f\u00B0", session._sWeather.fWindSpeed, session._sWeather.fWindDirection);
+    ImGui::Text(u8"Rain: %.0f\u0025", session._sWeather.fRainProbablility);
+    ImGui::End();
+}
+
+void RaceEngineer::DrawTrackMap()
+{
+    sSession& session = m_IRModel.m_sSessionData;
+
+    ImGui::SetNextWindowPos(ImVec2(100.0f, 100.0f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize, ImGuiCond_FirstUseEver);
+    ImGui::Begin("TrackMap");    
+
+    ImVec2 draw_area = ImGui::GetContentRegionAvail();
+    ImVec2 cursor = ImGui::GetCursorScreenPos();
+    ImVec2 center = ImVec2(cursor.x + draw_area.x * 0.5f, cursor.y + draw_area.y * 0.5f);    
+
+    ImGui::Text(u8"Track temp: %.02f\u00B0C", session._sWeather.fTrackTemp);
+    ImGui::Text(u8"Air temp: %.02f\u00B0C", session._sWeather.fAirTemp);
+    ImGui::Text(u8"Wind: %.02fm/s %.0f\u00B0", session._sWeather.fWindSpeed, session._sWeather.fWindDirection);
+    ImGui::Text(u8"Rain: %.0f\u0025", session._sWeather.fRainProbablility);
+
+    ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+    draw_list->AddCircle(center, 0.45*std::min(draw_area.x, draw_area.y), IM_COL32(255, 255, 255, 255), 100, 5);
+
+    ImGui::End();
+    
 }
 
 void RaceEngineer::DrawDebrief()

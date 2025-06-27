@@ -1,7 +1,8 @@
 #include "IRModel.h"
 
-#define IR_MAX_DRIVERS 64
-#define IR_MAX_TIRE_COMPOUND 4
+#define _USE_MATH_DEFINES
+#include <math.h>
+#include <vector>
 
 OnlineReader::OnlineReader()
 {
@@ -144,7 +145,14 @@ void IRModel::ReadData()
 	m_sSessionData.fSessionTime = m_pCurrentReader->GetFloat("SessionTime");
 	m_sSessionData.fSessionTimeTotal = m_pCurrentReader->GetFloat("SessionTimeTotal");
 
-	char szPath[64];
+	/*m_sSessionData._sWeather.fTrackTemp = m_pCurrentReader->GetFloat("TrackSurfaceTemp");
+	m_sSessionData._sWeather.fAirTemp = m_pCurrentReader->GetFloat("TrackAirTemp");
+	m_sSessionData._sWeather.fWindSpeed = m_pCurrentReader->GetFloat("TrackWindVel");
+	m_sSessionData._sWeather.fWindDirection = m_pCurrentReader->GetFloat("TrackWindDir") * M_PI / 180.;
+	m_sSessionData._sWeather.fRainProbablility = m_pCurrentReader->GetFloat("TrackPrecipitation");*/
+
+	//DRIVERS
+	char szPath[128];
 	for (uint8_t i = 0; i < IR_MAX_DRIVERS; ++i)
 	{
 		sprintf(szPath, "DriverInfo:Drivers:CarIdx:{%d}UserName:", i);
@@ -179,6 +187,40 @@ void IRModel::ReadData()
 		HEXAtoFloat4(szData, 1.0, m_sSessionData._mDrivers[i].aLicColor);
 	}
 
+	//POSITIONS
+	std::vector<uint8_t> vInserted;
+	for (uint8_t i = 0; i < IR_MAX_DRIVERS; ++i)
+	{
+		sprintf(szPath, "SessionInfo:Sessions:SessionNum:{0}ResultsPositions:Position:{%d}CarIdx:", i+1);	
+		if (!m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData)))
+			continue;
+
+		int32_t iCarIdx = atoi(szData);
+		vInserted.push_back(iCarIdx);
+		m_sSessionData.aPositions[i] = &m_sSessionData._mDrivers.at(iCarIdx);
+		m_sSessionData.aPositions[i]->uiPosition = i + 1;
+
+		sprintf(szPath, "SessionInfo:Sessions:SessionNum:{0}ResultsPositions:Position:{%d}FastestTime:", i + 1);
+		m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData));
+		m_sSessionData.aPositions[i]->fFastestLap = atof(szData);
+
+		sprintf(szPath, "SessionInfo:Sessions:SessionNum:{0}ResultsPositions:Position:{%d}LastTime:", i + 1);
+		m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData));
+		m_sSessionData.aPositions[i]->fLastLap = atof(szData);
+	}
+
+	//Fill in with unranked drivers (unsorted)
+	int32_t iCount = vInserted.size()-1;
+	for (auto& driver : m_sSessionData._mDrivers)
+	{
+		if (std::find(vInserted.begin(), vInserted.end(), driver.first) == vInserted.end())
+		{
+			m_sSessionData.aPositions[iCount] = &driver.second;
+			driver.second.uiPosition = iCount + 1;
+			iCount++;
+		}		
+	}
+
 	for (uint8_t i = 0; i < IR_MAX_TIRE_COMPOUND; ++i)
 	{
 		sprintf(szPath, "DriverInfo:DriverTires:TireIndex:{%d}TireCompoundType:", i);
@@ -187,8 +229,8 @@ void IRModel::ReadData()
 
 		m_sSessionData.strAvailableTires += szData[1];
 	}
-	m_sSessionData.strAvailableTires = "HMSW";
 
+	
 	m_bDiskRead = true;
 }
 

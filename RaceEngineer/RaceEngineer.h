@@ -12,6 +12,8 @@ public:
 	void DrawTelemetry();
 	void DrawSession();
 	void DrawStandings();
+	void DrawWeather();
+	void DrawTrackMap();
 
 	void DrawDebrief();
 
