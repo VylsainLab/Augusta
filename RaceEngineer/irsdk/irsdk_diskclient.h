@@ -45,6 +45,7 @@ public:
 
 	// read next line out of file
 	bool getNextData();
+	bool getTickData(int iTick);
 	int getDataCount() { return m_diskSubHeader.sessionRecordCount; }
 
 	// return how many variables this .ibt file has in the header

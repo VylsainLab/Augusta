@@ -4,8 +4,11 @@
 #include "irsdk_diskclient.h"
 #include <string>
 #include <map>
+#include <vector>
 
-#define DEBUG_IBT_PATH "D:\\Git\\Augusta\\RaceEngineer\\Sample\\bmwm4gt3_okayama full 2025-06-15 19-15-20.ibt"//"C:\\Users\\melin\\OneDrive\\Documents\\iRacing\\telemetry\\superformulalights324_bathurst 2025-06-02 21-59-08.ibt"
+//#define DEBUG_IBT_PATH "C:\\Users\\melin\\OneDrive\\Documents\\iRacing\\telemetry\\superformulalights324_bathurst 2025-06-02 21-59-08.ibt"
+//#define DEBUG_IBT_PATH "D:\\Git\\Augusta\\RaceEngineer\\Sample\\bmwm4gt3_okayama full 2025-06-15 19-15-20.ibt"//
+#define DEBUG_IBT_PATH "D:\\Git\\Augusta\\RaceEngineer\\Sample\\bmwm4gt3_monza full 2025-07-01 23-05-21.ibt"
 
 #define IR_MAX_DRIVERS 64
 #define IR_MAX_TIRE_COMPOUND 4
@@ -19,40 +22,38 @@ enum eSessionType
 
 struct sDriver
 {
-	uint8_t uiPosition;
-	std::string strName;
-	std::string strCountry;
-	uint32_t uiCarNumber;
-	uint32_t uiIRating;
-	std::string strLicence;
-	float aLicColor[4];
-	float fSafetyRating;
-	float fFastestLap;
-	float fLastLap;
+	uint8_t _uiPosition;
+	std::string _strName;
+	std::string _strCountry;
+	uint32_t _uiCarNumber;
+	uint32_t _uiIRating;
+	std::string _strLicence;
+	float _aLicColor[4];
+	float _fSafetyRating;
+	float _fFastestLap;
+	float _fLastLap;
 };
 
 struct sWeather
 {
-	float fTrackTemp = 30.f;
-	float fAirTemp = 20.f;
-	float fWindSpeed = 2.5f;
-	float fWindDirection = 92.f;
-	float fRainProbablility = 23.f;
+	float _fTrackTemp = 30.f;
+	float _fAirTemp = 20.f;
+	float _fWindSpeed = 2.5f;
+	float _fWindDirection = 92.f;
+	float _fRainProbablility = 23.f;
 };
 
 struct sSession
 {
 	std::string _strSessionYaml;
 	eSessionType _eSessionType;
-	float fSessionTime = 0;
-	float fSessionTimeTotal = 0;
+	float _fSessionTime = 0;
+	float _fSessionTimeTotal = 0;
 	sWeather _sWeather;
 	std::map<uint32_t, sDriver> _mDrivers;
-	sDriver* aPositions[IR_MAX_DRIVERS] = { nullptr };
-	std::string strAvailableTires;
+	sDriver* _aPositions[IR_MAX_DRIVERS] = { nullptr };
+	std::string _strAvailableTires;
 };
-
-
 
 class IReader
 {
@@ -97,9 +98,13 @@ public:
 	double GetDouble(const char* szName) override;
 
 	void ReadData(sSession& session);
+	void ReadTickData(int32_t iTick);
 
+	uint32_t m_uiNbTicks;
 protected:
 	irsdkDiskClient m_irDiskClient;
+	
+	
 };
 
 class IRModel
@@ -114,7 +119,6 @@ public:
 	bool m_bConnected;
 	bool m_bDiskRead = false;
 	sSession m_sSessionData;
-
 	
 	IReader* m_pCurrentReader = nullptr;
 	OnlineReader m_OnlineReader;

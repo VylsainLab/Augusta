@@ -55,6 +55,11 @@ void OnlineReader::ReadData(sSession& session)
 DiskReader::DiskReader()
 {
 	m_irDiskClient.openFile(DEBUG_IBT_PATH);
+	int iNumVars = m_irDiskClient.getNumVars();
+	int iDataCount = m_irDiskClient.getDataCount();
+	m_uiNbTicks = iDataCount / iNumVars;
+
+	m_irDiskClient.getNextData();
 }
 
 int DiskReader::GetSessionStrVal(const char* path, char* val, int valLen)
@@ -126,7 +131,11 @@ void DiskReader::ReadData(sSession& session)
 	}
 }
 
-
+void DiskReader::ReadTickData(int32_t iTick)
+{
+	printf("\nTick: %d", iTick);
+	m_irDiskClient.getTickData(iTick);
+}
 
 IRModel::IRModel()
 {
@@ -159,120 +168,132 @@ void IRModel::Update()
 
 void IRModel::ReadData()
 {
-	if (!m_pCurrentReader || (!m_bConnected && m_bDiskRead))
+	if (!m_pCurrentReader)
 		return;
 
-	m_pCurrentReader->ReadData(m_sSessionData);
-
-	//save in readable format for debug purposes
-	FILE* pFile = fopen("session.yaml", "w");
-	if (pFile)
+	if (!m_bConnected && !m_bDiskRead)
 	{
-		fwrite(m_sSessionData._strSessionYaml.data(), m_sSessionData._strSessionYaml.size(), 1, pFile);
-		fclose(pFile);
-	}
+		m_pCurrentReader->ReadData(m_sSessionData);
 
-	char szData[256];
-	if (m_pCurrentReader->GetSessionStrVal("SessionInfo:Sessions:SessionType:", szData, sizeof(szData)))
-	{
-		if (_stricmp(szData, "Practice")==0)
-			m_sSessionData._eSessionType == PRACTICE;
-		else if (_stricmp(szData, "Qualify")==0)
-			m_sSessionData._eSessionType == QUALI;
-		else if (_stricmp(szData, "Race")==0)
-			m_sSessionData._eSessionType == RACE;
-	}
-
-	m_sSessionData.fSessionTime = m_pCurrentReader->GetFloat("SessionTime");
-	m_sSessionData.fSessionTimeTotal = m_pCurrentReader->GetFloat("SessionTimeTotal");
-
-	m_sSessionData._sWeather.fTrackTemp = m_pCurrentReader->GetFloat("TrackTempCrew");
-	m_sSessionData._sWeather.fAirTemp = m_pCurrentReader->GetFloat("AirTemp");
-	m_sSessionData._sWeather.fWindSpeed = m_pCurrentReader->GetFloat("WindVel");
-	m_sSessionData._sWeather.fWindDirection = m_pCurrentReader->GetFloat("WindDir") * M_PI / 180.;
-	m_sSessionData._sWeather.fRainProbablility = m_pCurrentReader->GetFloat("Precipitation");
-
-	//DRIVERS
-	char szPath[128];
-	for (uint8_t i = 0; i < IR_MAX_DRIVERS; ++i)
-	{
-		sprintf(szPath, "DriverInfo:Drivers:CarIdx:{%d}UserName:", i);
-		if (!m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData)))
-			continue;
-
-		m_sSessionData._mDrivers[i].strName = szData;
-
-		sprintf(szPath, "DriverInfo:Drivers:CarIdx:{%d}FlairName:", i);
-		
-		if (m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData))==0) //fallback for IBTs created before the introduction of flairs
+		//save in readable format for debug purposes
+		FILE* pFile = fopen("session.yaml", "w");
+		if (pFile)
 		{
-			sprintf(szPath, "DriverInfo:Drivers:CarIdx:{%d}ClubName:", i);
-			m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData));
+			fwrite(m_sSessionData._strSessionYaml.data(), m_sSessionData._strSessionYaml.size(), 1, pFile);
+			fclose(pFile);
 		}
-		m_sSessionData._mDrivers[i].strCountry = szData;
 
-		sprintf(szPath, "DriverInfo:Drivers:CarIdx:{%d}CarNumberRaw:", i);
-		m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData));
-		m_sSessionData._mDrivers[i].uiCarNumber = atoi(szData);
-
-		sprintf(szPath, "DriverInfo:Drivers:CarIdx:{%d}IRating:", i);
-		m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData));
-		m_sSessionData._mDrivers[i].uiIRating = atoi(szData);
-
-		sprintf(szPath, "DriverInfo:Drivers:CarIdx:{%d}LicString:", i);
-		m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData));
-		m_sSessionData._mDrivers[i].strLicence = szData;
-
-		sprintf(szPath, "DriverInfo:Drivers:CarIdx:{%d}LicColor:", i);
-		m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData));
-		HEXAtoFloat4(szData, 1.0, m_sSessionData._mDrivers[i].aLicColor);
-	}
-
-	//POSITIONS
-	std::vector<uint8_t> vInserted;
-	for (uint8_t i = 0; i < IR_MAX_DRIVERS; ++i)
-	{
-		sprintf(szPath, "SessionInfo:Sessions:SessionNum:{0}ResultsPositions:Position:{%d}CarIdx:", i+1);	
-		if (!m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData)))
-			continue;
-
-		int32_t iCarIdx = atoi(szData);
-		vInserted.push_back(iCarIdx);
-		m_sSessionData.aPositions[i] = &m_sSessionData._mDrivers.at(iCarIdx);
-		m_sSessionData.aPositions[i]->uiPosition = i + 1;
-
-		sprintf(szPath, "SessionInfo:Sessions:SessionNum:{0}ResultsPositions:Position:{%d}FastestTime:", i + 1);
-		m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData));
-		m_sSessionData.aPositions[i]->fFastestLap = atof(szData);
-
-		sprintf(szPath, "SessionInfo:Sessions:SessionNum:{0}ResultsPositions:Position:{%d}LastTime:", i + 1);
-		m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData));
-		m_sSessionData.aPositions[i]->fLastLap = atof(szData);
-	}
-
-	//Fill in with unranked drivers (unsorted)
-	int32_t iCount = vInserted.size()-1;
-	for (auto& driver : m_sSessionData._mDrivers)
-	{
-		if (std::find(vInserted.begin(), vInserted.end(), driver.first) == vInserted.end())
+		char szData[256];
+		if (m_pCurrentReader->GetSessionStrVal("SessionInfo:Sessions:SessionType:", szData, sizeof(szData)))
 		{
-			m_sSessionData.aPositions[iCount] = &driver.second;
-			driver.second.uiPosition = iCount + 1;
-			iCount++;
-		}		
+			if (_stricmp(szData, "Practice") == 0)
+				m_sSessionData._eSessionType = PRACTICE;
+			else if (_stricmp(szData, "Qualify") == 0)
+				m_sSessionData._eSessionType = QUALI;
+			else if (_stricmp(szData, "Race") == 0)
+				m_sSessionData._eSessionType = RACE;
+		}
+
+		
+
+		//TODO Track sectors
+
+		//DRIVERS
+		char szPath[128];
+		for (uint8_t i = 0; i < IR_MAX_DRIVERS; ++i)
+		{
+			sprintf(szPath, "DriverInfo:Drivers:CarIdx:{%d}UserName:", i);
+			if (!m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData)))
+				continue;
+
+			m_sSessionData._mDrivers[i]._strName = szData;
+
+			sprintf(szPath, "DriverInfo:Drivers:CarIdx:{%d}FlairName:", i);
+
+			if (m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData)) == 0) //fallback for IBTs created before the introduction of flairs
+			{
+				sprintf(szPath, "DriverInfo:Drivers:CarIdx:{%d}ClubName:", i);
+				m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData));
+			}
+			m_sSessionData._mDrivers[i]._strCountry = szData;
+
+			sprintf(szPath, "DriverInfo:Drivers:CarIdx:{%d}CarNumberRaw:", i);
+			m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData));
+			m_sSessionData._mDrivers[i]._uiCarNumber = atoi(szData);
+
+			sprintf(szPath, "DriverInfo:Drivers:CarIdx:{%d}IRating:", i);
+			m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData));
+			m_sSessionData._mDrivers[i]._uiIRating = atoi(szData);
+
+			sprintf(szPath, "DriverInfo:Drivers:CarIdx:{%d}LicString:", i);
+			m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData));
+			m_sSessionData._mDrivers[i]._strLicence = szData;
+
+			sprintf(szPath, "DriverInfo:Drivers:CarIdx:{%d}LicColor:", i);
+			m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData));
+			HEXAtoFloat4(szData, 1.0, m_sSessionData._mDrivers[i]._aLicColor);
+
+			//TODO: car class, car brand, team name
+		}
+
+		//POSITIONS
+		std::vector<uint8_t> vInserted;
+		for (uint8_t i = 0; i < IR_MAX_DRIVERS; ++i)
+		{
+			sprintf(szPath, "SessionInfo:Sessions:SessionNum:{0}ResultsPositions:Position:{%d}CarIdx:", i + 1);
+			if (!m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData)))
+				continue;
+
+			int32_t iCarIdx = atoi(szData);
+			vInserted.push_back(iCarIdx);
+			m_sSessionData._aPositions[i] = &m_sSessionData._mDrivers.at(iCarIdx);
+			m_sSessionData._aPositions[i]->_uiPosition = i + 1;
+
+			sprintf(szPath, "SessionInfo:Sessions:SessionNum:{0}ResultsPositions:Position:{%d}FastestTime:", i + 1);
+			m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData));
+			m_sSessionData._aPositions[i]->_fFastestLap = atof(szData);
+
+			sprintf(szPath, "SessionInfo:Sessions:SessionNum:{0}ResultsPositions:Position:{%d}LastTime:", i + 1);
+			m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData));
+			m_sSessionData._aPositions[i]->_fLastLap = atof(szData);
+
+			//TODO class position
+		}
+
+		//Fill in with unranked drivers (unsorted)
+		int32_t iCount = vInserted.size();
+		for (auto& driver : m_sSessionData._mDrivers)
+		{
+			if (std::find(vInserted.begin(), vInserted.end(), driver.first) == vInserted.end())
+			{
+				m_sSessionData._aPositions[iCount] = &driver.second;
+				driver.second._uiPosition = iCount + 1;
+				iCount++;
+			}
+		}
+
+		for (uint8_t i = 0; i < IR_MAX_TIRE_COMPOUND; ++i)
+		{
+			sprintf(szPath, "DriverInfo:DriverTires:TireIndex:{%d}TireCompoundType:", i);
+			if (!m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData)))
+				continue;
+
+			m_sSessionData._strAvailableTires += szData[1];
+		}
+
+
+		m_bDiskRead = true;
 	}
 
-	for (uint8_t i = 0; i < IR_MAX_TIRE_COMPOUND; ++i)
-	{
-		sprintf(szPath, "DriverInfo:DriverTires:TireIndex:{%d}TireCompoundType:", i);
-		if (!m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData)))
-			continue;
+	int iSessionTick = m_pCurrentReader->GetFloat("SessionTick");
+	m_sSessionData._fSessionTime = m_pCurrentReader->GetFloat("SessionTime");
+	m_sSessionData._fSessionTimeTotal = m_pCurrentReader->GetFloat("SessionTimeTotal");
 
-		m_sSessionData.strAvailableTires += szData[1];
-	}
-
-	
-	m_bDiskRead = true;
+	m_sSessionData._sWeather._fTrackTemp = m_pCurrentReader->GetFloat("TrackTempCrew");
+	m_sSessionData._sWeather._fAirTemp = m_pCurrentReader->GetFloat("AirTemp");
+	m_sSessionData._sWeather._fWindSpeed = m_pCurrentReader->GetFloat("WindVel");
+	m_sSessionData._sWeather._fWindDirection = m_pCurrentReader->GetFloat("WindDir") * M_PI / 180.;
+	m_sSessionData._sWeather._fRainProbablility = m_pCurrentReader->GetFloat("Precipitation");
 }
 
 

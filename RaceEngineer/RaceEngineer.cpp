@@ -107,18 +107,18 @@ void RaceEngineer::DrawSession()
         break;
     }
 
-    int h = session.fSessionTime / 3600;
-    int m = fmod(session.fSessionTime / 60,60);
-    int s = fmod(session.fSessionTime, 60);
-    int th = session.fSessionTimeTotal / 3600;
-    int tm = fmod(session.fSessionTimeTotal / 60,60);
+    int h = session._fSessionTime / 3600;
+    int m = fmod(session._fSessionTime / 60,60);
+    int s = fmod(session._fSessionTime, 60);
+    int th = session._fSessionTimeTotal / 3600;
+    int tm = fmod(session._fSessionTimeTotal / 60,60);
     ImGui::Text("%02d:%02d:%02d / %02d:%02dh", h,m,s, th,tm );
 
     ImGui::Text("DRIVERS: %d", session._mDrivers.size());
 
     SL(ImGui::Text("TIRES: "));
     ImGui::PushFont(m_pEmojiFont);
-    for (char &c : session.strAvailableTires)
+    for (char &c : session._strAvailableTires)
     {
         switch (c)
         {
@@ -139,6 +139,12 @@ void RaceEngineer::DrawSession()
         }
     }
     ImGui::PopFont();
+
+    static float fTick = 0;
+    float prevTick = fTick;
+    ImGui::SliderFloat("Tick", &fTick, 0., 1.);
+    if(prevTick!=fTick)
+        m_IRModel.m_DiskReader.ReadTickData(fTick * m_IRModel.m_DiskReader.m_uiNbTicks);
 
     ImGui::End();
 }
@@ -165,23 +171,23 @@ void RaceEngineer::DrawStandings()
 
     ImVec4 fastest(0.75,0.,0.75,1.);
     ImVec4 other(1.,1.,1.,1.);
-    for (auto driver : session.aPositions)
+    for (auto driver : session._aPositions)
     {
         if (driver == nullptr)
             continue;
 
         ImGui::TableNextRow();
         ImGui::TableNextColumn();
-        ImGui::Text("%d", driver->uiPosition);
+        ImGui::Text("%d", driver->_uiPosition);
 
         ImGui::TableNextColumn();
-        ImGui::Text("%d", driver->uiCarNumber);
+        ImGui::Text("%d", driver->_uiCarNumber);
 
         ImGui::TableNextColumn();
-        if (!mFlags[driver->strCountry].empty())
+        if (!mFlags[driver->_strCountry].empty())
         {
             ImGui::PushFont(m_pFlagFont);
-            SL(ImGui::Text(mFlags[driver->strCountry].c_str()))
+            SL(ImGui::Text(mFlags[driver->_strCountry].c_str()))
             ImGui::PopFont();
         }
         else
@@ -192,24 +198,24 @@ void RaceEngineer::DrawStandings()
             //ImGui::Text(driver.second.strCountry.c_str());
         }
 
-        ImGui::Text("%s", driver->strName.c_str());
+        ImGui::Text("%s", driver->_strName.c_str());
 
         ImGui::TableNextColumn();
-        ImVec4 color(driver->aLicColor[0], driver->aLicColor[1], driver->aLicColor[2], driver->aLicColor[3]);
+        ImVec4 color(driver->_aLicColor[0], driver->_aLicColor[1], driver->_aLicColor[2], driver->_aLicColor[3]);
         ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::ColorConvertFloat4ToU32(color));
         bool bLight = (color.x + color.y + color.z) < 1.5;
-        ImGui::TextColored( ImVec4(bLight,bLight,bLight,1.0f), "%s", driver->strLicence.c_str());
+        ImGui::TextColored( ImVec4(bLight,bLight,bLight,1.0f), "%s", driver->_strLicence.c_str());
 
         ImGui::TableNextColumn();
-        ImGui::Text("%.02fk", float(driver->uiIRating)/1000);
+        ImGui::Text("%.02fk", float(driver->_uiIRating)/1000);
 
         ImGui::TableNextColumn();
-        if(driver->fFastestLap>0.)
-            ImGui::TextColored(driver->uiPosition==1?fastest:other, "%d:%.03f", int(driver->fFastestLap / 60), fmod(driver->fFastestLap, 60.));
+        if(driver->_fFastestLap>0.)
+            ImGui::TextColored(driver->_uiPosition==1?fastest:other, "%d:%.03f", int(driver->_fFastestLap / 60), fmod(driver->_fFastestLap, 60.));
 
         ImGui::TableNextColumn();
-        if (driver->fLastLap > 0.)
-            ImGui::Text("%d:%.03f", int(driver->fLastLap/60), fmod(driver->fLastLap,60.));
+        if (driver->_fLastLap > 0.)
+            ImGui::Text("%d:%.03f", int(driver->_fLastLap/60), fmod(driver->_fLastLap,60.));
     }
     ImGui::EndTable();
 
@@ -223,10 +229,10 @@ void RaceEngineer::DrawWeather()
     ImGui::SetNextWindowPos(ImVec2(100.0f, 100.0f), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize, ImGuiCond_FirstUseEver);
     ImGui::Begin("Weather");
-    ImGui::Text(u8"Track temp: %.02f\u00B0C", session._sWeather.fTrackTemp);
-    ImGui::Text(u8"Air temp: %.02f\u00B0C", session._sWeather.fAirTemp);
-    ImGui::Text(u8"Wind: %.02fm/s %.0f\u00B0", session._sWeather.fWindSpeed, session._sWeather.fWindDirection);
-    ImGui::Text(u8"Rain: %.0f\u0025", session._sWeather.fRainProbablility);
+    ImGui::Text(u8"Track temp: %.02f\u00B0C", session._sWeather._fTrackTemp);
+    ImGui::Text(u8"Air temp: %.02f\u00B0C", session._sWeather._fAirTemp);
+    ImGui::Text(u8"Wind: %.02fm/s %.0f\u00B0", session._sWeather._fWindSpeed, session._sWeather._fWindDirection);
+    ImGui::Text(u8"Rain: %.0f\u0025", session._sWeather._fRainProbablility);
     ImGui::End();
 }
 
@@ -242,10 +248,10 @@ void RaceEngineer::DrawTrackMap()
     ImVec2 cursor = ImGui::GetCursorScreenPos();
     ImVec2 center = ImVec2(cursor.x + draw_area.x * 0.5f, cursor.y + draw_area.y * 0.5f);    
 
-    ImGui::Text(u8"Track temp: %.02f\u00B0C", session._sWeather.fTrackTemp);
-    ImGui::Text(u8"Air temp: %.02f\u00B0C", session._sWeather.fAirTemp);
-    ImGui::Text(u8"Wind: %.02fm/s %.0f\u00B0", session._sWeather.fWindSpeed, session._sWeather.fWindDirection);
-    ImGui::Text(u8"Rain: %.0f\u0025", session._sWeather.fRainProbablility);
+    ImGui::Text(u8"Track temp: %.02f\u00B0C", session._sWeather._fTrackTemp);
+    ImGui::Text(u8"Air temp: %.02f\u00B0C", session._sWeather._fAirTemp);
+    ImGui::Text(u8"Wind: %.02fm/s %.0f\u00B0", session._sWeather._fWindSpeed, session._sWeather._fWindDirection);
+    ImGui::Text(u8"Rain: %.0f\u0025", session._sWeather._fRainProbablility);
 
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
