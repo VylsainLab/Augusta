@@ -2,6 +2,9 @@
 #include "Nations.h"
 #include <algorithm>
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 #define SL(x) x;ImGui::SameLine();
 
 RaceEngineer::RaceEngineer(const std::string& name, uint16_t width, uint16_t height, bool bResizable, bool bVisible)
@@ -140,6 +143,8 @@ void RaceEngineer::DrawSession()
     }
     ImGui::PopFont();
 
+    ImGui::NewLine();
+
     static float fTick = 0;
     float prevTick = fTick;
     ImGui::SliderFloat("Tick", &fTick, 0., 1.);
@@ -253,9 +258,24 @@ void RaceEngineer::DrawTrackMap()
     ImGui::Text(u8"Wind: %.02fm/s %.0f\u00B0", session._sWeather._fWindSpeed, session._sWeather._fWindDirection);
     ImGui::Text(u8"Rain: %.0f\u0025", session._sWeather._fRainProbablility);
 
+    
+
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
-    draw_list->AddCircle(center, 0.45*std::min(draw_area.x, draw_area.y), IM_COL32(255, 255, 255, 255), 100, 5);
+    float fRadius = 0.45 * std::min(draw_area.x, draw_area.y);
+    draw_list->AddCircle(center, fRadius, IM_COL32(255, 255, 255, 255), 100, 5);
+
+    //draw player car
+    if (session._pPlayer)
+    {
+        float fAzimuth = (session._pPlayer->_LapDistPct * 2 * M_PI)-(M_PI/2);
+        float x = center.x + fRadius * cos(fAzimuth);
+        float y = center.y + fRadius * sin(fAzimuth);
+        draw_list->AddCircleFilled(ImVec2(x, y), 15, IM_COL32(255, 0, 0, 255), 20);
+        char szPos[8];
+        sprintf(szPos, "%d", session._pPlayer->_uiPosition);
+        draw_list->AddText(ImVec2(x-7, y-7), IM_COL32(0, 0, 0, 255), szPos);
+    }
 
     ImGui::End();
     

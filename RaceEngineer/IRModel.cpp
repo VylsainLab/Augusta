@@ -132,7 +132,6 @@ void DiskReader::ReadData(sSession& session)
 
 void DiskReader::ReadTickData(int32_t iTick)
 {
-	printf("\nTick: %d", iTick);
 	m_irDiskClient.getTickData(iTick);
 }
 
@@ -287,12 +286,21 @@ void IRModel::ReadData()
 	int iSessionTick = m_pCurrentReader->GetFloat("SessionTick");
 	m_sSessionData._fSessionTime = m_pCurrentReader->GetFloat("SessionTime");
 	m_sSessionData._fSessionTimeTotal = m_pCurrentReader->GetFloat("SessionTimeTotal");
+	m_sSessionData._Flags = (irsdk_Flags)m_pCurrentReader->GetInt("SessionFlags");
+	//printf("\nFlag: %d", m_sSessionData._Flags);
 
 	m_sSessionData._sWeather._fTrackTemp = m_pCurrentReader->GetFloat("TrackTempCrew");
 	m_sSessionData._sWeather._fAirTemp = m_pCurrentReader->GetFloat("AirTemp");
 	m_sSessionData._sWeather._fWindSpeed = m_pCurrentReader->GetFloat("WindVel");
 	m_sSessionData._sWeather._fWindDirection = m_pCurrentReader->GetFloat("WindDir") * M_PI / 180.;
 	m_sSessionData._sWeather._fRainProbablility = m_pCurrentReader->GetFloat("Precipitation");
+
+	int iPlayerIdx = m_pCurrentReader->GetInt("PlayerCarIdx");
+	m_sSessionData._mDrivers[iPlayerIdx]._bIsPlayer = true;
+	m_sSessionData._pPlayer = &m_sSessionData._mDrivers[iPlayerIdx];
+
+	m_sSessionData._pPlayer->_LapDistPct = m_pCurrentReader->GetFloat("LapDistPct");
+	m_sSessionData._pPlayer->_uiPosition = m_pCurrentReader->GetInt("PlayerCarPosition");
 }
 
 

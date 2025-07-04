@@ -7,8 +7,8 @@
 #include <vector>
 
 //#define DEBUG_IBT_PATH "C:\\Users\\melin\\OneDrive\\Documents\\iRacing\\telemetry\\superformulalights324_bathurst 2025-06-02 21-59-08.ibt"
-//#define DEBUG_IBT_PATH "D:\\Git\\Augusta\\RaceEngineer\\Sample\\bmwm4gt3_okayama full 2025-06-15 19-15-20.ibt"//
-#define DEBUG_IBT_PATH "D:\\Git\\Augusta\\RaceEngineer\\Sample\\bmwm4gt3_monza full 2025-07-01 23-05-21.ibt"
+#define DEBUG_IBT_PATH "D:\\Git\\Augusta\\RaceEngineer\\Sample\\bmwm4gt3_okayama full 2025-06-15 19-15-20.ibt"//
+//#define DEBUG_IBT_PATH "D:\\Git\\Augusta\\RaceEngineer\\Sample\\bmwm4gt3_monza full 2025-07-01 23-05-21.ibt"
 
 #define IR_MAX_DRIVERS 64
 #define IR_MAX_TIRE_COMPOUND 4
@@ -32,6 +32,9 @@ struct sDriver
 	float _fSafetyRating;
 	float _fFastestLap;
 	float _fLastLap;
+	bool _bIsOnTrack = true;
+	bool _bIsPlayer = false;
+	float _LapDistPct;
 };
 
 struct sWeather
@@ -52,7 +55,9 @@ struct sSession
 	sWeather _sWeather;
 	std::map<uint32_t, sDriver> _mDrivers;
 	sDriver* _aPositions[IR_MAX_DRIVERS] = { nullptr };
+	sDriver* _pPlayer = nullptr;
 	std::string _strAvailableTires;
+	irsdk_Flags _Flags;
 };
 
 class IReader
@@ -119,6 +124,7 @@ public:
 	bool m_bConnected;
 	bool m_bDiskRead = false;
 	sSession m_sSessionData;
+	sDriver* m_pPlayer = nullptr;
 	
 	IReader* m_pCurrentReader = nullptr;
 	OnlineReader m_OnlineReader;
