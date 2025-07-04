@@ -56,8 +56,7 @@ DiskReader::DiskReader()
 {
 	m_irDiskClient.openFile(DEBUG_IBT_PATH);
 	int iNumVars = m_irDiskClient.getNumVars();
-	int iDataCount = m_irDiskClient.getDataCount();
-	m_uiNbTicks = iDataCount / iNumVars;
+	m_uiNbTicks = m_irDiskClient.getDataCount();
 
 	m_irDiskClient.getNextData();
 }

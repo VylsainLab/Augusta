@@ -144,6 +144,7 @@ bool irsdkDiskClient::getTickData(int iTick)
 {
 	if (m_ibtFile)
 	{
+		printf("\nOffset: %d", m_header.varBuf[0].bufOffset + iTick * m_header.bufLen);
 		fseek(m_ibtFile, m_header.varBuf[0].bufOffset + iTick * m_header.bufLen, SEEK_SET);
 		return fread(m_varBuf, 1, m_header.bufLen, m_ibtFile) == (size_t)m_header.bufLen;
 	}		
