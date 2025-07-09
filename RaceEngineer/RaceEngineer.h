@@ -13,7 +13,9 @@ public:
 	void DrawSession();
 	void DrawStandings();
 	void DrawWeather();
+	ImVec2 GetPosFromRadiusAzimuth(const ImVec2 &c, const float& r, const float& a);
 	void DrawTrackMap();
+	void DrawFuelCalculator();
 
 	void DrawDebrief();
 

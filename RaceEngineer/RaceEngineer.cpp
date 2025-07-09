@@ -72,10 +72,7 @@ void RaceEngineer::DrawTelemetry()
 
     //DrawWeather();
 
-    ImGui::SetNextWindowPos(ImVec2(100.0f, 100.0f), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize, ImGuiCond_FirstUseEver);
-    ImGui::Begin("FuelCalculator");
-    ImGui::End();
+    DrawFuelCalculator();
 
     DrawTrackMap();
 }
@@ -164,8 +161,8 @@ void RaceEngineer::DrawStandings()
 
     ImGui::BeginTable("Standings", 7, ImGuiTableFlags_RowBg);
 
+    ImGui::TableSetupColumn("Pos", ImGuiTableColumnFlags_WidthFixed);
     ImGui::TableSetupColumn("#", ImGuiTableColumnFlags_WidthFixed);
-    ImGui::TableSetupColumn("Number", ImGuiTableColumnFlags_WidthFixed);
     ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed);
     ImGui::TableSetupColumn("Licence", ImGuiTableColumnFlags_WidthFixed);
     ImGui::TableSetupColumn("iRating", ImGuiTableColumnFlags_WidthFixed);
@@ -241,6 +238,13 @@ void RaceEngineer::DrawWeather()
     ImGui::End();
 }
 
+ImVec2 RaceEngineer::GetPosFromRadiusAzimuth(const ImVec2 &c, const float& r, const float& a)
+{
+    float x = c.x + r * cos(a);
+    float y = c.y + r * sin(a);
+    return ImVec2(x,y);
+}
+
 void RaceEngineer::DrawTrackMap()
 {
     sSession& session = m_IRModel.m_sSessionData;
@@ -256,29 +260,66 @@ void RaceEngineer::DrawTrackMap()
     ImGui::Text(u8"Track temp: %.02f\u00B0C", session._sWeather._fTrackTemp);
     ImGui::Text(u8"Air temp: %.02f\u00B0C", session._sWeather._fAirTemp);
     ImGui::Text(u8"Wind: %.02fm/s %.0f\u00B0", session._sWeather._fWindSpeed, session._sWeather._fWindDirection);
-    ImGui::Text(u8"Rain: %.0f\u0025", session._sWeather._fRainProbablility);
+    ImGui::Text(u8"Rain: %.0f %%", session._sWeather._fRainProbablility);
 
     
 
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
     float fRadius = 0.45 * std::min(draw_area.x, draw_area.y);
+
+    //sectors
+    for (auto fSector : session._vSectors)
+    {
+        float fAzimuth = (fSector * 2 * M_PI) - (M_PI / 2);
+        
+        draw_list->AddLine(GetPosFromRadiusAzimuth(center, 0.9 * fRadius, fAzimuth), GetPosFromRadiusAzimuth(center, 1.1 * fRadius, fAzimuth), IM_COL32(255, 255, 255, 255), 3);
+    }
+
+    //track    
     draw_list->AddCircle(center, fRadius, IM_COL32(255, 255, 255, 255), 100, 5);
+
+    //pitlane
+    draw_list->PathArcTo(center, 0.8 * fRadius, 2.5*M_PI/2, 3.5*M_PI/2, 50);
+    draw_list->PathStroke(IM_COL32(128, 128, 128, 255), ImDrawFlags_None, 3);
 
     //draw player car
     if (session._pPlayer)
     {
         float fAzimuth = (session._pPlayer->_LapDistPct * 2 * M_PI)-(M_PI/2);
-        float x = center.x + fRadius * cos(fAzimuth);
-        float y = center.y + fRadius * sin(fAzimuth);
-        draw_list->AddCircleFilled(ImVec2(x, y), 15, IM_COL32(255, 0, 0, 255), 20);
+        float r = (session._pPlayer->_bIsOnPitRoad ? 0.8 : 1.) * fRadius;
+        ImVec2 pos = GetPosFromRadiusAzimuth(center, r, fAzimuth);
+        draw_list->AddCircleFilled(pos, 15, IM_COL32(255, 0, 0, 255), 20);
+        draw_list->AddCircle(pos, 15, IM_COL32(255, 255, 255, 255), 20);
+
         char szPos[8];
         sprintf(szPos, "%d", session._pPlayer->_uiPosition);
-        draw_list->AddText(ImVec2(x-7, y-7), IM_COL32(0, 0, 0, 255), szPos);
+        ImVec2 textSize = ImGui::CalcTextSize(szPos);
+        draw_list->AddText(ImVec2(pos.x-0.5*textSize.x, pos.y-0.5*textSize.y), IM_COL32(0, 0, 0, 255), szPos);
     }
 
     ImGui::End();
     
+}
+
+void RaceEngineer::DrawFuelCalculator()
+{
+    sDriver* pPlayer = m_IRModel.m_sSessionData._pPlayer;
+
+    ImGui::SetNextWindowPos(ImVec2(100.0f, 100.0f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize, ImGuiCond_FirstUseEver);
+    ImGui::Begin("FuelCalculator");
+
+    if (pPlayer)
+    {
+        char szFuelLvl[8];
+        sprintf(szFuelLvl, "%.01f L", pPlayer->_fFuelLevelLiters);
+        ImGui::ProgressBar(pPlayer->_fFuelLevelPct, ImVec2(0.0f, 0.0f), szFuelLvl);
+        ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);
+        ImGui::Text("%.01f L", pPlayer->_fFuelLevelLiters / pPlayer->_fFuelLevelPct);
+    }
+
+    ImGui::End();
 }
 
 void RaceEngineer::DrawDebrief()

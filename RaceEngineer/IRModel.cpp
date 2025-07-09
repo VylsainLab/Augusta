@@ -190,14 +190,22 @@ void IRModel::ReadData()
 				m_sSessionData._eSessionType = QUALI;
 			else if (_stricmp(szData, "Race") == 0)
 				m_sSessionData._eSessionType = RACE;
+		}	
+
+		//Track sectors
+		char szPath[128];
+		int i = 0;
+		bool bFound = true;
+		while(bFound)
+		{
+			sprintf(szPath, "SplitTimeInfo:Sectors:SectorNum:{%d}SectorStartPct:", i);
+			bFound = m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData));
+			if (bFound)
+				m_sSessionData._vSectors.push_back(atof(szData));
+			++i;
 		}
 
-		
-
-		//TODO Track sectors
-
-		//DRIVERS
-		char szPath[128];
+		//DRIVERS		
 		for (uint8_t i = 0; i < IR_MAX_DRIVERS; ++i)
 		{
 			sprintf(szPath, "DriverInfo:Drivers:CarIdx:{%d}UserName:", i);
@@ -299,8 +307,13 @@ void IRModel::ReadData()
 	m_sSessionData._mDrivers[iPlayerIdx]._bIsPlayer = true;
 	m_sSessionData._pPlayer = &m_sSessionData._mDrivers[iPlayerIdx];
 
+	m_sSessionData._pPlayer->_bIsOnPitRoad = m_pCurrentReader->GetInt("OnPitRoad");
+
 	m_sSessionData._pPlayer->_LapDistPct = m_pCurrentReader->GetFloat("LapDistPct");
 	m_sSessionData._pPlayer->_uiPosition = m_pCurrentReader->GetInt("PlayerCarPosition");
+
+	m_sSessionData._pPlayer->_fFuelLevelLiters = m_pCurrentReader->GetFloat("FuelLevel");
+	m_sSessionData._pPlayer->_fFuelLevelPct = m_pCurrentReader->GetFloat("FuelLevelPct");
 }
 
 
