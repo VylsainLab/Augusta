@@ -75,8 +75,30 @@ void RaceEngineer::DrawTelemetry()
     DrawFuelCalculator();
 
     DrawTrackMap();
+
+    DrawInputs();
 }
 
+void DrawTireCompound(const char& c)
+{
+    switch (c)
+    {
+    case 'H':
+        SL(ImGui::TextColored(ImVec4(1., 1., 1., 1.), u8"\u25ce"));
+        break;
+    case 'M':
+        SL(ImGui::TextColored(ImVec4(1., 1., 0., 1.), u8"\u25ce"));
+        break;
+    case 'S':
+        SL(ImGui::TextColored(ImVec4(1., 0., 0., 1.), u8"\u25ce"));
+        break;
+    case 'W':
+        SL(ImGui::TextColored(ImVec4(0.5, 0.5, 1., 1.), u8"\u25ce"));
+        break;
+    default:
+        break;
+    }
+}
 void RaceEngineer::DrawSession()
 {
     sSession& session = m_IRModel.m_sSessionData;
@@ -120,23 +142,8 @@ void RaceEngineer::DrawSession()
     ImGui::PushFont(m_pEmojiFont);
     for (char &c : session._strAvailableTires)
     {
-        switch (c)
-        {
-        case 'H':
-            SL(ImGui::TextColored(ImVec4(1., 1., 1., 1.), u8"\u25ce"));
-            break;
-        case 'M':
-            SL(ImGui::TextColored(ImVec4(1., 1., 0., 1.), u8"\u25ce"));
-            break;
-        case 'S':
-            SL(ImGui::TextColored(ImVec4(1., 0., 0., 1.), u8"\u25ce"));
-            break;
-        case 'W':
-            SL(ImGui::TextColored(ImVec4(0.5, 0.5, 1., 1.), u8"\u25ce"));
-            break;
-        default:
-            break;
-        }
+        DrawTireCompound(c);
+        ImGui::SameLine();
     }
     ImGui::PopFont();
 
@@ -159,7 +166,7 @@ void RaceEngineer::DrawStandings()
     ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize, ImGuiCond_FirstUseEver);
     ImGui::Begin("Standings");
 
-    ImGui::BeginTable("Standings", 7, ImGuiTableFlags_RowBg);
+    ImGui::BeginTable("Standings", 8, ImGuiTableFlags_RowBg);
 
     ImGui::TableSetupColumn("Pos", ImGuiTableColumnFlags_WidthFixed);
     ImGui::TableSetupColumn("#", ImGuiTableColumnFlags_WidthFixed);
@@ -168,6 +175,7 @@ void RaceEngineer::DrawStandings()
     ImGui::TableSetupColumn("iRating", ImGuiTableColumnFlags_WidthFixed);
     ImGui::TableSetupColumn("Fastest", ImGuiTableColumnFlags_WidthFixed);
     ImGui::TableSetupColumn("Last", ImGuiTableColumnFlags_WidthFixed);
+    ImGui::TableSetupColumn("Tire", ImGuiTableColumnFlags_WidthFixed);
     ImGui::TableSetupScrollFreeze(0, 1); // Make row always visible
     ImGui::TableHeadersRow();
 
@@ -218,6 +226,11 @@ void RaceEngineer::DrawStandings()
         ImGui::TableNextColumn();
         if (driver->_fLastLap > 0.)
             ImGui::Text("%d:%.03f", int(driver->_fLastLap/60), fmod(driver->_fLastLap,60.));
+
+        ImGui::TableNextColumn();
+        ImGui::PushFont(m_pEmojiFont);
+        DrawTireCompound(session._strAvailableTires[driver->_uiTireCompound]);
+        ImGui::PopFont();
     }
     ImGui::EndTable();
 
@@ -313,11 +326,57 @@ void RaceEngineer::DrawFuelCalculator()
     if (pPlayer)
     {
         char szFuelLvl[8];
-        sprintf(szFuelLvl, "%.01f L", pPlayer->_fFuelLevelLiters);
-        ImGui::ProgressBar(pPlayer->_fFuelLevelPct, ImVec2(0.0f, 0.0f), szFuelLvl);
+        sprintf(szFuelLvl, "%.01f L", pPlayer->_sFuel._fFuelLevelLiters);
+        ImGui::ProgressBar(pPlayer->_sFuel._fFuelLevelPct, ImVec2(0.0f, 0.0f), szFuelLvl);
         ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);
-        ImGui::Text("%.01f L", pPlayer->_fFuelLevelLiters / pPlayer->_fFuelLevelPct);
+        ImGui::Text("%.01f L", pPlayer->_sFuel._fFuelLevelLiters / pPlayer->_sFuel._fFuelLevelPct);
+
+        if (ImGui::BeginTable("Fuel", 5, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedSame | ImGuiTableFlags_NoHostExtendX))
+        {
+            ImGui::TableSetupColumn("");
+            ImGui::TableSetupColumn("Usage");
+            ImGui::TableSetupColumn("Laps");
+            ImGui::TableSetupColumn("Refuel");
+            ImGui::TableSetupColumn("Final");
+            ImGui::TableHeadersRow();
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("Last");
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("Min");
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("Max");
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("Avg 5L");
+
+            ImGui::EndTable();
+        }
     }
+
+    ImGui::End();
+}
+
+void RaceEngineer::DrawInputs()
+{
+    sDriver* pPlayer = m_IRModel.m_sSessionData._pPlayer;
+
+    ImGui::SetNextWindowPos(ImVec2(100.0f, 100.0f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize, ImGuiCond_FirstUseEver);
+    ImGui::Begin("Inputs");
+
+    SL(ImGui::Text("Gear: %d", pPlayer->_iGear));
+    ImGui::Text("Speed: %.0f kph", pPlayer->_fSpeedMps*3.6);
+
+    ImGui::ProgressBar(pPlayer->_fThrottle, ImVec2(0.0f, 0.0f), "Throttle");
+    ImGui::ProgressBar(pPlayer->_fBrake, ImVec2(0.0f, 0.0f), "Brake");
+    ImGui::ProgressBar(pPlayer->_fClutch, ImVec2(0.0f, 0.0f), "Clutch");
 
     ImGui::End();
 }

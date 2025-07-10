@@ -20,6 +20,23 @@ enum eSessionType
 	RACE
 };
 
+struct sFuel
+{
+	float _fFuelLevelLiters;
+	float _fFuelLevelPct;
+	float _fFuelUsageKgph;
+	std::vector<float> _vFuekPerLap;
+};
+
+struct sLap
+{
+	bool _bFastest;
+	float _fTime;
+	std::vector<float> _vSectorTimes;
+
+	//TODO:	telemetry data (throttle, brakes, wheel input, etc...)
+};
+
 struct sDriver
 {
 	uint8_t _uiPosition;
@@ -30,16 +47,25 @@ struct sDriver
 	std::string _strLicence;
 	float _aLicColor[4];
 	float _fSafetyRating;
-	float _fFastestLap;
+	float _fFastestLap; //TODO replace with index in lap vector
 	float _fLastLap;
 	bool _bIsOnTrack = true;
 	bool _bIsOnPitRoad = true;
 	bool _bIsPlayer = false;
 	float _LapDistPct;
 
-	//fuel
-	float _fFuelLevelLiters;
-	float _fFuelLevelPct;
+	uint8_t _uiTireCompound;
+
+	sFuel _sFuel;
+	std::vector<sLap> _vLaps;
+
+	float _fSteeringRad;
+	float _fThrottle;
+	float _fBrake;
+	float _fClutch;
+	int32_t _iGear;
+	float _fSpeedMps;
+	bool _bABSActive;
 };
 
 struct sWeather

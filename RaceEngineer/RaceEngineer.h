@@ -16,6 +16,7 @@ public:
 	ImVec2 GetPosFromRadiusAzimuth(const ImVec2 &c, const float& r, const float& a);
 	void DrawTrackMap();
 	void DrawFuelCalculator();
+	void DrawInputs();
 
 	void DrawDebrief();
 

@@ -312,8 +312,18 @@ void IRModel::ReadData()
 	m_sSessionData._pPlayer->_LapDistPct = m_pCurrentReader->GetFloat("LapDistPct");
 	m_sSessionData._pPlayer->_uiPosition = m_pCurrentReader->GetInt("PlayerCarPosition");
 
-	m_sSessionData._pPlayer->_fFuelLevelLiters = m_pCurrentReader->GetFloat("FuelLevel");
-	m_sSessionData._pPlayer->_fFuelLevelPct = m_pCurrentReader->GetFloat("FuelLevelPct");
+	m_sSessionData._pPlayer->_sFuel._fFuelLevelLiters = m_pCurrentReader->GetFloat("FuelLevel");
+	m_sSessionData._pPlayer->_sFuel._fFuelLevelPct = m_pCurrentReader->GetFloat("FuelLevelPct");
+
+	m_sSessionData._pPlayer->_uiTireCompound = m_pCurrentReader->GetFloat("PlayerTireCompound");
+
+	m_sSessionData._pPlayer->_fSteeringRad = m_pCurrentReader->GetFloat("SteeringWheelAngle");
+	m_sSessionData._pPlayer->_fThrottle = m_pCurrentReader->GetFloat("Throttle");
+	m_sSessionData._pPlayer->_fBrake = m_pCurrentReader->GetFloat("Brake");
+	m_sSessionData._pPlayer->_fClutch = m_pCurrentReader->GetFloat("Clutch");
+	m_sSessionData._pPlayer->_iGear = m_pCurrentReader->GetInt("Gear");
+	m_sSessionData._pPlayer->_fSpeedMps = m_pCurrentReader->GetFloat("Speed");
+	m_sSessionData._pPlayer->_bABSActive = m_pCurrentReader->GetInt("BrakeABSactive");
 }
 
 
