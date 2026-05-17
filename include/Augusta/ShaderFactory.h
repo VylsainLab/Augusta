@@ -41,7 +41,7 @@ namespace aug
 		Shader(const char* szFileName, int32_t stageBitMask);
 		~Shader();
 
-		uint32_t GetStageCount() { return m_vVkPipelineShaderStageCreateInfo.size(); }
+		uint32_t GetStageCount() { return static_cast<uint32_t>(m_vVkPipelineShaderStageCreateInfo.size()); }
 		const VkPipelineShaderStageCreateInfo* GetPipelineShaderStagesCreateInfo() { return m_vVkPipelineShaderStageCreateInfo.data(); }
 
 		static void SetPath(const char* szPath) { m_sPath = szPath; }

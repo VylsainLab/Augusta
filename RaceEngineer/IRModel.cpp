@@ -1,8 +1,80 @@
 #include "IRModel.h"
+#include "Utils.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <vector>
+#include <unordered_map>
+
+void IReader::ApplyTickDataDiff(sSession& session, uint64_t uiTargetTick, uint64_t uiCurrentTick)
+{
+	uint64_t uiTick = uiCurrentTick;
+	do
+	{
+		irData& tickData = m_vTickData[uiTick];
+
+		//Resolve player first
+		if (!session._pPlayer)
+		{
+			int iPlayerIdx = std::get<int>(tickData[m_idxPlayerCarIdx]._Value);
+			session._mDrivers[iPlayerIdx]._bIsPlayer = true;
+			session._pPlayer = &session._mDrivers[iPlayerIdx];
+		}
+
+		//TODO replace with switch case on hash
+		for(auto & var : m_vTickData[uiTick])
+		{
+			if(var.first == m_idxSessionTime)
+				session._dSessionTime = std::get<double>(var.second._Value);
+			else if(var.first == m_idxSessionTimeTotal)
+				session._dSessionTimeTotal = std::get<double>(var.second._Value);
+			else if (var.first == m_idxSessionFlags)
+				session._Flags = static_cast<irsdk_Flags>(std::get<int>(var.second._Value));
+			else if (var.first == m_idxTrackTempCrew)
+				session._sWeather._fTrackTemp = std::get<float>(var.second._Value);
+			else if (var.first == m_idxAirTemp)
+				session._sWeather._fAirTemp = std::get<float>(var.second._Value);
+			else if (var.first == m_idxWindVel)
+				session._sWeather._fWindSpeed = std::get<float>(var.second._Value);
+			else if (var.first == m_idxWindDir)
+				session._sWeather._fWindDirection = std::get<float>(var.second._Value) * float(M_PI) / 180.f;
+			else if (var.first == m_idxPrecipitation)
+				session._sWeather._fRainProbablility = std::get<float>(var.second._Value);
+			else if(session._pPlayer != nullptr)
+			{
+				if(var.first == m_idxOnPitRoad)
+					session._pPlayer->_bIsOnPitRoad = std::get<bool>(var.second._Value);
+				else if(var.first == m_idxLapDistPct)
+					session._pPlayer->_LapDistPct = std::get<float>(var.second._Value);
+				else if (var.first == m_idxPlayerCarPosition)
+					session._pPlayer->_uiPosition = std::get<int>(var.second._Value);
+				else if (var.first == m_idxFuelLevel)
+					session._pPlayer->_sFuel._fFuelLevelLiters = std::get<float>(var.second._Value);
+				else if (var.first == m_idxFuelLevelPct)
+					session._pPlayer->_sFuel._fFuelLevelPct = std::get<float>(var.second._Value);
+				else if (var.first == m_idxPlayerTireCompound)
+					session._pPlayer->_uiTireCompound = std::get<int>(var.second._Value);
+				else if (var.first == m_idxSteeringWheelAngle)
+					session._pPlayer->_fSteeringRad = std::get<float>(var.second._Value);
+				else if (var.first == m_idxThrottle)
+					session._pPlayer->_fThrottle = std::get<float>(var.second._Value);
+				else if (var.first == m_idxBrake)
+					session._pPlayer->_fBrake = std::get<float>(var.second._Value);
+				else if (var.first == m_idxClutch)
+					session._pPlayer->_fClutch = std::get<float>(var.second._Value);
+				else if (var.first == m_idxGear)
+					session._pPlayer->_iGear = std::get<int>(var.second._Value);
+				else if (var.first == m_idxSpeed)
+					session._pPlayer->_fSpeedMps = std::get<float>(var.second._Value);
+				else if (var.first == m_idxBrakeABSactive)
+					session._pPlayer->_bABSActive = std::get<bool>(var.second._Value);
+			}
+		}
+		
+		if(uiTick!=uiTargetTick)
+			uiTick += uiTargetTick > uiCurrentTick ? 1 : -1;
+	} while (uiTick != uiTargetTick);
+}
 
 OnlineReader::OnlineReader()
 {
@@ -54,11 +126,91 @@ void OnlineReader::ReadData(sSession& session)
 
 DiskReader::DiskReader()
 {
-	m_irDiskClient.openFile(DEBUG_IBT_PATH);
+	std::string strPath = GetRootDirectory() + DEBUG_IBT_PATH;
+	m_irDiskClient.openFile(strPath.c_str());
 	int iNumVars = m_irDiskClient.getNumVars();
 	m_uiNbTicks = m_irDiskClient.getDataCount();
 
-	m_irDiskClient.getNextData();
+	irData* pPrevData = nullptr;
+	std::vector<sIRVariable> vTemp(iNumVars);
+	sIRVariable irVar;
+
+	//Prefetech variables type and name to iterate faster on ticks data
+	std::vector<irsdk_VarType> vVarTypes(iNumVars);
+	std::unordered_map<std::string, int32_t> mVariablesDictionary;
+	mVariablesDictionary.reserve(iNumVars);
+	for (int i = 0; i < iNumVars; ++i)
+	{
+		mVariablesDictionary[m_irDiskClient.getVarName(i)] = i;
+		vVarTypes[i] = m_irDiskClient.getVarType(i);
+	}	
+
+	//Read all ticks (disk data does not contain all session and other drivers data)
+	m_vTickData.resize(m_uiNbTicks);
+	for (uint32_t i = 0; i < m_uiNbTicks; ++i)
+	{
+		m_irDiskClient.getTickData(i);
+		irData& tickData = m_vTickData[i];
+		tickData.reserve(iNumVars);
+
+		for (int j = 0; j < iNumVars; ++j)
+		{		
+			switch (vVarTypes[j])
+			{
+			case irsdk_char:
+				break;
+			case irsdk_bool:
+				irVar._Value = m_irDiskClient.getVarBool(j);
+				break;
+			case irsdk_int:
+			case irsdk_bitField:
+				irVar._Value = m_irDiskClient.getVarInt(j);
+				break;
+			case irsdk_float:
+				irVar._Value = m_irDiskClient.getVarFloat(j);
+				break;
+			case irsdk_double:
+				irVar._Value = m_irDiskClient.getVarDouble(j);
+				break;
+			default:
+				break;
+			}
+
+			if (i>0 && vTemp[j]._Value == irVar._Value)
+				continue;			
+			
+			vTemp[j] = irVar;
+
+			const std::string &strName = m_irDiskClient.getVarName(j);
+			tickData[j] = irVar;
+		}
+
+		pPrevData = &tickData;
+	}
+
+	//Build variables indices list to avoid fetching by names every time
+	m_idxSessionTime = mVariablesDictionary["SessionTime"];
+	m_idxSessionTimeTotal = mVariablesDictionary["SessionTimeTotal"];
+	m_idxSessionFlags = mVariablesDictionary["SessionFlags"];
+	m_idxTrackTempCrew = mVariablesDictionary["TrackTempCrew"];
+	m_idxAirTemp = mVariablesDictionary["AirTemp"];
+	m_idxWindVel = mVariablesDictionary["WindVel"];
+	m_idxWindDir = mVariablesDictionary["WindDir"];
+	m_idxPrecipitation = mVariablesDictionary["Precipitation"];
+	m_idxOnPitRoad = mVariablesDictionary["OnPitRoad"];
+	m_idxLapDistPct = mVariablesDictionary["LapDistPct"];
+	m_idxPlayerCarPosition = mVariablesDictionary["PlayerCarPosition"];
+	m_idxFuelLevel = mVariablesDictionary["FuelLevel"];
+	m_idxFuelLevelPct = mVariablesDictionary["FuelLevelPct"];
+	m_idxPlayerTireCompound = mVariablesDictionary["PlayerTireCompound"];
+	m_idxSteeringWheelAngle = mVariablesDictionary["SteeringWheelAngle"];
+	m_idxThrottle = mVariablesDictionary["Throttle"];
+	m_idxBrake = mVariablesDictionary["Brake"];
+	m_idxClutch = mVariablesDictionary["Clutch"];
+	m_idxGear = mVariablesDictionary["Gear"];
+	m_idxSpeed = mVariablesDictionary["Speed"];
+	m_idxBrakeABSactive = mVariablesDictionary["BrakeABSactive"];
+	m_idxPlayerCarIdx = mVariablesDictionary["PlayerCarIdx"];
 }
 
 int DiskReader::GetSessionStrVal(const char* path, char* val, int valLen)
@@ -87,47 +239,6 @@ double DiskReader::GetDouble(const char* szName)
 void DiskReader::ReadData(sSession& session)
 {
 	session._strSessionYaml = m_irDiskClient.getSessionStr();
-
-	FILE* pFile = fopen("available_data.txt", "w");
-	if (pFile)
-	{
-		fprintf(pFile,"\nNumVars = %d", m_irDiskClient.getNumVars());
-		for (int i = 0; i < m_irDiskClient.getNumVars(); ++i)
-		{
-			const char* szName = m_irDiskClient.getVarName(i);
-			irsdk_VarType iType = m_irDiskClient.getVarType(i);
-			std::string strType;
-			switch (iType)
-			{
-			case irsdk_char:
-				strType = "Char";
-				break;
-			case irsdk_bool:
-				strType = "Bool";
-				break;
-			case irsdk_int:
-				strType = "Int";
-				break;
-			case irsdk_bitField:
-				strType = "BitField";
-				break;
-			case irsdk_float:
-				strType = "Float";
-				break;
-			case irsdk_double:
-				strType = "Double";
-				break;
-			default:
-				strType = "Unknown";
-				break;
-			}
-			const char* szDesc = m_irDiskClient.getVarDesc(i);
-			int iCount = m_irDiskClient.getVarCount(i);
-			const char* szUnit = m_irDiskClient.getVarUnit(i);
-			fprintf(pFile,"\n%d %s %s [%d] (%s) : %s", i, szName, szUnit, iCount, strType.c_str(), szDesc);
-		}
-		fclose(pFile);
-	}
 }
 
 void DiskReader::ReadTickData(int32_t iTick)
@@ -201,7 +312,7 @@ void IRModel::ReadData()
 			sprintf(szPath, "SplitTimeInfo:Sectors:SectorNum:{%d}SectorStartPct:", i);
 			bFound = m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData));
 			if (bFound)
-				m_sSessionData._vSectors.push_back(atof(szData));
+				m_sSessionData._vSectors.push_back(static_cast<float>(atof(szData)));
 			++i;
 		}
 
@@ -257,24 +368,24 @@ void IRModel::ReadData()
 
 			sprintf(szPath, "SessionInfo:Sessions:SessionNum:{0}ResultsPositions:Position:{%d}FastestTime:", i + 1);
 			m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData));
-			m_sSessionData._aPositions[i]->_fFastestLap = atof(szData);
+			m_sSessionData._aPositions[i]->_fFastestLap = static_cast<float>(atof(szData));
 
 			sprintf(szPath, "SessionInfo:Sessions:SessionNum:{0}ResultsPositions:Position:{%d}LastTime:", i + 1);
 			m_pCurrentReader->GetSessionStrVal(szPath, szData, sizeof(szData));
-			m_sSessionData._aPositions[i]->_fLastLap = atof(szData);
+			m_sSessionData._aPositions[i]->_fLastLap = static_cast<float>(atof(szData));
 
 			//TODO class position
 		}
 
 		//Fill in with unranked drivers (unsorted)
-		int32_t iCount = vInserted.size();
+		uint32_t uiCount = static_cast<uint32_t>(vInserted.size());
 		for (auto& driver : m_sSessionData._mDrivers)
 		{
 			if (std::find(vInserted.begin(), vInserted.end(), driver.first) == vInserted.end())
 			{
-				m_sSessionData._aPositions[iCount] = &driver.second;
-				driver.second._uiPosition = iCount + 1;
-				iCount++;
+				m_sSessionData._aPositions[uiCount] = &driver.second;
+				driver.second._uiPosition = uiCount + 1;
+				uiCount++;
 			}
 		}
 
@@ -287,43 +398,8 @@ void IRModel::ReadData()
 			m_sSessionData._strAvailableTires += szData[1];
 		}
 
-
 		m_bDiskRead = true;
 	}
-
-	int iSessionTick = m_pCurrentReader->GetFloat("SessionTick");
-	m_sSessionData._fSessionTime = m_pCurrentReader->GetFloat("SessionTime");
-	m_sSessionData._fSessionTimeTotal = m_pCurrentReader->GetFloat("SessionTimeTotal");
-	m_sSessionData._Flags = (irsdk_Flags)m_pCurrentReader->GetInt("SessionFlags");
-	//printf("\nFlag: %d", m_sSessionData._Flags);
-
-	m_sSessionData._sWeather._fTrackTemp = m_pCurrentReader->GetFloat("TrackTempCrew");
-	m_sSessionData._sWeather._fAirTemp = m_pCurrentReader->GetFloat("AirTemp");
-	m_sSessionData._sWeather._fWindSpeed = m_pCurrentReader->GetFloat("WindVel");
-	m_sSessionData._sWeather._fWindDirection = m_pCurrentReader->GetFloat("WindDir") * M_PI / 180.;
-	m_sSessionData._sWeather._fRainProbablility = m_pCurrentReader->GetFloat("Precipitation");
-
-	int iPlayerIdx = m_pCurrentReader->GetInt("PlayerCarIdx");
-	m_sSessionData._mDrivers[iPlayerIdx]._bIsPlayer = true;
-	m_sSessionData._pPlayer = &m_sSessionData._mDrivers[iPlayerIdx];
-
-	m_sSessionData._pPlayer->_bIsOnPitRoad = m_pCurrentReader->GetInt("OnPitRoad");
-
-	m_sSessionData._pPlayer->_LapDistPct = m_pCurrentReader->GetFloat("LapDistPct");
-	m_sSessionData._pPlayer->_uiPosition = m_pCurrentReader->GetInt("PlayerCarPosition");
-
-	m_sSessionData._pPlayer->_sFuel._fFuelLevelLiters = m_pCurrentReader->GetFloat("FuelLevel");
-	m_sSessionData._pPlayer->_sFuel._fFuelLevelPct = m_pCurrentReader->GetFloat("FuelLevelPct");
-
-	m_sSessionData._pPlayer->_uiTireCompound = m_pCurrentReader->GetFloat("PlayerTireCompound");
-
-	m_sSessionData._pPlayer->_fSteeringRad = m_pCurrentReader->GetFloat("SteeringWheelAngle");
-	m_sSessionData._pPlayer->_fThrottle = m_pCurrentReader->GetFloat("Throttle");
-	m_sSessionData._pPlayer->_fBrake = m_pCurrentReader->GetFloat("Brake");
-	m_sSessionData._pPlayer->_fClutch = m_pCurrentReader->GetFloat("Clutch");
-	m_sSessionData._pPlayer->_iGear = m_pCurrentReader->GetInt("Gear");
-	m_sSessionData._pPlayer->_fSpeedMps = m_pCurrentReader->GetFloat("Speed");
-	m_sSessionData._pPlayer->_bABSActive = m_pCurrentReader->GetInt("BrakeABSactive");
 }
 
 

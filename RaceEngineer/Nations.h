@@ -1,8 +1,8 @@
 #pragma once
 #include <string>
-#include <map>
+#include <unordered_map>
 
-static std::map <std::string, std::string> mFlags =
+static std::unordered_map <std::string, std::string> mFlags =
 {
 	{"United Kingdom",	"\u0021"},
 	{"0022",			"\u0022"},

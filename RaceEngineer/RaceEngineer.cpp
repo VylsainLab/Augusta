@@ -1,6 +1,7 @@
 ﻿#include "RaceEngineer.h"
 #include "Nations.h"
 #include <algorithm>
+#include "Utils.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -22,8 +23,10 @@ RaceEngineer::RaceEngineer(const std::string& name, uint16_t width, uint16_t hei
     cfg.FontBuilderFlags |= ImGuiFreeTypeBuilderFlags_LoadColor;
     m_pEmojiFont = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\seguiemj.ttf", 24.0f, &cfg, ranges);
 
+    
     cfg.GlyphOffset.y = -5;
-    m_pFlagFont = io.Fonts->AddFontFromFileTTF("D:\\Git\\Dependencies\\Fonts\\flags color world.ttf", 24.0f, &cfg, ranges);
+    std::string strPath = GetRootDirectory() + "Dependencies\\Fonts\\flags color world.ttf";
+    m_pFlagFont = io.Fonts->AddFontFromFileTTF(strPath.c_str(), 24.0f, &cfg, ranges);
 }
 
 void RaceEngineer::Render(VkCommandBuffer commandBuffer)
@@ -129,11 +132,11 @@ void RaceEngineer::DrawSession()
         break;
     }
 
-    int h = session._fSessionTime / 3600;
-    int m = fmod(session._fSessionTime / 60,60);
-    int s = fmod(session._fSessionTime, 60);
-    int th = session._fSessionTimeTotal / 3600;
-    int tm = fmod(session._fSessionTimeTotal / 60,60);
+    int h = session._dSessionTime / 3600;
+    int m = fmod(session._dSessionTime / 60,60);
+    int s = fmod(session._dSessionTime, 60);
+    int th = session._dSessionTimeTotal / 3600;
+    int tm = fmod(session._dSessionTimeTotal / 60,60);
     ImGui::Text("%02d:%02d:%02d / %02d:%02dh", h,m,s, th,tm );
 
     ImGui::Text("DRIVERS: %d", session._mDrivers.size());
@@ -149,11 +152,15 @@ void RaceEngineer::DrawSession()
 
     ImGui::NewLine();
 
-    static float fTick = 0;
-    float prevTick = fTick;
-    ImGui::SliderFloat("Tick", &fTick, 0., 1.);
-    if(prevTick!=fTick)
-        m_IRModel.m_DiskReader.ReadTickData(fTick * m_IRModel.m_DiskReader.m_uiNbTicks);
+    static bool bFirstDraw = true;
+    static int iTick = 0;
+    int prevTick = iTick;
+    ImGui::SliderInt("Tick", &iTick, 0, m_IRModel.m_DiskReader.m_uiNbTicks-1);
+    if (bFirstDraw || prevTick != iTick)
+    {
+        bFirstDraw = false;
+        m_IRModel.m_DiskReader.ApplyTickDataDiff(session, iTick, prevTick);
+    }
 
     ImGui::End();
 }
@@ -371,12 +378,15 @@ void RaceEngineer::DrawInputs()
     ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize, ImGuiCond_FirstUseEver);
     ImGui::Begin("Inputs");
 
-    SL(ImGui::Text("Gear: %d", pPlayer->_iGear));
-    ImGui::Text("Speed: %.0f kph", pPlayer->_fSpeedMps*3.6);
+    if (pPlayer)
+    {
+        SL(ImGui::Text("Gear: %d", pPlayer->_iGear));
+        ImGui::Text("Speed: %.0f kph", pPlayer->_fSpeedMps * 3.6);
 
-    ImGui::ProgressBar(pPlayer->_fThrottle, ImVec2(0.0f, 0.0f), "Throttle");
-    ImGui::ProgressBar(pPlayer->_fBrake, ImVec2(0.0f, 0.0f), "Brake");
-    ImGui::ProgressBar(pPlayer->_fClutch, ImVec2(0.0f, 0.0f), "Clutch");
+        ImGui::ProgressBar(pPlayer->_fThrottle, ImVec2(0.0f, 0.0f), "Throttle");
+        ImGui::ProgressBar(pPlayer->_fBrake, ImVec2(0.0f, 0.0f), "Brake");
+        ImGui::ProgressBar(pPlayer->_fClutch, ImVec2(0.0f, 0.0f), "Clutch");
+    }
 
     ImGui::End();
 }
