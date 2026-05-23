@@ -27,20 +27,28 @@ namespace aug
 		Pipeline(aug::Window* pWindow);
 		virtual ~Pipeline();
 
+#ifndef USE_DYNAMIC_RENDERING
 		void CreateRenderPass(aug::Window* pWindow); //TODO configurable
+        const VkRenderPass& GetRenderPass() { return m_VkRenderPass; }
+#endif
 		void Init(const SPipelineDesc& desc);
 
-		void Bind(const VkCommandBuffer& commandBuffer, const VkFramebuffer& framebuffer, const VkExtent2D& extent, uint32_t descriptorSetCount, uint8_t uiCurrentFrame);
+#ifdef USE_DYNAMIC_RENDERING
+        void Bind(const VkCommandBuffer& commandBuffer, uint32_t descriptorSetCount, uint8_t uiCurrentFrame);
+#else
+        void Bind(const VkCommandBuffer& commandBuffer, const VkFramebuffer& framebuffer, const VkExtent2D& extent, uint32_t descriptorSetCount, uint8_t uiCurrentFrame);
+#endif
 
 		void PushConstants(const VkCommandBuffer& commandBuffer, void* pData);
 
-		const VkRenderPass& GetRenderPass() { return m_VkRenderPass; }
 		const VkPipelineLayout& GetPipelineLayout() { return m_VkPipelineLayout; }
 		const VkDescriptorPool& GetPipelineDescriptorPool() {return m_VkDescriptorPool;	}
 
 	protected:
 		SPipelineDesc m_Desc;
+#ifndef USE_DYNAMIC_RENDERING
 		VkRenderPass m_VkRenderPass = VK_NULL_HANDLE;
+#endif
 
 		VkDescriptorSetLayout m_VkDescriptorSetLayout = VK_NULL_HANDLE;
 		VkDescriptorPool m_VkDescriptorPool = VK_NULL_HANDLE;

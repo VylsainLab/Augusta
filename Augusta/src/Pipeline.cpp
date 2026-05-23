@@ -5,7 +5,9 @@
 
 aug::Pipeline::Pipeline(aug::Window* pWindow)
 {
+#ifndef USE_DYNAMIC_RENDERING
 	CreateRenderPass(pWindow);
+#endif
 
 	//Descriptor layout
 	VkDescriptorSetLayoutBinding uboLayoutBinding{};
@@ -39,13 +41,16 @@ aug::Pipeline::~Pipeline()
 
 	vkDestroyPipelineLayout(aug::Context::m_VkDevice, m_VkPipelineLayout, nullptr);
 
+#ifndef USE_DYNAMIC_RENDERING
 	vkDestroyRenderPass(Context::m_VkDevice, m_VkRenderPass, nullptr);
+#endif
 
 	vkDestroyDescriptorPool(aug::Context::m_VkDevice, m_VkDescriptorPool, nullptr);
 
 	vkDestroyDescriptorSetLayout(aug::Context::m_VkDevice, m_VkDescriptorSetLayout, nullptr);
 }
 
+#ifndef USE_DYNAMIC_RENDERING
 void aug::Pipeline::CreateRenderPass(aug::Window* pWindow)
 {
 	VkAttachmentDescription colorAttachment = {};
@@ -105,9 +110,10 @@ void aug::Pipeline::CreateRenderPass(aug::Window* pWindow)
 	if (vkCreateRenderPass(aug::Context::m_VkDevice, &renderPassInfo, nullptr, &m_VkRenderPass) != VK_SUCCESS)
 		throw std::runtime_error("failed to create render pass!");
 }
+#endif
 
 void aug::Pipeline::Init(const SPipelineDesc& desc)
-{	
+{
 	m_Desc = desc;
 
 	//Input assembly
@@ -211,6 +217,14 @@ void aug::Pipeline::Init(const SPipelineDesc& desc)
 	if (vkCreatePipelineLayout(aug::Context::m_VkDevice, &pipelineLayoutInfo, nullptr, &m_VkPipelineLayout) != VK_SUCCESS)
 		throw std::runtime_error("Failed to create pipeline layout!");
 
+	//Dynamic rendering (replaces render passes)
+	VkPipelineRenderingCreateInfo renderingInfo = {};
+	renderingInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO_KHR;
+	renderingInfo.colorAttachmentCount = 1;
+	VkFormat colorFormat = desc.pWindow->GetColorFormat();
+	renderingInfo.pColorAttachmentFormats = &colorFormat;
+	renderingInfo.depthAttachmentFormat = desc.pWindow->GetDepthStencilFormat();
+
 	//Graphics pipeline
 	VkGraphicsPipelineCreateInfo pipelineInfo = {};
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -225,10 +239,14 @@ void aug::Pipeline::Init(const SPipelineDesc& desc)
 	pipelineInfo.pColorBlendState = &colorBlending;
 	pipelineInfo.pDynamicState = nullptr;
 	pipelineInfo.layout = m_VkPipelineLayout;
-	pipelineInfo.renderPass = m_VkRenderPass;
-	pipelineInfo.subpass = 0;
-	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
-	pipelineInfo.basePipelineIndex = -1;
+#ifdef USE_DYNAMIC_RENDERING
+    pipelineInfo.pNext = &renderingInfo;
+#else
+    pipelineInfo.renderPass = m_VkRenderPass;
+    pipelineInfo.subpass = 0;
+    pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
+    pipelineInfo.basePipelineIndex = -1;
+#endif	
 
 	if (vkCreateGraphicsPipelines(aug::Context::m_VkDevice, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_VkGraphicsPipeline) != VK_SUCCESS)
 		throw std::runtime_error("failed to create graphics pipeline!");
@@ -290,8 +308,13 @@ void aug::Pipeline::Init(const SPipelineDesc& desc)
 	}
 }
 
+#ifdef USE_DYNAMIC_RENDERING
+void aug::Pipeline::Bind(const VkCommandBuffer& commandBuffer, uint32_t descriptorSetCount, uint8_t uiCurrentFrame)
+#else
 void aug::Pipeline::Bind(const VkCommandBuffer& commandBuffer, const VkFramebuffer& framebuffer, const VkExtent2D& extent, uint32_t descriptorSetCount, uint8_t uiCurrentFrame)
+#endif
 {
+#ifndef USE_DYNAMIC_RENDERING
 	//Render pass
 	VkRenderPassBeginInfo renderPassInfo = {};
 	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -303,6 +326,7 @@ void aug::Pipeline::Bind(const VkCommandBuffer& commandBuffer, const VkFramebuff
 	renderPassInfo.clearValueCount = 2;
 	renderPassInfo.pClearValues = clearColors;
 	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+#endif
 
 	if (m_VkGraphicsPipeline == nullptr)
 		return;

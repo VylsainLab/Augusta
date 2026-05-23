@@ -30,7 +30,9 @@ namespace aug
 
 		m_pPipeline = std::make_unique<Pipeline>(m_pWindow.get());
 		
+#ifndef USE_DYNAMIC_RENDERING
 		m_pWindow->InitFramebuffers(m_pPipeline->GetRenderPass());
+#endif
 		CreateSwapChainCommandBuffers();
 		CreateSyncObjects();
 	}
@@ -117,8 +119,48 @@ namespace aug
 		if (vkBeginCommandBuffer(m_vVkSwapChainCommandBuffers[currentImage], &beginInfo) != VK_SUCCESS)
 			throw std::runtime_error("Failed to begin recording command buffer!");
 
-		if(m_pPipeline)
-			m_pPipeline->Bind(m_vVkSwapChainCommandBuffers[currentImage], m_pWindow->GetSwapChainFramebuffer(currentImage), m_pWindow->GetSwapChainExtent(), 1, m_uiCurrentFrame);
+#ifdef USE_DYNAMIC_RENDERING
+		//Dynamic rendering
+		VkClearValue clearColors{};
+		clearColors.color = { 0.0f, 0.0f, 0.0f, 0.0f };
+		
+
+		VkRenderingAttachmentInfo colorAttachmentInfo{};
+		colorAttachmentInfo.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
+		colorAttachmentInfo.imageView = m_pWindow->GetCurrentColorImageView();
+		colorAttachmentInfo.imageLayout = VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL;
+		colorAttachmentInfo.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		colorAttachmentInfo.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+		colorAttachmentInfo.clearValue = clearColors;
+
+		clearColors.depthStencil = { 1.0f, 0 };
+
+		VkRenderingAttachmentInfo depthAttachmentInfo{};
+		depthAttachmentInfo.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
+			depthAttachmentInfo.imageView = m_pWindow->GetCurrentDepthImageView();
+		depthAttachmentInfo.imageLayout = VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL;
+		depthAttachmentInfo.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		depthAttachmentInfo.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		depthAttachmentInfo.clearValue = clearColors;
+
+		VkRenderingInfo renderingInfo{};
+		renderingInfo.sType = VK_STRUCTURE_TYPE_RENDERING_INFO;
+		VkRect2D renderArea{};
+		renderArea.extent = m_pWindow->GetSwapChainExtent();
+		renderingInfo.renderArea = renderArea;
+		renderingInfo.layerCount = 1;
+		renderingInfo.colorAttachmentCount = 1;
+		renderingInfo.pColorAttachments = &colorAttachmentInfo;
+		renderingInfo.pDepthAttachment = &depthAttachmentInfo;
+
+		vkCmdBeginRendering(m_vVkSwapChainCommandBuffers[currentImage], &renderingInfo);
+        
+        if (m_pPipeline)
+            m_pPipeline->Bind(m_vVkSwapChainCommandBuffers[currentImage], 1, m_uiCurrentFrame);
+#else
+        if (m_pPipeline)
+            m_pPipeline->Bind(m_vVkSwapChainCommandBuffers[currentImage], m_pWindow->GetSwapChainFramebuffer(currentImage), m_pWindow->GetSwapChainExtent(), 1, m_uiCurrentFrame);
+#endif
 
 		
 	}
@@ -132,7 +174,11 @@ namespace aug
 		ImDrawData* main_draw_data = ImGui::GetDrawData();
 		ImGui_ImplVulkan_RenderDrawData(main_draw_data, m_vVkSwapChainCommandBuffers[uiCurrentImage]);		
 
+#ifdef USE_DYNCAMIC_RENDERING
+		vkCmdEndRendering(m_vVkSwapChainCommandBuffers[uiCurrentImage]);
+#else
 		vkCmdEndRenderPass(m_vVkSwapChainCommandBuffers[uiCurrentImage]);
+#endif
 
 		if (vkEndCommandBuffer(m_vVkSwapChainCommandBuffers[uiCurrentImage]) != VK_SUCCESS)
 			throw std::runtime_error("Failed to record command buffer!");
@@ -238,6 +284,13 @@ namespace aug
 
 		ImGui_ImplGlfw_InitForVulkan(m_pWindow->GetGLFWWindow(), true);
 
+		VkPipelineRenderingCreateInfo renderingInfo = {};
+		renderingInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO_KHR;
+		renderingInfo.colorAttachmentCount = 1;
+		VkFormat colorFormat = m_pWindow->GetColorFormat();
+		renderingInfo.pColorAttachmentFormats = &colorFormat;
+		renderingInfo.depthAttachmentFormat = m_pWindow->GetDepthStencilFormat();
+
 		ImGui_ImplVulkan_InitInfo init_info = {};
 		init_info.Instance = aug::Context::m_VkInstance;
 		init_info.PhysicalDevice = aug::Context::m_VkPhysicalDevice;
@@ -245,7 +298,12 @@ namespace aug
 		init_info.QueueFamily = aug::Context::m_QueueFamilies.uiGraphicsFamily.value();
 		init_info.Queue = aug::Context::m_VkGraphicsQueue;
 		init_info.DescriptorPoolSize = IMGUI_IMPL_VULKAN_MINIMUM_IMAGE_SAMPLER_POOL_SIZE + 1;
+#ifdef USE_DYNAMIC_RENDERING
+		init_info.UseDynamicRendering = true;
+		init_info.PipelineRenderingCreateInfo = renderingInfo;
+#else
 		init_info.RenderPass = m_pPipeline->GetRenderPass();
+#endif
 		init_info.Subpass = 0;
 		init_info.MinImageCount = 3;
 		init_info.ImageCount = 3;

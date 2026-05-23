@@ -135,9 +135,6 @@ namespace aug
 			}
 		}*/
 
-		/*if (m_bLog)
-			printf("NumMeshes : %u\n", m_pAiScene->mNumMeshes);*/
-
 		std::vector<VertexFormatComponents> vVertexFormatComponents({ VERTEX_FORMAT_VEC3F32 });
 		if (m_uiVertexComponentFlags & VERTEX_COMPONENT_NORMAL)
 			vVertexFormatComponents.push_back(VERTEX_FORMAT_VEC3F32);
@@ -148,9 +145,6 @@ namespace aug
 		for (uint32_t i = 0; i < m_pAiScene->mNumMeshes; ++i)
 		{
 			aiMesh* pMesh = m_pAiScene->mMeshes[i];
-
-			/*if (m_bLog)
-				printf("Mesh %u (%u) : %s %u\n", i, pMesh->mPrimitiveTypes, pMesh->mName.C_Str(), pMesh->mNumFaces);*/
 
 			if (pMesh)
 			{
@@ -220,23 +214,13 @@ namespace aug
 			//TODO
 		}
 
-		/*if (m_bLog)
-			printf("\nNumAnimations : %d\n", m_pAiScene->mNumAnimations);*/
-
 		for (uint32_t i = 0; i < m_pAiScene->mNumAnimations; ++i)
 		{
 			aiAnimation* anim = m_pAiScene->mAnimations[i];
-			/*if (m_bLog)
-			{
-				printf("Anim %u : %s", i, anim->mName.C_Str());
-				printf("    %u %f %f", anim->mNumChannels, anim->mDuration, anim->mTicksPerSecond);
-			}*/
 
 			for (uint32_t j = 0; j < anim->mNumChannels; ++j)
 			{
 				aiNodeAnim* pNA = anim->mChannels[j];
-				/*if (m_bLog)
-					printf("        %s -> %u %u %u", pNA->mNodeName.C_Str(), pNA->mNumPositionKeys, pNA->mNumRotationKeys, pNA->mNumScalingKeys);*/
 			}
 		}
 

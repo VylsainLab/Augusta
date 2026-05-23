@@ -51,7 +51,7 @@ namespace aug
 		const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
 		void* pUserData)
 	{
-		std::cerr << "Validation layer: " << pCallbackData->pMessage << std::endl;
+		std::cerr << "\nValidation layer: " << pCallbackData->pMessage << std::endl;
 
 		return VK_FALSE;
 	}
@@ -145,11 +145,11 @@ namespace aug
 
 		VkApplicationInfo appInfo = {};
 		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-		appInfo.pApplicationName = "Hello Triangle";
+		appInfo.pApplicationName = "TODO";
 		appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-		appInfo.pEngineName = "No Engine";
+		appInfo.pEngineName = "Augusta";
 		appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-		appInfo.apiVersion = VK_API_VERSION_1_0;
+		appInfo.apiVersion = VK_API_VERSION_1_4;
 
 		VkInstanceCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
@@ -302,6 +302,11 @@ namespace aug
 		{
 			if (IsDeviceSuitable(device))
 			{
+				VkPhysicalDeviceProperties2 deviceProperties;
+				deviceProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
+				deviceProperties.pNext = nullptr;
+				vkGetPhysicalDeviceProperties2(device, &deviceProperties);
+				std::cout << "Selected physical device: " << deviceProperties.properties.deviceName << "\n";
 				m_VkPhysicalDevice = device;
 				break;
 			}
@@ -328,8 +333,17 @@ namespace aug
 			vQueueCreateInfos.push_back(queueCreateInfo);
 		}
 
+		//TODO enable more modern extensions like dynamic rendering and descriptor indexing
+
 		VkPhysicalDeviceFeatures deviceFeatures = {};
 		deviceFeatures.samplerAnisotropy = VK_TRUE;
+
+		VkPhysicalDeviceVulkan13Features vk13Features = {};
+		vk13Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;
+#ifdef USE_DYNAMIC_RENDERING
+		vk13Features.dynamicRendering = true;
+#endif
+		vk13Features.pNext = nullptr;
 
 		VkDeviceCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -338,6 +352,7 @@ namespace aug
 		createInfo.pEnabledFeatures = &deviceFeatures;
 		createInfo.enabledExtensionCount = (uint32_t)m_vDeviceExtensions.size();
 		createInfo.ppEnabledExtensionNames = m_vDeviceExtensions.data();
+		createInfo.pNext = &vk13Features;
 
 		//needed for older Vulkan versions compatibility 
 		if (ENABLE_VALIDATION_LAYERS)

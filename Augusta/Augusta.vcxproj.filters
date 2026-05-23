@@ -99,6 +99,9 @@
     <ClInclude Include="..\..\Dependencies\imgui-docking\misc\freetype\imgui_freetype.h">
       <Filter>imgui</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\Augusta\Geodetics.h">
+      <Filter>Source Files\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp">

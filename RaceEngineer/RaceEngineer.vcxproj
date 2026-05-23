@@ -107,13 +107,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>PLUTOSVG_BUILD_STATIC;_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../Dependencies/;../../Dependencies/plutosvg/include/;../../Dependencies/GLFW/include;../../Dependencies/GLFW/include;../../Dependencies/imgui-docking/;../include;C:\VulkanSDK\1.4.304.1\Include;./irsdk</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../Dependencies/;../../Dependencies/plutosvg/include/;../../Dependencies/GLFW/include;../../Dependencies/GLFW/include;../../Dependencies/imgui-docking/;../include;C:\VulkanSDK\1.4.341.1\Include;./irsdk</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../../Dependencies/plutosvg;../../Dependencies/freetype/win64/;../../Dependencies/glfw/lib-vc2022;../../Dependencies/assimp;../lib;C:\VulkanSDK\1.4.304.1\Lib;C:\VulkanSDK\1.4.304.1\Bin</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../Dependencies/plutosvg;../../Dependencies/freetype/win64/;../../Dependencies/glfw/lib-vc2022;../../Dependencies/assimp;../lib;C:\VulkanSDK\1.4.341.1\Lib;C:\VulkanSDK\1.4.341.1\Bin</AdditionalLibraryDirectories>
       <AdditionalDependencies>plutovg.lib;plutosvg.lib;freetype.lib;assimp.lib;vulkan-1.lib;glfw3.lib;shaderc_combinedd.lib;Augusta.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -150,6 +150,7 @@
     <ClInclude Include="irsdk\yaml_parser.h" />
     <ClInclude Include="Nations.h" />
     <ClInclude Include="RaceEngineer.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

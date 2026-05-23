@@ -22,8 +22,10 @@ namespace aug
 
 	Window::~Window()
 	{
+#ifndef USE_DYNAMIC_RENDERING
 		for (auto framebuffer : m_vVkSwapChainFramebuffers)
 			vkDestroyFramebuffer(aug::Context::m_VkDevice, framebuffer, nullptr);
+#endif
 
 		m_pSwapChain.reset();
 
@@ -51,6 +53,7 @@ namespace aug
 		m_pDepthStencilTexture = std::make_unique<Texture>(desc);
 	}
 
+#ifndef USE_DYNAMIC_RENDERING
 	void Window::InitFramebuffers(const VkRenderPass& renderPass)
 	{
 		m_vVkSwapChainFramebuffers.resize(m_pSwapChain->GetImageCount());
@@ -72,6 +75,12 @@ namespace aug
 				throw std::runtime_error("Failed to create framebuffer!");
 		}
 	}
+
+    VkFramebuffer Window::GetSwapChainFramebuffer(uint32_t index) const
+    {
+        return m_vVkSwapChainFramebuffers.at(index);
+    }
+#endif
 
 	bool Window::IsClosed()
 	{
@@ -113,8 +122,12 @@ namespace aug
 		return m_pSwapChain->GetExtent();
 	}
 
-	VkFramebuffer Window::GetSwapChainFramebuffer(uint32_t index) const
+	VkImageView Window::GetCurrentColorImageView() const
 	{
-		return m_vVkSwapChainFramebuffers.at(index);
+		return m_pSwapChain->GetImageViewAtIndex(m_pSwapChain->GetCurrentImageIndex());
+	}
+	VkImageView Window::GetCurrentDepthImageView() const
+	{
+		return m_pDepthStencilTexture->GetImageView();
 	}
 }

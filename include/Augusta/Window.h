@@ -19,7 +19,10 @@ namespace aug
 		virtual ~Window();
 
 		void InitAttachments();
+#ifndef USE_DYNAMIC_RENDERING
 		void InitFramebuffers(const VkRenderPass& renderPass);
+        VkFramebuffer GetSwapChainFramebuffer(uint32_t index) const;
+#endif
 
 		VkSurfaceKHR GetSurface() { return m_VkSurface; }
 		bool IsClosed();
@@ -31,16 +34,20 @@ namespace aug
 		VkSwapchainKHR GetSwapChainHandle() const;
 		VkFormat GetColorFormat() const;
 		VkFormat GetDepthStencilFormat() const;
-		VkExtent2D GetSwapChainExtent() const;
-		VkFramebuffer GetSwapChainFramebuffer(uint32_t index) const;
+		VkExtent2D GetSwapChainExtent() const;		
 		GLFWwindow* GetGLFWWindow() const { return m_pWindow; }
+
+		VkImageView GetCurrentColorImageView() const;
+		VkImageView GetCurrentDepthImageView() const;
 
 	protected:
 		GLFWwindow* m_pWindow = nullptr;
 		static bool m_bGLFWInitialized;
 		VkSurfaceKHR m_VkSurface;
 		std::unique_ptr<SwapChain> m_pSwapChain = nullptr;
+#ifndef USE_DYNAMIC_RENDERING
 		std::vector<VkFramebuffer> m_vVkSwapChainFramebuffers;
+#endif
 		std::unique_ptr<Texture> m_pDepthStencilTexture;
 	};
 }
