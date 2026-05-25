@@ -110,6 +110,15 @@ private:
 
 		for (uint32_t i = 0; i < pNode->GetNbMeshes(); ++i)
 		{
+			//TODO update material descriptor
+			//m_pPipeline->UpdateDescriptors(pNode->GetMesh(i)->m_pMaterial);
+			if (pNode->GetMesh(i)->m_pMaterial->m_vDescriptorSets.empty())
+			{
+				std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, m_pPipeline->m_VkDescriptorSetLayoutMaterial);
+				pNode->GetMesh(i)->m_pMaterial->CreateDescriptorSets(layouts.data());
+			}		
+			vkCmdBindDescriptorSets(m_ActiveCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pPipeline->m_VkPipelineLayout, 1, 1, &pNode->GetMesh(i)->m_pMaterial->m_vDescriptorSets[m_uiCurrentFrame]/*&m_vDescriptorSets[uiCurrentFrame]*/, 0, nullptr);
+
 			pNode->GetMesh(i)->Draw(m_ActiveCommandBuffer);
 		}
 	}

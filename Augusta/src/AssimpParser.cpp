@@ -75,7 +75,7 @@ namespace aug
 			return false;
 		}
 
-		/*std::map<uint32_t, std::string> mMaterialIndirection;
+		std::map<uint32_t, std::string> mMaterialIndirection;
 		for (uint32_t i = 0; i < m_pAiScene->mNumMaterials; ++i)
 		{
 			aiMaterial* pAiMat = m_pAiScene->mMaterials[i];
@@ -85,7 +85,7 @@ namespace aug
 				aiColor4D color;
 				float factor;
 				aiString str;
-				std::shared_ptr<meMaterial> pMat;
+				std::shared_ptr<Material> pMat;
 
 				if (aiGetMaterialString(pAiMat, AI_MATKEY_NAME, &str) == AI_SUCCESS)
 				{
@@ -94,7 +94,7 @@ namespace aug
 					if (bAlreadyExists)
 					{
 						char szNewName[256];
-						snprintf(szNewName, sizeof(szNewName), "AAMaterial%u", i);
+						snprintf(szNewName, sizeof(szNewName), "Material%u", i);
 						pMat = pTarget->GetMaterialByName(szNewName);
 						mMaterialIndirection[i] = szNewName;
 					}
@@ -104,7 +104,7 @@ namespace aug
 				else
 					pMat = pTarget->GetMaterialByName("Default");
 
-				if (aiGetMaterialColor(pAiMat, AI_MATKEY_COLOR_AMBIENT, &color) == AI_SUCCESS)
+				/*if (aiGetMaterialColor(pAiMat, AI_MATKEY_COLOR_AMBIENT, &color) == AI_SUCCESS)
 					pMat->m_MaterialUBO.m_AmbientColor = glm::vec3(color.r, color.g, color.b);
 				if (aiGetMaterialColor(pAiMat, AI_MATKEY_COLOR_DIFFUSE, &color) == AI_SUCCESS)
 				{
@@ -124,16 +124,13 @@ namespace aug
 					pMat->m_MaterialUBO.m_fMetalness = factor;
 
 				if (aiGetMaterialFloat(pAiMat, AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_ROUGHNESS_FACTOR, &factor) == AI_SUCCESS)
-					pMat->m_MaterialUBO.m_fRoughness = factor;
+					pMat->m_MaterialUBO.m_fRoughness = factor;*/
 
-				LoadAssimpTexture(pAiMat, pMat, aiTextureType_DIFFUSE);
-				LoadAssimpTexture(pAiMat, pMat, aiTextureType_NORMALS, "normal");
-				LoadAssimpTexture(pAiMat, pMat, aiTextureType_SPECULAR, "specular");
-				LoadAssimpTexture(pAiMat, pMat, aiTextureType_SHININESS, "roughness");
-				LoadAssimpTexture(pAiMat, pMat, aiTextureType_METALNESS, "metalness");
-				LoadAssimpTexture(pAiMat, pMat, aiTextureType_EMISSIVE, "emissive");
+				//TODO normalize naming with suffix for each type
+				pAiMat->GetTexture(aiTextureType_DIFFUSE, 0, &str);
+				pMat->m_pTexture = std::make_unique<Texture>(str.C_Str());
 			}
-		}*/
+		}
 
 		std::vector<VertexFormatComponents> vVertexFormatComponents({ VERTEX_FORMAT_VEC3F32 });
 		if (m_uiVertexComponentFlags & VERTEX_COMPONENT_NORMAL)
@@ -150,7 +147,7 @@ namespace aug
 			{
 				SMeshDesc meshDesc;
 				//meshDesc.m_uiIndex = i;
-				//meshDesc.m_pMaterial = pTarget->GetMaterialByName(mMaterialIndirection[pMesh->mMaterialIndex].c_str());
+				meshDesc.pMaterial = pTarget->GetMaterialByName(mMaterialIndirection[pMesh->mMaterialIndex].c_str());
 				meshDesc.usage = MESH_USAGE_STATIC;
 				meshDesc.pFormat = &vertexFormat;
 

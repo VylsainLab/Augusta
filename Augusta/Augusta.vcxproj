@@ -34,6 +34,7 @@
     <ClInclude Include="..\include\Augusta\Camera.h" />
     <ClInclude Include="..\include\Augusta\Context.h" />
     <ClInclude Include="..\include\Augusta\Geodetics.h" />
+    <ClInclude Include="..\include\Augusta\Material.h" />
     <ClInclude Include="..\include\Augusta\Pipeline.h" />
     <ClInclude Include="..\include\Augusta\MemoryAllocator.h" />
     <ClInclude Include="..\include\Augusta\Mesh.h" />
@@ -42,6 +43,7 @@
     <ClInclude Include="..\include\Augusta\SwapChain.h" />
     <ClInclude Include="..\include\Augusta\Texture.h" />
     <ClInclude Include="..\include\Augusta\Uniform.h" />
+    <ClInclude Include="..\include\Augusta\Utils.h" />
     <ClInclude Include="..\include\Augusta\VertexFormat.h" />
     <ClInclude Include="..\include\Augusta\Window.h" />
   </ItemGroup>
@@ -59,6 +61,7 @@
     <ClCompile Include="src\Buffer.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Context.cpp" />
+    <ClCompile Include="src\Material.cpp" />
     <ClCompile Include="src\Pipeline.cpp" />
     <ClCompile Include="src\MemoryAllocator.cpp" />
     <ClCompile Include="src\Mesh.cpp" />

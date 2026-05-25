@@ -1,5 +1,5 @@
-#ifndef _UTILS
-#define _UTILS
+#ifndef _GEODETICS
+#define _GEODETICS
 
 #define _USE_MATH_DEFINES
 #include <math.h>

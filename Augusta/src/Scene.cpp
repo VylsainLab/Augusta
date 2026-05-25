@@ -41,6 +41,7 @@ namespace aug
 		std::shared_ptr<Mesh> pMesh(new Mesh(desc));
 
 		//TODO : material
+		pMesh->m_pMaterial = desc.pMaterial;
 
 		AddExistingMesh(pMesh, pTarget);
 		return pMesh;
@@ -55,6 +56,26 @@ namespace aug
 			pTarget->AddMesh(pMesh);
 		else
 			m_pRootNode->AddMesh(pMesh);
+	}
+
+	std::shared_ptr<Material> Scene::GetMaterialByName(const char* szName, bool* pbAlreadyExists)
+	{
+		for (uint32_t i = 0; i < m_vMaterials.size(); ++i)
+		{
+			if (strcmp(m_vMaterials[i]->m_sName.c_str(), szName) == 0)
+			{
+				if (pbAlreadyExists)
+					*pbAlreadyExists = true;
+				return m_vMaterials[i];
+			}
+		}
+		std::shared_ptr<Material> pMat(new Material());
+		pMat->m_sName = szName;
+		pMat->m_uiIndex = m_vMaterials.size();
+		m_vMaterials.push_back(pMat);
+		if (pbAlreadyExists)
+			*pbAlreadyExists = false;
+		return pMat;
 	}
 
 	void Scene::SetRootTransform(const glm::dmat4& mat)

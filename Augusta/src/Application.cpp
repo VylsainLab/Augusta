@@ -174,7 +174,7 @@ namespace aug
 		ImDrawData* main_draw_data = ImGui::GetDrawData();
 		ImGui_ImplVulkan_RenderDrawData(main_draw_data, m_vVkSwapChainCommandBuffers[uiCurrentImage]);		
 
-#ifdef USE_DYNCAMIC_RENDERING
+#ifdef USE_DYNAMIC_RENDERING
 		vkCmdEndRendering(m_vVkSwapChainCommandBuffers[uiCurrentImage]);
 #else
 		vkCmdEndRenderPass(m_vVkSwapChainCommandBuffers[uiCurrentImage]);

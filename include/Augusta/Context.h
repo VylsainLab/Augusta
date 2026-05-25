@@ -12,6 +12,8 @@
 #define ENABLE_VALIDATION_LAYERS	true
 #endif
 
+#define AUG_DESCRIPTOR_POOL_SIZE	100
+
 namespace aug
 {
 	struct QueueFamilyIndices
@@ -36,6 +38,9 @@ namespace aug
 
 		static VkCommandBuffer BuildSingleTimeCommandBuffer();
 		static void SubmitAndFreeCommandBuffer(VkCommandBuffer commandBuffer);
+
+		//static VkDescriptorSet AllocateDescriptorSet(const VkDescriptorSetAllocateInfo& layout);
+		//static void FreeDescriptorSet();
 		
 		static VkInstance m_VkInstance;
 		static std::vector<const char*> m_vValidationLayers;
@@ -47,8 +52,9 @@ namespace aug
 		static VkQueue m_VkGraphicsQueue;
 		static VkQueue m_VkPresentQueue;
 		static VkCommandPool m_VkCommandPool;
+		static VkDescriptorPool m_VkDescriptorPool;
 		static std::vector<const char*> m_vDeviceExtensions;
-		static QueueFamilyIndices m_QueueFamilies;
+		static QueueFamilyIndices m_QueueFamilies;		
 
 	protected:
 		static bool CheckValidationLayers();
@@ -60,6 +66,7 @@ namespace aug
 		static void PickPhysicalDevice();
 		static void CreateLogicalDevice();
 		static void CreateCommandPool();
+		static void CreateDescriptorPool();
  
 		static VkDebugUtilsMessengerEXT m_VkDebugMessenger;		
 	};

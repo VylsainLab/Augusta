@@ -41,7 +41,7 @@ namespace aug
 		VmaAllocation m_VmaAllocation = VK_NULL_HANDLE;
 		VmaAllocationInfo m_VmaAllocationInfo;
 		VkImageView m_VkImageView = VK_NULL_HANDLE;
-		VkSampler m_VkSampler = VK_NULL_HANDLE;
+		VkSampler m_VkSampler = VK_NULL_HANDLE; //TODO decouple samplers from textures
 
 		VkImageLayout m_CurrentImageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 

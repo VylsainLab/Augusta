@@ -102,6 +102,12 @@
     <ClInclude Include="..\include\Augusta\Geodetics.h">
       <Filter>Source Files\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\Augusta\Material.h">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Augusta\Utils.h">
+      <Filter>Source Files\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp">
@@ -172,6 +178,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Dependencies\imgui-docking\misc\freetype\imgui_freetype.cpp">
       <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Material.cpp">
+      <Filter>Source Files\Vulkan</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

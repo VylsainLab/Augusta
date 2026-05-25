@@ -36,6 +36,7 @@ namespace aug
 	{
 		//Load file and create staging buffer
 		int32_t w, h, c;
+		stbi_set_flip_vertically_on_load(true);
 		stbi_uc* pData = stbi_load(strPath.c_str(), &w, &h, &c, STBI_rgb_alpha);
 		if (pData == nullptr)
 			throw std::runtime_error(std::string(std::string("Failed to load image ") + strPath));
@@ -58,7 +59,8 @@ namespace aug
 		m_TextureDesc.layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 		CreateImage();
-		
+		CreateImageView();
+
 		//Transition image layout for copy
 		TransitionImageToLayout(VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
@@ -82,8 +84,7 @@ namespace aug
 
 		//Transition image layout for sampling
 		TransitionImageToLayout( m_TextureDesc.layout);
-
-		CreateImageView();
+		
 		CreateSampler();
 	}
 
@@ -142,7 +143,7 @@ namespace aug
 		samplerInfo.addressModeV = m_TextureDesc.samplingMode;
 		samplerInfo.addressModeW = m_TextureDesc.samplingMode;
 		samplerInfo.anisotropyEnable = VK_TRUE;
-		samplerInfo.maxAnisotropy = 16.0f;
+		samplerInfo.maxAnisotropy = 16.0f; //TODO expose in graphics settings
 		samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
 		samplerInfo.unnormalizedCoordinates = VK_FALSE;
 		samplerInfo.compareEnable = VK_FALSE;

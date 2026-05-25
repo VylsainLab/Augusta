@@ -3,6 +3,7 @@
 
 #include <Augusta/Buffer.h>
 #include <Augusta/VertexFormat.h>
+#include <Augusta/Material.h>
 
 namespace aug
 {
@@ -22,6 +23,7 @@ namespace aug
 		void* vertexData = nullptr;
 		uint32_t indexCount = 0;
 		const uint32_t* indexData = nullptr;
+		std::shared_ptr<Material> pMaterial = nullptr;
 	};
 
 	class Mesh
@@ -32,11 +34,12 @@ namespace aug
 
 		void Draw(const VkCommandBuffer &commandBuffer);
 
+		std::shared_ptr<Material> m_pMaterial = nullptr;
 	private:
 		uint32_t m_uiVertexCount = 0;
 		std::unique_ptr<Buffer> m_pVertexBuffer = nullptr;
 		uint32_t m_uiIndexCount = 0;
-		std::unique_ptr<Buffer> m_pIndexBuffer = nullptr;
+		std::unique_ptr<Buffer> m_pIndexBuffer = nullptr;		
 	};
 }
 
