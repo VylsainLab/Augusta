@@ -26,19 +26,21 @@ aug::Pipeline::Pipeline(aug::Window* pWindow)
 		throw std::runtime_error("Failed to create descriptor set layout!");
 
 	//Material descriptor layout
-	VkDescriptorSetLayoutBinding samplerLayoutBinding{};
-	samplerLayoutBinding.binding = 0;
-	samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-	samplerLayoutBinding.descriptorCount = 1;
-	samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-	samplerLayoutBinding.pImmutableSamplers = nullptr;
+	std::array<VkDescriptorSetLayoutBinding,ETextureChannel::TEXTURE_CHANNEL_COUNT> samplerLayoutBinding{};
+	for (int i = 0; i < ETextureChannel::TEXTURE_CHANNEL_COUNT; ++i)
+	{
+		samplerLayoutBinding[i].binding = i;
+		samplerLayoutBinding[i].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		samplerLayoutBinding[i].descriptorCount = 1;
+		samplerLayoutBinding[i].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+		samplerLayoutBinding[i].pImmutableSamplers = nullptr;
+	}
 
-	layoutInfo.pBindings = &samplerLayoutBinding;
+	layoutInfo.bindingCount = ETextureChannel::TEXTURE_CHANNEL_COUNT;
+	layoutInfo.pBindings = samplerLayoutBinding.data();
 
 	if (vkCreateDescriptorSetLayout(aug::Context::m_VkDevice, &layoutInfo, nullptr, &m_VkDescriptorSetLayoutMaterial) != VK_SUCCESS)
 		throw std::runtime_error("Failed to create descriptor set layout!");
-
-	int toto = 1;
 }
 
 aug::Pipeline::~Pipeline()
@@ -211,10 +213,11 @@ void aug::Pipeline::Init(const SPipelineDesc& desc)
 	pushConstantRange.size = desc.uiPushConstantSize;
 
 	//Pipeline layout (uniforms specification)
-	std::vector<VkDescriptorSetLayout> descriptorLayouts = { m_VkDescriptorSetLayout , m_VkDescriptorSetLayoutMaterial };
+	std::vector<VkDescriptorSetLayout> descriptorLayouts = { m_VkDescriptorSetLayout };
+	descriptorLayouts.insert(descriptorLayouts.end(), TEXTURE_CHANNEL_COUNT, m_VkDescriptorSetLayoutMaterial);
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-	pipelineLayoutInfo.setLayoutCount = descriptorLayouts.size();
+	pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorLayouts.size());
 	pipelineLayoutInfo.pSetLayouts = descriptorLayouts.data();
 	pipelineLayoutInfo.pushConstantRangeCount = 1;
 	pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;

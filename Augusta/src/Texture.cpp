@@ -1,3 +1,5 @@
+#include <gli/gli.hpp>
+
 #include <Augusta/Texture.h>
 #include <Augusta/Buffer.h>
 #include <Augusta/Context.h>
@@ -5,20 +7,41 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image/stb_image.h>
-#include <stdexcept>
+#include <iostream>
+#include <filesystem>
 
 namespace aug
 {
-	Texture::Texture(const std::string& strPath)
-	{
-		LoadFromFile(strPath);
-	}
-
-	Texture::Texture(STextureDesc& desc)
+	Texture::Texture(STextureDesc& desc, Buffer* pBuffer)
 	{
 		m_TextureDesc = desc;
 		CreateImage();
 		CreateImageView();
+
+		if (pBuffer)
+		{
+			//Transition image layout for copy
+			TransitionImageToLayout(VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+
+			//Copy buffer to image
+			VkCommandBuffer commandBuffer = Context::BuildSingleTimeCommandBuffer();
+
+			VkBufferImageCopy region{};
+			region.bufferOffset = 0;
+			region.bufferRowLength = 0; // tightly packed
+			region.bufferImageHeight = 0; //same
+			region.imageSubresource.aspectMask = m_TextureDesc.aspect;
+			region.imageSubresource.mipLevel = 0;
+			region.imageSubresource.baseArrayLayer = 0;
+			region.imageSubresource.layerCount = 1;
+			region.imageOffset = { 0, 0, 0 };
+			region.imageExtent = { static_cast<uint32_t>(m_TextureDesc.width), static_cast<uint32_t>(m_TextureDesc.height), 1 };
+
+			vkCmdCopyBufferToImage(commandBuffer, pBuffer->GetBufferHandle(), m_VkImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+
+			Context::SubmitAndFreeCommandBuffer(commandBuffer);
+		}
+
 		CreateSampler();
 		TransitionImageToLayout(desc.layout);
 	}
@@ -30,62 +53,6 @@ namespace aug
 		vkDestroyImageView(Context::m_VkDevice, m_VkImageView, nullptr);
 
 		vmaDestroyImage(MemoryAllocator::m_VmaAllocator, m_VkImage, m_VmaAllocation);
-	}
-
-	void Texture::LoadFromFile(const std::string& strPath)
-	{
-		//Load file and create staging buffer
-		int32_t w, h, c;
-		stbi_set_flip_vertically_on_load(true);
-		stbi_uc* pData = stbi_load(strPath.c_str(), &w, &h, &c, STBI_rgb_alpha);
-		if (pData == nullptr)
-			throw std::runtime_error(std::string(std::string("Failed to load image ") + strPath));
-
-		uint64_t uiSize = w * h * 4;
-		Buffer stagingBuffer(uiSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY, pData);
-
-		stbi_image_free(pData);
-
-		//Create and allocate image
-		m_TextureDesc.aspect = VK_IMAGE_ASPECT_COLOR_BIT;
-		m_TextureDesc.format = VK_FORMAT_R8G8B8A8_SRGB;
-		m_TextureDesc.width = w;
-		m_TextureDesc.height = h;
-		m_TextureDesc.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
-		m_TextureDesc.memoryUsage = VMA_MEMORY_USAGE_GPU_ONLY;
-		m_TextureDesc.tiling = VK_IMAGE_TILING_OPTIMAL;
-		m_TextureDesc.filtering = VK_FILTER_LINEAR;
-		m_TextureDesc.samplingMode = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-		m_TextureDesc.layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-
-		CreateImage();
-		CreateImageView();
-
-		//Transition image layout for copy
-		TransitionImageToLayout(VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-
-		//Copy buffer to image
-		VkCommandBuffer commandBuffer = Context::BuildSingleTimeCommandBuffer();
-
-		VkBufferImageCopy region{};
-		region.bufferOffset = 0;
-		region.bufferRowLength = 0; // tightly packed
-		region.bufferImageHeight = 0; //same
-		region.imageSubresource.aspectMask = m_TextureDesc.aspect;
-		region.imageSubresource.mipLevel = 0;
-		region.imageSubresource.baseArrayLayer = 0;
-		region.imageSubresource.layerCount = 1;
-		region.imageOffset = { 0, 0, 0 };
-		region.imageExtent = { static_cast<uint32_t>(w), static_cast<uint32_t>(h), 1 };
-		
-		vkCmdCopyBufferToImage(	commandBuffer, stagingBuffer.GetBufferHandle(), m_VkImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region );
-
-		Context::SubmitAndFreeCommandBuffer(commandBuffer);
-
-		//Transition image layout for sampling
-		TransitionImageToLayout( m_TextureDesc.layout);
-		
-		CreateSampler();
 	}
 
 	void Texture::CreateImage()
@@ -211,5 +178,102 @@ namespace aug
 		Context::SubmitAndFreeCommandBuffer(commandBuffer);
 
 		m_CurrentImageLayout = newLayout;
+	}
+
+
+	std::vector<std::string> TextureFactory::m_vPaths;
+	std::string TextureFactory::m_sForcedExtension;
+	std::unordered_map<std::string, std::weak_ptr<Texture>> TextureFactory::m_mTextureDictionary;
+	void TextureFactory::AddTexturePath(const std::string& strPath)
+	{
+		m_vPaths.push_back(strPath);
+	}
+
+	void TextureFactory::SetTextureExtension(const std::string& strExt)
+	{
+		m_sForcedExtension = strExt;
+	}
+
+	std::shared_ptr<Texture> TextureFactory::LoadTextureFromFile(const std::string& strPath)
+	{
+		size_t pos = strPath.find_last_of("\\");
+		std::string strFilename = strPath.substr(pos + 1);
+		std::string strDirPath = strPath.substr(0, pos);
+		if (!m_sForcedExtension.empty())
+		{
+			pos = strFilename.rfind('.');
+			strFilename.replace(pos + 1, strFilename.size() - pos, m_sForcedExtension.c_str());
+		}
+
+		std::string strRealPath = FindTexture(strDirPath,strFilename);
+
+		if (strRealPath.find(".dds") != std::string::npos)
+			return LoadTextureFromDDS(strRealPath);
+		else
+			return LoadTextureFromSTBI(strRealPath);		
+	}
+
+	std::string TextureFactory::FindTexture(const std::string& strDirPath, const std::string& strFilename)
+	{
+		std::string strPath = strDirPath + "\\" + strFilename;
+		if (std::filesystem::exists(strPath))
+			return strPath;
+		else
+		{
+			for (auto& path : m_vPaths)
+			{
+				strPath = path + "\\" + strFilename;
+				if (std::filesystem::exists(strPath))
+					return strPath;
+			}
+		}
+
+		return "";
+	}
+
+	std::shared_ptr<Texture> TextureFactory::LoadTextureFromDDS(const std::string& strPath)
+	{
+		gli::texture ddsTexture = gli::load_dds(strPath);
+		ddsTexture = gli::flip(ddsTexture);
+
+		uint32_t uiWidth = ddsTexture.extent().x;
+		uint32_t uiHeight = ddsTexture.extent().y;
+		uint32_t uiLevels = ddsTexture.levels();
+		uint64_t uiSize = ddsTexture.size(0);
+		Buffer stagingBuffer(uiSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY, ddsTexture.data());		
+		
+		STextureDesc desc;
+		desc.width = uiWidth;
+		desc.height = uiHeight;
+		desc.levels = 0;// uiLevels; TODO support mipmaps
+		desc.format = VK_FORMAT_BC1_RGBA_UNORM_BLOCK;
+		desc.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+		desc.layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		return std::make_shared<Texture>(desc, &stagingBuffer);
+	}
+
+	std::shared_ptr<Texture> TextureFactory::LoadTextureFromSTBI(const std::string& strPath)
+	{
+		//Load file and create staging buffer
+		int32_t w, h, c;
+		stbi_set_flip_vertically_on_load(true);
+		stbi_uc* pData = stbi_load(strPath.c_str(), &w, &h, &c, STBI_rgb_alpha);
+		if (pData == nullptr)
+		{
+			std::cout << "Failed to load image " << strPath << std::endl;
+			return nullptr;
+		}
+
+		uint64_t uiSize = w * h * 4;
+		Buffer stagingBuffer(uiSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY, pData);
+
+		stbi_image_free(pData);
+
+		STextureDesc desc;
+		desc.width = w;
+		desc.height = h;
+		desc.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+		desc.layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		return std::make_shared<Texture>(desc, &stagingBuffer);
 	}
 }

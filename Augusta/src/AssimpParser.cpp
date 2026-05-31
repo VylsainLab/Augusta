@@ -58,13 +58,8 @@ namespace aug
 
 	bool AssimpParser::LoadSceneFromFile(std::shared_ptr<Scene> pTarget, const std::string& strModelPath, const std::string& strTexPath, const std::string& strForceExt)
 	{
-		m_vTexPaths.push_back(strModelPath);
-		if (!strTexPath.empty())
-			m_vTexPaths.push_back(strTexPath);
-		if (!strForceExt.empty())
-			m_strTexExtension = strForceExt;
-		else
-			m_strTexExtension = "";
+		TextureFactory::AddTexturePath(strTexPath);
+		TextureFactory::SetTextureExtension(strForceExt);
 		m_strFilePath = strModelPath;
 
 		m_pAiScene = aiImportFile(strModelPath.c_str(), m_uiImportFlags);
@@ -127,8 +122,18 @@ namespace aug
 					pMat->m_MaterialUBO.m_fRoughness = factor;*/
 
 				//TODO normalize naming with suffix for each type
-				pAiMat->GetTexture(aiTextureType_DIFFUSE, 0, &str);
-				pMat->m_pTexture = std::make_unique<Texture>(str.C_Str());
+				if(pAiMat->GetTexture(aiTextureType_DIFFUSE, 0, &str)== aiReturn_SUCCESS)
+					pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_ALBEDO] = TextureFactory::LoadTextureFromFile(str.C_Str());
+				if (pAiMat->GetTexture(aiTextureType_NORMALS, 0, &str) == aiReturn_SUCCESS)
+					pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_NORMAL] = TextureFactory::LoadTextureFromFile(str.C_Str());
+				if (pAiMat->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &str) == aiReturn_SUCCESS)
+					pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_AO] = TextureFactory::LoadTextureFromFile(str.C_Str());
+				if (pAiMat->GetTexture(aiTextureType_SHININESS, 0, &str) == aiReturn_SUCCESS)
+					pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_ROUGHNESS] = TextureFactory::LoadTextureFromFile(str.C_Str());
+				if (pAiMat->GetTexture(aiTextureType_METALNESS, 0, &str) == aiReturn_SUCCESS)
+					pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_METALNESS] = TextureFactory::LoadTextureFromFile(str.C_Str());
+				if (pAiMat->GetTexture(aiTextureType_EMISSIVE, 0, &str) == aiReturn_SUCCESS)
+					pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_EMISSVE] = TextureFactory::LoadTextureFromFile(str.C_Str());
 			}
 		}
 

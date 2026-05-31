@@ -7,6 +7,17 @@
 
 namespace aug
 {
+	enum ETextureChannel
+	{
+		TEXTURE_CHANNEL_ALBEDO,
+		TEXTURE_CHANNEL_NORMAL,
+		TEXTURE_CHANNEL_AO,
+		TEXTURE_CHANNEL_ROUGHNESS,
+		TEXTURE_CHANNEL_METALNESS,
+		TEXTURE_CHANNEL_EMISSVE,
+		TEXTURE_CHANNEL_COUNT
+	};
+
 	class Material
 	{
 	public:
@@ -17,9 +28,8 @@ namespace aug
 
 		std::string m_sName = "";
 		uint32_t m_uiIndex = 0;
-		std::unique_ptr<Texture> m_pTexture = nullptr;
+		std::shared_ptr<Texture> m_aTextures[ETextureChannel::TEXTURE_CHANNEL_COUNT] = { nullptr };
 
-		//VkDescriptorSetLayout m_VkDescriptorSetLayout = VK_NULL_HANDLE;
 		std::vector<VkDescriptorSet> m_vDescriptorSets;
 	private:		
 		

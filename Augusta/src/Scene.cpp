@@ -71,7 +71,7 @@ namespace aug
 		}
 		std::shared_ptr<Material> pMat(new Material());
 		pMat->m_sName = szName;
-		pMat->m_uiIndex = m_vMaterials.size();
+		pMat->m_uiIndex = static_cast<uint32_t>(m_vMaterials.size());
 		m_vMaterials.push_back(pMat);
 		if (pbAlreadyExists)
 			*pbAlreadyExists = false;
