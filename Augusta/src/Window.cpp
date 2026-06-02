@@ -82,6 +82,13 @@ namespace aug
     }
 #endif
 
+	void Window::TransitionCurrentSwapChainImageToLayout(const VkCommandBuffer& cb, VkImageLayout layout)
+	{
+		m_pSwapChain->TransitionCurrentImageToLayout(cb,layout);
+
+		//m_pDepthStencilTexture->TransitionImageToLayout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+	}
+
 	bool Window::IsClosed()
 	{
 		return glfwWindowShouldClose(m_pWindow);
@@ -126,7 +133,7 @@ namespace aug
 	{
 		return m_pSwapChain->GetImageViewAtIndex(m_pSwapChain->GetCurrentImageIndex());
 	}
-	VkImageView Window::GetCurrentDepthImageView() const
+	VkImageView Window::GetDepthImageView() const
 	{
 		return m_pDepthStencilTexture->GetImageView();
 	}

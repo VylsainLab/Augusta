@@ -23,6 +23,8 @@ namespace aug
 
 		uint32_t AcquireNextImage(VkSemaphore semaphore);
 
+		void TransitionCurrentImageToLayout(const VkCommandBuffer& cb, VkImageLayout layout);
+
 		VkSwapchainKHR GetSwapChainHandle() const { return m_VkSwapChain; }
 		VkFormat GetImageFormat() const { return m_VkSwapChainImageFormat; }
 		VkExtent2D GetExtent() const { return m_VkSwapChainExtent; }
@@ -30,6 +32,8 @@ namespace aug
 		VkImageView GetImageViewAtIndex(uint32_t index) const { return m_vVkSwapChainImageViews.at(index); }
 
 		uint32_t GetCurrentImageIndex() const { return m_uiCurrentImageIndex; }
+
+
 
 	protected:
 		VkSwapchainKHR m_VkSwapChain;

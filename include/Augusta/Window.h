@@ -24,6 +24,8 @@ namespace aug
         VkFramebuffer GetSwapChainFramebuffer(uint32_t index) const;
 #endif
 
+		void TransitionCurrentSwapChainImageToLayout(const VkCommandBuffer& cb, VkImageLayout layout);
+
 		VkSurfaceKHR GetSurface() { return m_VkSurface; }
 		bool IsClosed();
 
@@ -38,7 +40,7 @@ namespace aug
 		GLFWwindow* GetGLFWWindow() const { return m_pWindow; }
 
 		VkImageView GetCurrentColorImageView() const;
-		VkImageView GetCurrentDepthImageView() const;
+		VkImageView GetDepthImageView() const;
 
 	protected:
 		GLFWwindow* m_pWindow = nullptr;
