@@ -14,6 +14,9 @@ layout(location = 0) out vec4 outColor;
 
 void main() 
 {
-    outColor.rgb = texture(samplerAlbedo, fragTexcoord).rgb;
+    vec3 albedo = texture(samplerAlbedo, fragTexcoord).rgb;
+    vec3 normals = texture(samplerNormal, fragTexcoord).rgb;
+
+    outColor.rgb = albedo+normals;
     outColor.a = 1.0;
 }

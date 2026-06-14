@@ -111,14 +111,7 @@ private:
 
 		for (uint32_t i = 0; i < pNode->GetNbMeshes(); ++i)
 		{
-			//TODO update material descriptor
-			//m_pPipeline->UpdateDescriptors(pNode->GetMesh(i)->m_pMaterial);
-			if (pNode->GetMesh(i)->m_pMaterial->m_vDescriptorSets.empty())
-			{
-				std::vector<VkDescriptorSetLayout> layouts(aug::ETextureChannel::TEXTURE_CHANNEL_COUNT*MAX_FRAMES_IN_FLIGHT, m_pPipeline->m_VkDescriptorSetLayoutMaterial);
-				pNode->GetMesh(i)->m_pMaterial->CreateDescriptorSets(layouts.data());
-			}		
-			vkCmdBindDescriptorSets(m_ActiveCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pPipeline->m_VkPipelineLayout, 1, aug::ETextureChannel::TEXTURE_CHANNEL_COUNT, &pNode->GetMesh(i)->m_pMaterial->m_vDescriptorSets[m_uiCurrentFrame*aug::ETextureChannel::TEXTURE_CHANNEL_COUNT], 0, nullptr);
+			m_pPipeline->UpdateDescriptors(m_ActiveCommandBuffer, pNode->GetMesh(i)->m_pMaterial, m_uiCurrentFrame);
 
 			pNode->GetMesh(i)->Draw(m_ActiveCommandBuffer);
 		}

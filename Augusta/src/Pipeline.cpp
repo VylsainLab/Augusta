@@ -213,8 +213,7 @@ void aug::Pipeline::Init(const SPipelineDesc& desc)
 	pushConstantRange.size = desc.uiPushConstantSize;
 
 	//Pipeline layout (uniforms specification)
-	std::vector<VkDescriptorSetLayout> descriptorLayouts = { m_VkDescriptorSetLayout };
-	descriptorLayouts.insert(descriptorLayouts.end(), TEXTURE_CHANNEL_COUNT, m_VkDescriptorSetLayoutMaterial);
+	std::vector<VkDescriptorSetLayout> descriptorLayouts = { m_VkDescriptorSetLayout, m_VkDescriptorSetLayoutMaterial };
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 	pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorLayouts.size());
@@ -329,4 +328,14 @@ void aug::Pipeline::PushConstants(const VkCommandBuffer& commandBuffer, void* pD
 		0,
 		m_Desc.uiPushConstantSize,
 		pData);
+}
+
+void aug::Pipeline::UpdateDescriptors(const VkCommandBuffer& cb, std::shared_ptr<Material> pMat, uint8_t uiCurrentFrame)
+{
+	if (pMat->m_vDescriptorSets.empty())
+	{
+		std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, m_VkDescriptorSetLayoutMaterial);
+		pMat->CreateDescriptorSets(layouts.data());
+	}
+	vkCmdBindDescriptorSets(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, m_VkPipelineLayout, 1, 1, &pMat->m_vDescriptorSets[uiCurrentFrame], 0, nullptr);
 }

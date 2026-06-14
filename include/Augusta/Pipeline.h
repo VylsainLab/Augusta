@@ -42,23 +42,22 @@ namespace aug
 
 		void PushConstants(const VkCommandBuffer& commandBuffer, void* pData);
 
-		//const VkPipelineLayout& GetPipelineLayout() { return m_VkPipelineLayout; }
-		//VkDescriptorSetLayout GetMaterialDescriptorSetLayout() { return m_VkDescriptorSetLayoutMaterial; }
+		void UpdateDescriptors(const VkCommandBuffer &cb, std::shared_ptr<Material> pMat, uint8_t uiCurrentFrame);
 
+		const VkPipelineLayout& GetPipelineLayout() { return m_VkPipelineLayout; }
+		const VkDescriptorSetLayout& GetMaterialDescriptorSetLayout() { return m_VkDescriptorSetLayoutMaterial; }
+
+	protected:
 		VkPipelineLayout m_VkPipelineLayout = VK_NULL_HANDLE;
 
 		VkDescriptorSetLayout m_VkDescriptorSetLayoutMaterial = VK_NULL_HANDLE;
-
-	protected:
+	
 		SPipelineDesc m_Desc;
 #ifndef USE_DYNAMIC_RENDERING
 		VkRenderPass m_VkRenderPass = VK_NULL_HANDLE;
 #endif
 		VkDescriptorSetLayout m_VkDescriptorSetLayout = VK_NULL_HANDLE;
 		std::vector<VkDescriptorSet> m_vDescriptorSets;
-
-		
-
 		
 		VkPipeline m_VkGraphicsPipeline = VK_NULL_HANDLE;
 	};
