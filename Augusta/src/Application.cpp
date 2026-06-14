@@ -119,6 +119,9 @@ namespace aug
 		if (vkBeginCommandBuffer(m_vVkSwapChainCommandBuffers[currentImage], &beginInfo) != VK_SUCCESS)
 			throw std::runtime_error("Failed to begin recording command buffer!");
 
+		//Swapchain image transition
+		m_pWindow->TransitionCurrentSwapChainImageToLayout(m_vVkSwapChainCommandBuffers[currentImage], VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+
 #ifdef USE_DYNAMIC_RENDERING
 		//Dynamic rendering
 		VkClearValue clearColors{};
@@ -136,8 +139,8 @@ namespace aug
 		clearColors.depthStencil = { 1.0f, 0 };
 
 		VkRenderingAttachmentInfo depthAttachmentInfo{};
-		depthAttachmentInfo.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
-			depthAttachmentInfo.imageView = m_pWindow->GetCurrentDepthImageView();
+		depthAttachmentInfo.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
+		depthAttachmentInfo.imageView = m_pWindow->GetDepthImageView();
 		depthAttachmentInfo.imageLayout = VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL;
 		depthAttachmentInfo.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		depthAttachmentInfo.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -179,6 +182,9 @@ namespace aug
 #else
 		vkCmdEndRenderPass(m_vVkSwapChainCommandBuffers[uiCurrentImage]);
 #endif
+
+		//Transition swap chain images for presentation
+		m_pWindow->TransitionCurrentSwapChainImageToLayout(m_vVkSwapChainCommandBuffers[uiCurrentImage], VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 
 		if (vkEndCommandBuffer(m_vVkSwapChainCommandBuffers[uiCurrentImage]) != VK_SUCCESS)
 			throw std::runtime_error("Failed to record command buffer!");

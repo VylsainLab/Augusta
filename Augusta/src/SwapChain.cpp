@@ -150,4 +150,22 @@ namespace aug
 		vkAcquireNextImageKHR(aug::Context::m_VkDevice, m_VkSwapChain, UINT64_MAX, semaphore, VK_NULL_HANDLE, &m_uiCurrentImageIndex);
 		return m_uiCurrentImageIndex;
 	}
+
+	void SwapChain::TransitionCurrentImageToLayout(const VkCommandBuffer& cb, VkImageLayout layout)
+	{
+		VkImageMemoryBarrier barriers{};
+		barriers.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		barriers.srcAccessMask = 0;
+		barriers.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+		barriers.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		barriers.newLayout = layout;
+		barriers.image = m_vVkSwapChainImages[m_uiCurrentImageIndex];
+		barriers.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		barriers.subresourceRange.levelCount = 1;
+		barriers.subresourceRange.layerCount = 1;
+
+		VkPipelineStageFlags sourceStage = VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT;
+		VkPipelineStageFlags destinationStage = VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT;
+		vkCmdPipelineBarrier(cb, sourceStage, destinationStage, 0, 0, nullptr, 0, nullptr, 1, &barriers);
+	}
 }
