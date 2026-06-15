@@ -17,6 +17,6 @@ void main()
     vec3 albedo = texture(samplerAlbedo, fragTexcoord).rgb;
     vec3 normals = texture(samplerNormal, fragTexcoord).rgb;
 
-    outColor.rgb = albedo+normals;
+    outColor.rgb = albedo;
     outColor.a = 1.0;
 }

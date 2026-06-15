@@ -5,8 +5,9 @@
 
 namespace aug
 {
-	ShaderModule::ShaderModule(const std::string& filepath, VkShaderStageFlagBits stageFlag)
+	ShaderModule::ShaderModule(const std::string& strName, const std::string& filepath, VkShaderStageFlagBits stageFlag)
 	{
+		m_strName = strName;
 		std::string glsl_code = ReadFile(filepath);
 
 		shaderc_shader_kind shaderKind;
@@ -64,12 +65,29 @@ namespace aug
 		return m_VkPipelineShaderStageCreateInfo;
 	}
 
+	bool ShaderModule::CheckForModifications()
+	{
+		if (std::filesystem::exists(m_strFilePath))
+		{
+			std::filesystem::file_time_type t = std::filesystem::last_write_time(m_strFilePath);
+			if (t > m_LastModificationTime)
+			{
+				m_bHasChanged = true;
+				m_LastModificationTime = t;
+			}
+		}
+
+		return m_bHasChanged;
+	}
+
 	std::string ShaderModule::ReadFile(const std::string& filepath)
 	{
 		std::ifstream file(filepath, std::ios::ate | std::ios::binary);
 
 		if (!file.is_open())
 			throw std::runtime_error("failed to open file!");
+
+		m_strFilePath = filepath;
 
 		size_t fileSize = (size_t)file.tellg();
 		std::vector<char> buffer(fileSize);
@@ -101,20 +119,21 @@ namespace aug
 		return { module.cbegin(), module.cend() };
 	}
 
-
-	std::string Shader::m_sPath = "";
+	std::string Shader::m_sDirectory = "";
 
 	Shader::Shader(const char* szFileName, int32_t stageBitMask)
 	{
 		//TODO crade, à nettoyer
 		if (stageBitMask & VK_SHADER_STAGE_VERTEX_BIT)
 		{
-			m_mModules[VK_SHADER_STAGE_VERTEX_BIT] = new ShaderModule(m_sPath + szFileName + ".vert", VK_SHADER_STAGE_VERTEX_BIT);
+			std::string strName = std::string(szFileName) + ".vert";
+			m_mModules[VK_SHADER_STAGE_VERTEX_BIT] = new ShaderModule(strName, m_sDirectory + strName, VK_SHADER_STAGE_VERTEX_BIT);
 			m_vVkPipelineShaderStageCreateInfo.push_back(m_mModules[VK_SHADER_STAGE_VERTEX_BIT]->GetPipelineShaderModuleCreateInfo());
 		}
 		if (stageBitMask & VK_SHADER_STAGE_FRAGMENT_BIT)
 		{
-			m_mModules[VK_SHADER_STAGE_FRAGMENT_BIT] = new ShaderModule(m_sPath + szFileName + ".frag", VK_SHADER_STAGE_FRAGMENT_BIT);
+			std::string strName = std::string(szFileName) + ".frag";
+			m_mModules[VK_SHADER_STAGE_FRAGMENT_BIT] = new ShaderModule(strName, m_sDirectory + strName, VK_SHADER_STAGE_FRAGMENT_BIT);
 			m_vVkPipelineShaderStageCreateInfo.push_back(m_mModules[VK_SHADER_STAGE_FRAGMENT_BIT]->GetPipelineShaderModuleCreateInfo());
 		}
 	}
@@ -123,5 +142,17 @@ namespace aug
 	{
 		for (auto item : m_mModules)
 			delete item.second;
+	}
+
+	void Shader::CheckForModifications()
+	{
+		for (auto& it : m_mModules)
+		{
+			if (it.second->CheckForModifications()) //TODO extend to all asset types
+			{
+				printf("\nShader module has changed: %s", it.second->GetName());
+				it.second->ResetChanged();
+			}
+		}
 	}
 }

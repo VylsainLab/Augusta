@@ -76,7 +76,7 @@ private:
 		m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/KV2/kv2.FBX", "../../Assets/KV2/textures/","dds");
 		m_pScene->GetRootNode()->Scale(glm::dvec3(0.01));
 	
-		aug::Shader::SetPath("shaders/");
+		aug::Shader::SetDirectory("shaders/");
 		m_pShader = new aug::Shader("shader", VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT);
 
 		CreateUniformBuffers();
@@ -95,6 +95,8 @@ private:
 
 	void Update()
 	{
+		m_pShader->CheckForModifications();
+
 		m_Camera.ComputeCamera();
 
 		//update uniform buffers

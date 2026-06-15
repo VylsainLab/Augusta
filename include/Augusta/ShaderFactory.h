@@ -6,6 +6,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <filesystem>
 
 namespace aug
 {
@@ -13,11 +14,16 @@ namespace aug
 	class ShaderModule
 	{
 	public:
-		ShaderModule(const std::string& filepath, VkShaderStageFlagBits stage);
+		ShaderModule(const std::string& strName, const std::string& filepath, VkShaderStageFlagBits stage);
 		~ShaderModule();
 
 		const VkPipelineShaderStageCreateInfo GetPipelineShaderModuleCreateInfo();
 		const VkShaderStageFlagBits GetShaderStageFlagBits();
+
+		bool CheckForModifications();
+		void ResetChanged() { m_bHasChanged = false; }
+
+		const char* GetName() { return m_strName.c_str(); }
 
 	protected:
 		std::string ReadFile(const std::string& filepath);
@@ -25,11 +31,15 @@ namespace aug
 			shaderc_shader_kind kind,
 			const std::string& source,
 			bool optimize = false);
-
+		
+		std::string m_strName;
 		VkShaderModule m_VkShaderModule;
 		VkShaderStageFlagBits m_VkShaderStageFlag;
 		VkPipelineShaderStageCreateInfo m_VkPipelineShaderStageCreateInfo;
 		std::string m_strEntryPointName;
+		std::string m_strFilePath;
+		std::filesystem::file_time_type m_LastModificationTime;
+		bool m_bHasChanged = false;
 	};
 
 
@@ -44,10 +54,12 @@ namespace aug
 		uint32_t GetStageCount() { return static_cast<uint32_t>(m_vVkPipelineShaderStageCreateInfo.size()); }
 		const VkPipelineShaderStageCreateInfo* GetPipelineShaderStagesCreateInfo() { return m_vVkPipelineShaderStageCreateInfo.data(); }
 
-		static void SetPath(const char* szPath) { m_sPath = szPath; }
+		void CheckForModifications();
+
+		static void SetDirectory(const char* szPath) { m_sDirectory = szPath; }
 
 	protected:
-		static std::string m_sPath;
+		static std::string m_sDirectory;
 		std::map<int32_t, ShaderModule*> m_mModules;
 		std::vector<VkPipelineShaderStageCreateInfo> m_vVkPipelineShaderStageCreateInfo;
 	};
