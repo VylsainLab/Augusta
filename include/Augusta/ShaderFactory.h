@@ -30,11 +30,12 @@ namespace aug
 		bool CheckForModifications();
 
 		const char* GetName() { return m_strName.c_str(); }
+		std::filesystem::file_time_type& GetLastModificationTime(const std::string& strPath) { return m_mLastModificationTimes[strPath]; }
+
+		static std::string ReadFile(const std::string& filepath, std::filesystem::file_time_type& t);
 
 	protected:
-		void CleanModule();
-
-		std::string ReadFile(const std::string& filepath);
+		void CleanModule();		
 		std::vector<uint32_t> CompileFile(const std::string& source_name,
 			shaderc_shader_kind kind,
 			const std::string& source,
@@ -46,9 +47,24 @@ namespace aug
 		VkPipelineShaderStageCreateInfo m_VkPipelineShaderStageCreateInfo;
 		std::string m_strEntryPointName;
 		std::string m_strFilePath;
-		std::filesystem::file_time_type m_LastModificationTime;
+		std::map<std::string,std::filesystem::file_time_type> m_mLastModificationTimes;
 	};
 
+	class ShaderIncluder : public shaderc::CompileOptions::IncluderInterface
+	{
+	public:
+		ShaderIncluder(ShaderModule* pShader);
+
+		shaderc_include_result* GetInclude(
+			const char* requested_source,
+			shaderc_include_type type,
+			const char* requesting_source,
+			size_t include_depth);
+
+		void ReleaseInclude(shaderc_include_result* data);
+
+		ShaderModule* m_pShaderModule = nullptr;
+	};
 
 	//Object containing all shader stages, with their constants and descriptors
 	class Shader
@@ -63,6 +79,7 @@ namespace aug
 		bool CheckForModifications();
 
 		static void SetDirectory(const char* szPath) { m_sDirectory = szPath; }
+		static const std::string& GetDirectory() { return m_sDirectory; }
 
 	protected:
 		static std::string m_sDirectory;

@@ -1,5 +1,7 @@
 #version 450
 
+#include "toto.header"
+
 layout(location = 0) in vec3 fragNormal;
 layout(location = 1) in vec2 fragTexcoord;
 
@@ -21,6 +23,6 @@ void main()
 	vec3 metalness = texture(samplerMetalness, fragTexcoord).rgb;
 	vec3 emissive = texture(samplerEmissive, fragTexcoord).rgb;
 
-    outColor.rgb = albedo;
+    outColor.rgb = toto*albedo;
     outColor.a = 1.0;
 }

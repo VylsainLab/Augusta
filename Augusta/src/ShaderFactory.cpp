@@ -2,6 +2,7 @@
 #include <Augusta/Context.h>
 #include <stdexcept>
 #include <fstream>
+#include <array>
 
 namespace aug
 {
@@ -22,9 +23,7 @@ namespace aug
 	{
 		CleanModule();
 
-		m_LastModificationTime = std::filesystem::last_write_time(m_strFilePath);
-
-		std::string glsl_code = ReadFile(m_strFilePath);
+		std::string glsl_code = ReadFile(m_strFilePath, m_mLastModificationTimes[m_strFilePath]);
 
 		shaderc_shader_kind shaderKind;
 		switch (m_VkShaderStageFlag)
@@ -83,22 +82,27 @@ namespace aug
 
 	bool ShaderModule::CheckForModifications()
 	{
-		if (std::filesystem::exists(m_strFilePath))
+		for (auto& entry : m_mLastModificationTimes)
 		{
-			std::filesystem::file_time_type t = std::filesystem::last_write_time(m_strFilePath);
-			if (t > m_LastModificationTime)
-				return true;
+			if (std::filesystem::exists(entry.first))
+			{
+				std::filesystem::file_time_type t = std::filesystem::last_write_time(entry.first);
+				if (t > entry.second)
+					return true;
+			}
 		}
 
 		return false;
 	}
 
-	std::string ShaderModule::ReadFile(const std::string& filepath)
+	std::string ShaderModule::ReadFile(const std::string& filepath, std::filesystem::file_time_type& t)
 	{
 		std::ifstream file(filepath, std::ios::ate | std::ios::binary);
 
 		if (!file.is_open())
 			throw std::runtime_error("failed to open file!");
+
+		t = std::filesystem::last_write_time(filepath);
 
 		size_t fileSize = (size_t)file.tellg();
 		std::vector<char> buffer(fileSize);
@@ -121,14 +125,46 @@ namespace aug
 		shaderc::CompileOptions options;
 
 		if (optimize) 
-			options.SetOptimizationLevel(shaderc_optimization_level_size);
+			options.SetOptimizationLevel(shaderc_optimization_level_performance);
 
-		shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(source, kind, source_name.c_str(), options);
+		options.SetIncluder(std::make_unique<ShaderIncluder>(this));
+
+		shaderc::PreprocessedSourceCompilationResult res = compiler.PreprocessGlsl(source, kind, source_name.c_str(), options);
+		shaderc::SpvCompilationResult module = compiler.CompileGlslToSpv(res.begin(), kind, source_name.c_str(), options);
 
 		if (module.GetCompilationStatus() != shaderc_compilation_status_success) 
 			throw std::runtime_error(module.GetErrorMessage());
 
 		return { module.cbegin(), module.cend() };
+	}
+
+	ShaderIncluder::ShaderIncluder(ShaderModule* pShader)
+	{
+		m_pShaderModule = pShader;
+	}
+
+	shaderc_include_result* ShaderIncluder::GetInclude(const char* requested_source, shaderc_include_type type, const char* requesting_source, size_t include_depth)
+	{
+		std::array<std::string, 2>* aContent = new std::array<std::string, 2>();
+		(*aContent)[0] = Shader::GetDirectory() + "/" + requested_source;
+		(*aContent)[1] = ShaderModule::ReadFile((*aContent)[0], m_pShaderModule->GetLastModificationTime((*aContent)[0]));
+
+		shaderc_include_result* pRes = new shaderc_include_result();
+		pRes->source_name = (*aContent)[0].data();
+		pRes->source_name_length = (*aContent)[0].size();
+
+		pRes->content = (*aContent)[1].data();
+		pRes->content_length = (*aContent)[1].size();
+
+		pRes->user_data = aContent;
+
+		return pRes;
+	}
+
+	void ShaderIncluder::ReleaseInclude(shaderc_include_result* data)
+	{
+		delete data->user_data;
+		delete data;
 	}
 
 	std::string Shader::m_sDirectory = "";
@@ -151,7 +187,7 @@ namespace aug
 				break;
 
 			default:
-				std::runtime_error("Unsupported shader stage!");
+				throw std::runtime_error("Unsupported shader stage!");
 				break;
 			}
 
@@ -185,4 +221,5 @@ namespace aug
 
 		return bRet;
 	}
+	
 }
