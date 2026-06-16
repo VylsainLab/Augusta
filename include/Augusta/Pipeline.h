@@ -20,6 +20,7 @@ namespace aug
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo;
 		uint32_t uiPushConstantSize;
 		std::vector<aug::Buffer*>* pvUniformBuffers;
+		//TODO include shaders, materials, descriptor set layout, etc...
 	};
 
 	class Pipeline
@@ -44,10 +45,11 @@ namespace aug
 
 		void UpdateDescriptors(const VkCommandBuffer &cb, std::shared_ptr<Material> pMat, uint8_t uiCurrentFrame);
 
-		const VkPipelineLayout& GetPipelineLayout() { return m_VkPipelineLayout; }
-		const VkDescriptorSetLayout& GetMaterialDescriptorSetLayout() { return m_VkDescriptorSetLayoutMaterial; }
-
 	protected:
+
+		void BuildPipeline();
+		void CleanPipeline();
+
 		VkPipelineLayout m_VkPipelineLayout = VK_NULL_HANDLE;
 
 		VkDescriptorSetLayout m_VkDescriptorSetLayoutMaterial = VK_NULL_HANDLE;

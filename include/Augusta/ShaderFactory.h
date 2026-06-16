@@ -17,15 +17,18 @@ namespace aug
 		ShaderModule(const std::string& strName, const std::string& filepath, VkShaderStageFlagBits stage);
 		~ShaderModule();
 
+		void ReadAndCompileModule();		
+
 		const VkPipelineShaderStageCreateInfo GetPipelineShaderModuleCreateInfo();
 		const VkShaderStageFlagBits GetShaderStageFlagBits();
 
 		bool CheckForModifications();
-		void ResetChanged() { m_bHasChanged = false; }
 
 		const char* GetName() { return m_strName.c_str(); }
 
 	protected:
+		void CleanModule();
+
 		std::string ReadFile(const std::string& filepath);
 		std::vector<uint32_t> CompileFile(const std::string& source_name,
 			shaderc_shader_kind kind,
@@ -39,7 +42,6 @@ namespace aug
 		std::string m_strEntryPointName;
 		std::string m_strFilePath;
 		std::filesystem::file_time_type m_LastModificationTime;
-		bool m_bHasChanged = false;
 	};
 
 
@@ -54,7 +56,7 @@ namespace aug
 		uint32_t GetStageCount() { return static_cast<uint32_t>(m_vVkPipelineShaderStageCreateInfo.size()); }
 		const VkPipelineShaderStageCreateInfo* GetPipelineShaderStagesCreateInfo() { return m_vVkPipelineShaderStageCreateInfo.data(); }
 
-		void CheckForModifications();
+		bool CheckForModifications();
 
 		static void SetDirectory(const char* szPath) { m_sDirectory = szPath; }
 

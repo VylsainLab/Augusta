@@ -95,8 +95,6 @@ private:
 
 	void Update()
 	{
-		m_pShader->CheckForModifications();
-
 		m_Camera.ComputeCamera();
 
 		//update uniform buffers

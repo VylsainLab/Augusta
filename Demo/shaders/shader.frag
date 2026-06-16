@@ -16,6 +16,10 @@ void main()
 {
     vec3 albedo = texture(samplerAlbedo, fragTexcoord).rgb;
     vec3 normals = texture(samplerNormal, fragTexcoord).rgb;
+	vec3 ao = texture(samplerAO, fragTexcoord).rgb;
+	vec3 roughness = texture(samplerRoughness, fragTexcoord).rgb;
+	vec3 metalness = texture(samplerMetalness, fragTexcoord).rgb;
+	vec3 emissive = texture(samplerEmissive, fragTexcoord).rgb;
 
     outColor.rgb = albedo;
     outColor.a = 1.0;

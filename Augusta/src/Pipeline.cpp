@@ -45,15 +45,10 @@ aug::Pipeline::Pipeline(aug::Window* pWindow)
 
 aug::Pipeline::~Pipeline()
 {
-	vkDestroyPipeline(aug::Context::m_VkDevice, m_VkGraphicsPipeline, nullptr);
+	CleanPipeline();
 
-	vkDestroyPipelineLayout(aug::Context::m_VkDevice, m_VkPipelineLayout, nullptr);
-
-#ifndef USE_DYNAMIC_RENDERING
-	vkDestroyRenderPass(Context::m_VkDevice, m_VkRenderPass, nullptr);
-#endif
-
-	vkDestroyDescriptorSetLayout(aug::Context::m_VkDevice, m_VkDescriptorSetLayout, nullptr);
+	if (m_VkDescriptorSetLayout)
+		vkDestroyDescriptorSetLayout(aug::Context::m_VkDevice, m_VkDescriptorSetLayout, nullptr);
 }
 
 #ifndef USE_DYNAMIC_RENDERING
@@ -122,6 +117,67 @@ void aug::Pipeline::Init(const SPipelineDesc& desc)
 {
 	m_Desc = desc;
 
+	BuildPipeline();
+}
+
+#ifdef USE_DYNAMIC_RENDERING
+void aug::Pipeline::Bind(const VkCommandBuffer& commandBuffer, uint32_t descriptorSetCount, uint8_t uiCurrentFrame)
+#else
+void aug::Pipeline::Bind(const VkCommandBuffer& commandBuffer, const VkFramebuffer& framebuffer, const VkExtent2D& extent, uint32_t descriptorSetCount, uint8_t uiCurrentFrame)
+#endif
+{
+#ifndef USE_DYNAMIC_RENDERING
+	//Render pass
+	VkRenderPassBeginInfo renderPassInfo = {};
+	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+	renderPassInfo.renderPass = m_VkRenderPass;
+	renderPassInfo.framebuffer = framebuffer;
+	renderPassInfo.renderArea.offset = { 0, 0 };
+	renderPassInfo.renderArea.extent = extent;
+	VkClearValue clearColors[] = { { 0.0f, 0.0f, 0.0f, 1.0f }, { 1.0f, 0} }; //TODO configurable
+	renderPassInfo.clearValueCount = 2;
+	renderPassInfo.pClearValues = clearColors;
+	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+#endif
+
+	if (m_VkGraphicsPipeline == nullptr)
+		return;
+
+	if (m_Desc.pShader->CheckForModifications())
+	{
+		BuildPipeline();
+	}
+
+	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_VkGraphicsPipeline);
+
+	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_VkPipelineLayout, 0, descriptorSetCount, &m_vDescriptorSets[uiCurrentFrame], 0, nullptr);
+}
+
+void aug::Pipeline::PushConstants(const VkCommandBuffer& commandBuffer, void* pData)
+{
+	vkCmdPushConstants(
+		commandBuffer,
+		m_VkPipelineLayout,
+		VK_SHADER_STAGE_VERTEX_BIT,
+		0,
+		m_Desc.uiPushConstantSize,
+		pData);
+}
+
+void aug::Pipeline::UpdateDescriptors(const VkCommandBuffer& cb, std::shared_ptr<Material> pMat, uint8_t uiCurrentFrame)
+{
+	if (pMat->m_vDescriptorSets.empty())
+	{
+		std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, m_VkDescriptorSetLayoutMaterial);
+		pMat->CreateDescriptorSets(layouts.data());
+	}
+	vkCmdBindDescriptorSets(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, m_VkPipelineLayout, 1, 1, &pMat->m_vDescriptorSets[uiCurrentFrame], 0, nullptr);
+}
+
+void aug::Pipeline::BuildPipeline()
+{
+	CleanPipeline();
+
 	//Input assembly
 	VkPipelineInputAssemblyStateCreateInfo inputAssembly = {};
 	inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -132,14 +188,14 @@ void aug::Pipeline::Init(const SPipelineDesc& desc)
 	VkViewport viewport = {};
 	viewport.x = 0.0f;
 	viewport.y = 0.0f;
-	viewport.width = (float)desc.pWindow->GetSwapChainExtent().width;
-	viewport.height = (float)desc.pWindow->GetSwapChainExtent().height;
+	viewport.width = (float)m_Desc.pWindow->GetSwapChainExtent().width;
+	viewport.height = (float)m_Desc.pWindow->GetSwapChainExtent().height;
 	viewport.minDepth = 0.0f;
 	viewport.maxDepth = 1.0f;
 
 	VkRect2D scissor = {};
 	scissor.offset = { 0, 0 };
-	scissor.extent = desc.pWindow->GetSwapChainExtent();
+	scissor.extent = m_Desc.pWindow->GetSwapChainExtent();
 
 	VkPipelineViewportStateCreateInfo viewportState = {};
 	viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -210,7 +266,7 @@ void aug::Pipeline::Init(const SPipelineDesc& desc)
 	VkPushConstantRange pushConstantRange{};
 	pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
 	pushConstantRange.offset = 0;
-	pushConstantRange.size = desc.uiPushConstantSize;
+	pushConstantRange.size = m_Desc.uiPushConstantSize;
 
 	//Pipeline layout (uniforms specification)
 	std::vector<VkDescriptorSetLayout> descriptorLayouts = { m_VkDescriptorSetLayout, m_VkDescriptorSetLayoutMaterial };
@@ -228,16 +284,16 @@ void aug::Pipeline::Init(const SPipelineDesc& desc)
 	VkPipelineRenderingCreateInfo renderingInfo = {};
 	renderingInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO_KHR;
 	renderingInfo.colorAttachmentCount = 1;
-	VkFormat colorFormat = desc.pWindow->GetColorFormat();
+	VkFormat colorFormat = m_Desc.pWindow->GetColorFormat();
 	renderingInfo.pColorAttachmentFormats = &colorFormat;
-	renderingInfo.depthAttachmentFormat = desc.pWindow->GetDepthStencilFormat();
+	renderingInfo.depthAttachmentFormat = m_Desc.pWindow->GetDepthStencilFormat();
 
 	//Graphics pipeline
 	VkGraphicsPipelineCreateInfo pipelineInfo = {};
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-	pipelineInfo.stageCount = desc.pShader->GetStageCount();
-	pipelineInfo.pStages = desc.pShader->GetPipelineShaderStagesCreateInfo();
-	pipelineInfo.pVertexInputState = &desc.vertexInputInfo;
+	pipelineInfo.stageCount = m_Desc.pShader->GetStageCount();
+	pipelineInfo.pStages = m_Desc.pShader->GetPipelineShaderStagesCreateInfo();
+	pipelineInfo.pVertexInputState = &m_Desc.vertexInputInfo;
 	pipelineInfo.pInputAssemblyState = &inputAssembly;
 	pipelineInfo.pViewportState = &viewportState;
 	pipelineInfo.pRasterizationState = &rasterizer;
@@ -247,19 +303,19 @@ void aug::Pipeline::Init(const SPipelineDesc& desc)
 	pipelineInfo.pDynamicState = nullptr;
 	pipelineInfo.layout = m_VkPipelineLayout;
 #ifdef USE_DYNAMIC_RENDERING
-    pipelineInfo.pNext = &renderingInfo;
+	pipelineInfo.pNext = &renderingInfo;
 #else
-    pipelineInfo.renderPass = m_VkRenderPass;
-    pipelineInfo.subpass = 0;
-    pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
-    pipelineInfo.basePipelineIndex = -1;
+	pipelineInfo.renderPass = m_VkRenderPass;
+	pipelineInfo.subpass = 0;
+	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
+	pipelineInfo.basePipelineIndex = -1;
 #endif	
 
 	if (vkCreateGraphicsPipelines(aug::Context::m_VkDevice, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_VkGraphicsPipeline) != VK_SUCCESS)
 		throw std::runtime_error("failed to create graphics pipeline!");
 
 	//Descriptor set
-	std::vector<VkDescriptorSetLayout> layouts( MAX_FRAMES_IN_FLIGHT, m_VkDescriptorSetLayout);
+	std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, m_VkDescriptorSetLayout);
 
 	VkDescriptorSetAllocateInfo allocInfo{};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -274,9 +330,9 @@ void aug::Pipeline::Init(const SPipelineDesc& desc)
 	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
 	{
 		VkDescriptorBufferInfo bufferInfo{};
-		bufferInfo.buffer = (*desc.pvUniformBuffers)[i]->GetBufferHandle();
+		bufferInfo.buffer = (*m_Desc.pvUniformBuffers)[i]->GetBufferHandle();
 		bufferInfo.offset = 0;
-		bufferInfo.range = (*desc.pvUniformBuffers)[i]->GetBufferSize();
+		bufferInfo.range = (*m_Desc.pvUniformBuffers)[i]->GetBufferSize();
 
 		VkWriteDescriptorSet descriptorWrite{};
 		descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -291,51 +347,19 @@ void aug::Pipeline::Init(const SPipelineDesc& desc)
 	}
 }
 
-#ifdef USE_DYNAMIC_RENDERING
-void aug::Pipeline::Bind(const VkCommandBuffer& commandBuffer, uint32_t descriptorSetCount, uint8_t uiCurrentFrame)
-#else
-void aug::Pipeline::Bind(const VkCommandBuffer& commandBuffer, const VkFramebuffer& framebuffer, const VkExtent2D& extent, uint32_t descriptorSetCount, uint8_t uiCurrentFrame)
-#endif
+void aug::Pipeline::CleanPipeline()
 {
-#ifndef USE_DYNAMIC_RENDERING
-	//Render pass
-	VkRenderPassBeginInfo renderPassInfo = {};
-	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-	renderPassInfo.renderPass = m_VkRenderPass;
-	renderPassInfo.framebuffer = framebuffer;
-	renderPassInfo.renderArea.offset = { 0, 0 };
-	renderPassInfo.renderArea.extent = extent;
-	VkClearValue clearColors[] = { { 0.0f, 0.0f, 0.0f, 1.0f }, { 1.0f, 0} }; //TODO configurable
-	renderPassInfo.clearValueCount = 2;
-	renderPassInfo.pClearValues = clearColors;
-	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-#endif
-
-	if (m_VkGraphicsPipeline == nullptr)
-		return;
-
-	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_VkGraphicsPipeline);
-
-	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_VkPipelineLayout, 0, descriptorSetCount, &m_vDescriptorSets[uiCurrentFrame], 0, nullptr);
-}
-
-void aug::Pipeline::PushConstants(const VkCommandBuffer& commandBuffer, void* pData)
-{
-	vkCmdPushConstants(
-		commandBuffer,
-		m_VkPipelineLayout,
-		VK_SHADER_STAGE_VERTEX_BIT,
-		0,
-		m_Desc.uiPushConstantSize,
-		pData);
-}
-
-void aug::Pipeline::UpdateDescriptors(const VkCommandBuffer& cb, std::shared_ptr<Material> pMat, uint8_t uiCurrentFrame)
-{
-	if (pMat->m_vDescriptorSets.empty())
+	if (m_VkGraphicsPipeline)
 	{
-		std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, m_VkDescriptorSetLayoutMaterial);
-		pMat->CreateDescriptorSets(layouts.data());
+		vkDestroyPipeline(aug::Context::m_VkDevice, m_VkGraphicsPipeline, nullptr);
+		m_VkGraphicsPipeline = VK_NULL_HANDLE;
 	}
-	vkCmdBindDescriptorSets(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, m_VkPipelineLayout, 1, 1, &pMat->m_vDescriptorSets[uiCurrentFrame], 0, nullptr);
+
+	if(m_VkPipelineLayout)
+		vkDestroyPipelineLayout(aug::Context::m_VkDevice, m_VkPipelineLayout, nullptr);
+
+#ifndef USE_DYNAMIC_RENDERING
+	if(m_VkRenderPass)
+		vkDestroyRenderPass(Context::m_VkDevice, m_VkRenderPass, nullptr);
+#endif
 }

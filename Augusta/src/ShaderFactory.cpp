@@ -8,10 +8,26 @@ namespace aug
 	ShaderModule::ShaderModule(const std::string& strName, const std::string& filepath, VkShaderStageFlagBits stageFlag)
 	{
 		m_strName = strName;
-		std::string glsl_code = ReadFile(filepath);
+		m_strFilePath = filepath;
+		m_VkShaderStageFlag = stageFlag;
+		ReadAndCompileModule();
+	}
+
+	ShaderModule::~ShaderModule()
+	{
+		CleanModule();
+	}
+
+	void ShaderModule::ReadAndCompileModule()
+	{
+		CleanModule();
+
+		m_LastModificationTime = std::filesystem::last_write_time(m_strFilePath);
+
+		std::string glsl_code = ReadFile(m_strFilePath);
 
 		shaderc_shader_kind shaderKind;
-		switch (stageFlag)
+		switch (m_VkShaderStageFlag)
 		{
 		case VK_SHADER_STAGE_VERTEX_BIT:
 			shaderKind = shaderc_vertex_shader;
@@ -36,17 +52,16 @@ namespace aug
 			break;
 		}
 
-		std::vector<uint32_t> spirv_code = CompileFile(filepath, shaderKind, glsl_code, true);
+		std::vector<uint32_t> spirv_code = CompileFile(m_strFilePath, shaderKind, glsl_code, true);
 
 		VkShaderModuleCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-		createInfo.codeSize = spirv_code.size()*sizeof(uint32_t);
+		createInfo.codeSize = spirv_code.size() * sizeof(uint32_t);
 		createInfo.pCode = spirv_code.data();
 
 		if (vkCreateShaderModule(aug::Context::m_VkDevice, &createInfo, nullptr, &m_VkShaderModule) != VK_SUCCESS)
 			throw std::runtime_error("Failed to create shader module!");
 
-		m_VkShaderStageFlag = stageFlag;	
 		m_strEntryPointName = "main"; //forced by shaderc library
 
 		m_VkPipelineShaderStageCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -55,9 +70,10 @@ namespace aug
 		m_VkPipelineShaderStageCreateInfo.pName = m_strEntryPointName.c_str();
 	}
 
-	ShaderModule::~ShaderModule()
+	void ShaderModule::CleanModule()
 	{
-		vkDestroyShaderModule(aug::Context::m_VkDevice, m_VkShaderModule, nullptr);
+		if(m_VkShaderModule)
+			vkDestroyShaderModule(aug::Context::m_VkDevice, m_VkShaderModule, nullptr);
 	}
 
 	const VkPipelineShaderStageCreateInfo ShaderModule::GetPipelineShaderModuleCreateInfo()
@@ -71,13 +87,10 @@ namespace aug
 		{
 			std::filesystem::file_time_type t = std::filesystem::last_write_time(m_strFilePath);
 			if (t > m_LastModificationTime)
-			{
-				m_bHasChanged = true;
-				m_LastModificationTime = t;
-			}
+				return true;
 		}
 
-		return m_bHasChanged;
+		return false;
 	}
 
 	std::string ShaderModule::ReadFile(const std::string& filepath)
@@ -86,8 +99,6 @@ namespace aug
 
 		if (!file.is_open())
 			throw std::runtime_error("failed to open file!");
-
-		m_strFilePath = filepath;
 
 		size_t fileSize = (size_t)file.tellg();
 		std::vector<char> buffer(fileSize);
@@ -123,7 +134,6 @@ namespace aug
 
 	Shader::Shader(const char* szFileName, int32_t stageBitMask)
 	{
-		//TODO crade, à nettoyer
 		if (stageBitMask & VK_SHADER_STAGE_VERTEX_BIT)
 		{
 			std::string strName = std::string(szFileName) + ".vert";
@@ -144,15 +154,24 @@ namespace aug
 			delete item.second;
 	}
 
-	void Shader::CheckForModifications()
+	bool Shader::CheckForModifications()
 	{
+		bool bRet = false;
+
 		for (auto& it : m_mModules)
 		{
 			if (it.second->CheckForModifications()) //TODO extend to all asset types
 			{
 				printf("\nShader module has changed: %s", it.second->GetName());
-				it.second->ResetChanged();
+				it.second->ReadAndCompileModule();
+				bRet = true;
 			}
 		}
+
+		m_vVkPipelineShaderStageCreateInfo.clear();
+		for (auto& it : m_mModules)
+			m_vVkPipelineShaderStageCreateInfo.push_back(it.second->GetPipelineShaderModuleCreateInfo());
+
+		return bRet;
 	}
 }
