@@ -37,7 +37,6 @@ private:
 	
 	aug::VertexFormat m_VertexFormat; //move to render subpass
 
-	aug::Shader* m_pShader = nullptr;
 	std::vector<aug::Buffer*> m_vUniformBuffers; //One per swap chain image
 
 	VkCommandBuffer m_ActiveCommandBuffer = VK_NULL_HANDLE;
@@ -77,13 +76,16 @@ private:
 		m_pScene->GetRootNode()->Scale(glm::dvec3(0.01));
 	
 		aug::Shader::SetDirectory("shaders/");
-		m_pShader = new aug::Shader("shader", VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT);
 
 		CreateUniformBuffers();
 
 		aug::SPipelineDesc desc;
 		desc.pWindow = m_pWindow.get();
-		desc.pShader = m_pShader;
+		desc.shaderDesc.vShaderStages =
+		{
+			{VK_SHADER_STAGE_VERTEX_BIT, "shader"},
+			{VK_SHADER_STAGE_FRAGMENT_BIT, "shader"}
+		};
 		desc.vertexInputInfo = m_VertexFormat.GetPipelineVertexInputStateCreateInfo();
 		desc.uiPushConstantSize = sizeof(PushConstantData);
 		desc.pvUniformBuffers = &m_vUniformBuffers;
@@ -132,8 +134,6 @@ private:
 	{		
 		for (auto elem : m_vUniformBuffers)
 			delete elem;
-
-		delete m_pShader;
 	}
 };
 

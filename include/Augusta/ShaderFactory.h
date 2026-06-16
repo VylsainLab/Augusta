@@ -10,6 +10,11 @@
 
 namespace aug
 {
+	struct SShaderDesc
+	{
+		std::vector< std::pair<VkShaderStageFlagBits, std::string> > vShaderStages;
+	};
+
 	//Object designed to load a GLSL file, compile it into a Spir-V code and create the related VkShaderModule
 	class ShaderModule
 	{
@@ -49,8 +54,7 @@ namespace aug
 	class Shader
 	{
 	public:
-
-		Shader(const char* szFileName, int32_t stageBitMask);
+		Shader(const SShaderDesc& desc);
 		~Shader();
 
 		uint32_t GetStageCount() { return static_cast<uint32_t>(m_vVkPipelineShaderStageCreateInfo.size()); }
@@ -62,7 +66,9 @@ namespace aug
 
 	protected:
 		static std::string m_sDirectory;
-		std::map<int32_t, ShaderModule*> m_mModules;
+
+		SShaderDesc m_Desc;
+		std::map<int32_t, std::unique_ptr<ShaderModule>> m_mModules;
 		std::vector<VkPipelineShaderStageCreateInfo> m_vVkPipelineShaderStageCreateInfo;
 	};
 }

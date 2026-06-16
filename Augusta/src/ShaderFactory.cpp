@@ -104,6 +104,7 @@ namespace aug
 		std::vector<char> buffer(fileSize);
 		file.seekg(0);
 		file.read(buffer.data(), fileSize);
+
 		file.close();
 
 		return std::string(buffer.begin(),buffer.end());
@@ -132,26 +133,36 @@ namespace aug
 
 	std::string Shader::m_sDirectory = "";
 
-	Shader::Shader(const char* szFileName, int32_t stageBitMask)
+	Shader::Shader(const SShaderDesc& desc)
 	{
-		if (stageBitMask & VK_SHADER_STAGE_VERTEX_BIT)
+		m_Desc = desc;
+
+		for (auto& stage : desc.vShaderStages)
 		{
-			std::string strName = std::string(szFileName) + ".vert";
-			m_mModules[VK_SHADER_STAGE_VERTEX_BIT] = new ShaderModule(strName, m_sDirectory + strName, VK_SHADER_STAGE_VERTEX_BIT);
-			m_vVkPipelineShaderStageCreateInfo.push_back(m_mModules[VK_SHADER_STAGE_VERTEX_BIT]->GetPipelineShaderModuleCreateInfo());
-		}
-		if (stageBitMask & VK_SHADER_STAGE_FRAGMENT_BIT)
-		{
-			std::string strName = std::string(szFileName) + ".frag";
-			m_mModules[VK_SHADER_STAGE_FRAGMENT_BIT] = new ShaderModule(strName, m_sDirectory + strName, VK_SHADER_STAGE_FRAGMENT_BIT);
-			m_vVkPipelineShaderStageCreateInfo.push_back(m_mModules[VK_SHADER_STAGE_FRAGMENT_BIT]->GetPipelineShaderModuleCreateInfo());
+			std::string strExtension;
+			switch (stage.first)
+			{
+			case VK_SHADER_STAGE_VERTEX_BIT:
+				strExtension = ".vert";
+				break;
+
+			case VK_SHADER_STAGE_FRAGMENT_BIT:
+				strExtension = ".frag";
+				break;
+
+			default:
+				std::runtime_error("Unsupported shader stage!");
+				break;
+			}
+
+			std::string strName = stage.second + strExtension;
+			m_mModules[stage.first] = std::make_unique<ShaderModule>(strName, m_sDirectory + strName, stage.first);
+			m_vVkPipelineShaderStageCreateInfo.push_back(m_mModules[stage.first]->GetPipelineShaderModuleCreateInfo());
 		}
 	}
 
 	Shader::~Shader()
 	{
-		for (auto item : m_mModules)
-			delete item.second;
 	}
 
 	bool Shader::CheckForModifications()

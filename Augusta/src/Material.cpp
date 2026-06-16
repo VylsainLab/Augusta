@@ -49,7 +49,7 @@ namespace aug
 				descriptorWrite.descriptorCount = 1;
 				descriptorWrite.pImageInfo = &descriptorImageInfo;
 			}
-			vkUpdateDescriptorSets(aug::Context::m_VkDevice, vWrites.size(), vWrites.data(), 0, nullptr);
+			vkUpdateDescriptorSets(aug::Context::m_VkDevice, static_cast<uint32_t>(vWrites.size()), vWrites.data(), 0, nullptr);
 			vWrites.clear();
 			vImageInfos.clear();
 		}

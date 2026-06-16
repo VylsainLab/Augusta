@@ -16,11 +16,11 @@ namespace aug
 	struct SPipelineDesc
 	{
 		Window* pWindow; //TODO replace with framebuffer/render target
-		Shader* pShader;
+		SShaderDesc shaderDesc;
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo;
 		uint32_t uiPushConstantSize;
 		std::vector<aug::Buffer*>* pvUniformBuffers;
-		//TODO include shaders, materials, descriptor set layout, etc...
+		//TODO include materials, descriptor set layout, etc...
 	};
 
 	class Pipeline
@@ -62,6 +62,8 @@ namespace aug
 		std::vector<VkDescriptorSet> m_vDescriptorSets;
 		
 		VkPipeline m_VkGraphicsPipeline = VK_NULL_HANDLE;
+
+		std::unique_ptr<Shader> m_pShader = nullptr;
 	};
 }
 

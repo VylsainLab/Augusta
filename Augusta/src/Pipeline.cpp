@@ -117,6 +117,8 @@ void aug::Pipeline::Init(const SPipelineDesc& desc)
 {
 	m_Desc = desc;
 
+	m_pShader = std::make_unique<Shader>(desc.shaderDesc);
+
 	BuildPipeline();
 }
 
@@ -143,7 +145,7 @@ void aug::Pipeline::Bind(const VkCommandBuffer& commandBuffer, const VkFramebuff
 	if (m_VkGraphicsPipeline == nullptr)
 		return;
 
-	if (m_Desc.pShader->CheckForModifications())
+	if (m_pShader->CheckForModifications())
 	{
 		BuildPipeline();
 	}
@@ -291,8 +293,8 @@ void aug::Pipeline::BuildPipeline()
 	//Graphics pipeline
 	VkGraphicsPipelineCreateInfo pipelineInfo = {};
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-	pipelineInfo.stageCount = m_Desc.pShader->GetStageCount();
-	pipelineInfo.pStages = m_Desc.pShader->GetPipelineShaderStagesCreateInfo();
+	pipelineInfo.stageCount = m_pShader->GetStageCount();
+	pipelineInfo.pStages = m_pShader->GetPipelineShaderStagesCreateInfo();
 	pipelineInfo.pVertexInputState = &m_Desc.vertexInputInfo;
 	pipelineInfo.pInputAssemblyState = &inputAssembly;
 	pipelineInfo.pViewportState = &viewportState;
