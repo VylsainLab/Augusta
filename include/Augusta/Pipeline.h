@@ -19,8 +19,7 @@ namespace aug
 		SShaderDesc shaderDesc;
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo;
 		uint32_t uiPushConstantSize;
-		std::vector<aug::Buffer*>* pvUniformBuffers;
-		//TODO include materials, descriptor set layout, etc...
+		std::vector<DescriptorSetLayoutHandle> vLayoutHandles;
 	};
 
 	class Pipeline
@@ -43,7 +42,9 @@ namespace aug
 
 		void PushConstants(const VkCommandBuffer& commandBuffer, void* pData);
 
-		void UpdateDescriptors(const VkCommandBuffer &cb, std::shared_ptr<Material> pMat, uint8_t uiCurrentFrame);
+		void UpdateDescriptorSets(const VkCommandBuffer &cb, std::shared_ptr<Material> pMat, uint8_t uiCurrentFrame);
+
+		void BindDescriptorSets(const VkCommandBuffer& cb, DescriptorSetLayoutHandle hL, uint8_t uiDescriptorCount, DescriptorSetHandle* pDescriptorSets);
 
 	protected:
 
@@ -58,8 +59,6 @@ namespace aug
 #ifndef USE_DYNAMIC_RENDERING
 		VkRenderPass m_VkRenderPass = VK_NULL_HANDLE;
 #endif
-		VkDescriptorSetLayout m_VkDescriptorSetLayout = VK_NULL_HANDLE;
-		std::vector<VkDescriptorSet> m_vDescriptorSets;
 		
 		VkPipeline m_VkGraphicsPipeline = VK_NULL_HANDLE;
 

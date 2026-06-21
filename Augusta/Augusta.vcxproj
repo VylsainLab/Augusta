@@ -33,6 +33,7 @@
     <ClInclude Include="..\include\Augusta\Buffer.h" />
     <ClInclude Include="..\include\Augusta\Camera.h" />
     <ClInclude Include="..\include\Augusta\Context.h" />
+    <ClInclude Include="..\include\Augusta\DescriptorFactory.h" />
     <ClInclude Include="..\include\Augusta\Geodetics.h" />
     <ClInclude Include="..\include\Augusta\Material.h" />
     <ClInclude Include="..\include\Augusta\Pipeline.h" />
@@ -61,6 +62,7 @@
     <ClCompile Include="src\Buffer.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Context.cpp" />
+    <ClCompile Include="src\DescriptorFactory.cpp" />
     <ClCompile Include="src\Material.cpp" />
     <ClCompile Include="src\Pipeline.cpp" />
     <ClCompile Include="src\MemoryAllocator.cpp" />

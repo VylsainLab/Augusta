@@ -108,6 +108,9 @@
     <ClInclude Include="..\include\Augusta\Utils.h">
       <Filter>Source Files\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\Augusta\DescriptorFactory.h">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp">
@@ -180,6 +183,9 @@
       <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="src\Material.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DescriptorFactory.cpp">
       <Filter>Source Files\Vulkan</Filter>
     </ClCompile>
   </ItemGroup>

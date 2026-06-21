@@ -1,19 +1,22 @@
 #ifndef AUG_BUFFER_H
 #define AUG_BUFFER_H
 
+#include <Augusta/DescriptorFactory.h>
 #include <vma/vk_mem_alloc.h>
 
 namespace aug
 {
 	// Vulkan buffer and memory allocation wrapping object
 	// Memory allocation is done via VulkanMemoryAllocator library
-	class Buffer
+	class Buffer : public DescriptorTarget
 	{
 	public:
 		Buffer(uint64_t size, VkBufferUsageFlags bufferUsage, VmaMemoryUsage memoryUsage, void* pData);
 		~Buffer();
 
 		void CopyData(uint64_t size, void* pData);
+
+		void AllocateDescriptors(DescriptorSetLayoutHandle h) override;
 
 		VkBuffer GetBufferHandle() const { return m_VkBuffer; }
 		uint64_t GetBufferSize() const { return m_uiSize; }

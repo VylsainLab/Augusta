@@ -1,5 +1,6 @@
 #include <Augusta/Pipeline.h>
 #include <Augusta/Context.h>
+#include <Augusta/DescriptorFactory.h>
 #include <array>
 #include <stdexcept>
 
@@ -9,23 +10,7 @@ aug::Pipeline::Pipeline(aug::Window* pWindow)
 	CreateRenderPass(pWindow);
 #endif
 
-	//Matrices uniform buffer descriptor layout
-	VkDescriptorSetLayoutBinding uboLayoutBinding{};
-	uboLayoutBinding.binding = 0;
-	uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	uboLayoutBinding.descriptorCount = 1;
-	uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-	uboLayoutBinding.pImmutableSamplers = nullptr;
-
-	VkDescriptorSetLayoutCreateInfo layoutInfo{};
-	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-	layoutInfo.bindingCount = 1;
-	layoutInfo.pBindings = &uboLayoutBinding;
-
-	if (vkCreateDescriptorSetLayout(aug::Context::m_VkDevice, &layoutInfo, nullptr, &m_VkDescriptorSetLayout) != VK_SUCCESS)
-		throw std::runtime_error("Failed to create descriptor set layout!");
-
-	//Material descriptor layout
+	////Material descriptor layout
 	std::array<VkDescriptorSetLayoutBinding,ETextureChannel::TEXTURE_CHANNEL_COUNT> samplerLayoutBinding{};
 	for (int i = 0; i < ETextureChannel::TEXTURE_CHANNEL_COUNT; ++i)
 	{
@@ -36,6 +21,8 @@ aug::Pipeline::Pipeline(aug::Window* pWindow)
 		samplerLayoutBinding[i].pImmutableSamplers = nullptr;
 	}
 
+	VkDescriptorSetLayoutCreateInfo layoutInfo{};
+	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 	layoutInfo.bindingCount = ETextureChannel::TEXTURE_CHANNEL_COUNT;
 	layoutInfo.pBindings = samplerLayoutBinding.data();
 
@@ -46,9 +33,6 @@ aug::Pipeline::Pipeline(aug::Window* pWindow)
 aug::Pipeline::~Pipeline()
 {
 	CleanPipeline();
-
-	if (m_VkDescriptorSetLayout)
-		vkDestroyDescriptorSetLayout(aug::Context::m_VkDevice, m_VkDescriptorSetLayout, nullptr);
 }
 
 #ifndef USE_DYNAMIC_RENDERING
@@ -151,8 +135,6 @@ void aug::Pipeline::Bind(const VkCommandBuffer& commandBuffer, const VkFramebuff
 	}
 
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_VkGraphicsPipeline);
-
-	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_VkPipelineLayout, 0, descriptorSetCount, &m_vDescriptorSets[uiCurrentFrame], 0, nullptr);
 }
 
 void aug::Pipeline::PushConstants(const VkCommandBuffer& commandBuffer, void* pData)
@@ -166,7 +148,7 @@ void aug::Pipeline::PushConstants(const VkCommandBuffer& commandBuffer, void* pD
 		pData);
 }
 
-void aug::Pipeline::UpdateDescriptors(const VkCommandBuffer& cb, std::shared_ptr<Material> pMat, uint8_t uiCurrentFrame)
+void aug::Pipeline::UpdateDescriptorSets(const VkCommandBuffer& cb, std::shared_ptr<Material> pMat, uint8_t uiCurrentFrame)
 {
 	if (pMat->m_vDescriptorSets.empty())
 	{
@@ -174,6 +156,14 @@ void aug::Pipeline::UpdateDescriptors(const VkCommandBuffer& cb, std::shared_ptr
 		pMat->CreateDescriptorSets(layouts.data());
 	}
 	vkCmdBindDescriptorSets(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, m_VkPipelineLayout, 1, 1, &pMat->m_vDescriptorSets[uiCurrentFrame], 0, nullptr);
+}
+
+void aug::Pipeline::BindDescriptorSets(const VkCommandBuffer& cb, DescriptorSetLayoutHandle hL ,uint8_t uiDescriptorCount, DescriptorSetHandle* pDescriptorSets)
+{
+	std::vector<VkDescriptorSet> vDS;
+	for (int i = 0; i < uiDescriptorCount; ++i)
+		vDS.push_back(DescriptorFactory::GetDescriptorSet(hL,pDescriptorSets[i]));
+	vkCmdBindDescriptorSets(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, m_VkPipelineLayout, 0, uiDescriptorCount, vDS.data(), 0, nullptr);
 }
 
 void aug::Pipeline::BuildPipeline()
@@ -271,7 +261,9 @@ void aug::Pipeline::BuildPipeline()
 	pushConstantRange.size = m_Desc.uiPushConstantSize;
 
 	//Pipeline layout (uniforms specification)
-	std::vector<VkDescriptorSetLayout> descriptorLayouts = { m_VkDescriptorSetLayout, m_VkDescriptorSetLayoutMaterial };
+	std::vector<VkDescriptorSetLayout> descriptorLayouts;
+	for(auto &h : m_Desc.vLayoutHandles)
+		descriptorLayouts.push_back(DescriptorFactory::GetDescriptorSetLayout(h));
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 	pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorLayouts.size());
@@ -315,38 +307,6 @@ void aug::Pipeline::BuildPipeline()
 
 	if (vkCreateGraphicsPipelines(aug::Context::m_VkDevice, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_VkGraphicsPipeline) != VK_SUCCESS)
 		throw std::runtime_error("failed to create graphics pipeline!");
-
-	//Descriptor set
-	std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, m_VkDescriptorSetLayout);
-
-	VkDescriptorSetAllocateInfo allocInfo{};
-	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-	allocInfo.descriptorPool = aug::Context::m_VkDescriptorPool;
-	allocInfo.descriptorSetCount = MAX_FRAMES_IN_FLIGHT;
-	allocInfo.pSetLayouts = layouts.data();
-
-	m_vDescriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
-	if (vkAllocateDescriptorSets(aug::Context::m_VkDevice, &allocInfo, m_vDescriptorSets.data()) != VK_SUCCESS)
-		throw std::runtime_error("Failed to allocate descriptor sets!");
-
-	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
-	{
-		VkDescriptorBufferInfo bufferInfo{};
-		bufferInfo.buffer = (*m_Desc.pvUniformBuffers)[i]->GetBufferHandle();
-		bufferInfo.offset = 0;
-		bufferInfo.range = (*m_Desc.pvUniformBuffers)[i]->GetBufferSize();
-
-		VkWriteDescriptorSet descriptorWrite{};
-		descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		descriptorWrite.dstSet = m_vDescriptorSets[i];
-		descriptorWrite.dstBinding = 0;
-		descriptorWrite.dstArrayElement = 0;
-		descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		descriptorWrite.descriptorCount = 1;
-		descriptorWrite.pBufferInfo = &bufferInfo;
-
-		vkUpdateDescriptorSets(aug::Context::m_VkDevice, 1, &descriptorWrite, 0, nullptr);
-	}
 }
 
 void aug::Pipeline::CleanPipeline()
@@ -364,4 +324,11 @@ void aug::Pipeline::CleanPipeline()
 	if(m_VkRenderPass)
 		vkDestroyRenderPass(Context::m_VkDevice, m_VkRenderPass, nullptr);
 #endif
+
+	//TODO destroy layouts
+	/*for (auto& set : m_vDescriptorSetLayouts)
+	{
+		if (set)
+			vkDestroyDescriptorSetLayout(aug::Context::m_VkDevice, set, nullptr);
+	}*/
 }

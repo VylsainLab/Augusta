@@ -61,4 +61,9 @@ namespace aug
 			Context::SubmitAndFreeCommandBuffer(commandBuffer);
 		}
 	}
+
+	void Buffer::AllocateDescriptors(DescriptorSetLayoutHandle h)
+	{
+		
+	}
 }

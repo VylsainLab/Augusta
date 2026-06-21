@@ -1,5 +1,6 @@
 #include <Augusta/Application.h>
 #include <Augusta/ShaderFactory.h>
+#include <Augusta/DescriptorFactory.h>
 #include <Augusta/Camera.h>
 #include <Augusta/AssimpParser.h>
 #include <Augusta/Material.h>
@@ -46,6 +47,10 @@ private:
 
 	aug::Camera m_Camera;
 
+	aug::DescriptorSetLayoutHandle m_hModelMatrixUniformSet;
+	std::array<aug::DescriptorSetHandle, MAX_FRAMES_IN_FLIGHT> m_aModelMatrixDescriptors;
+	aug::DescriptorSetLayoutHandle m_hMaterialSet;
+
 	//Utils
 	aug::AssimpParser m_AssimpParser;
 
@@ -88,9 +93,30 @@ private:
 		};
 		desc.vertexInputInfo = m_VertexFormat.GetPipelineVertexInputStateCreateInfo();
 		desc.uiPushConstantSize = sizeof(PushConstantData);
-		desc.pvUniformBuffers = &m_vUniformBuffers;
+		//desc.pvUniformBuffers = &m_vUniformBuffers;
+
+		aug::SDescriptorSetDesc descUB;
+		descUB.uiSet = 0;
+		descUB.AddBinding(0, VK_SHADER_STAGE_VERTEX_BIT, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); //model UB
+		m_hModelMatrixUniformSet = aug::DescriptorFactory::AllocateDescriptorSetLayout(descUB);
+		desc.vLayoutHandles.push_back(m_hModelMatrixUniformSet);
+
+		aug::SDescriptorSetDesc descMat;	
+		descMat.uiSet = 1;
+		descMat.AddBinding(0, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //albedo
+		descMat.AddBinding(1, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //normals
+		descMat.AddBinding(2, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //ao
+		descMat.AddBinding(3, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //roughness
+		descMat.AddBinding(4, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //metalness
+		descMat.AddBinding(5, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //emissive
+		m_hMaterialSet = aug::DescriptorFactory::AllocateDescriptorSetLayout(descMat);
+		desc.vLayoutHandles.push_back(m_hMaterialSet);
 
 		m_pPipeline->Init(desc);
+
+		aug::DescriptorFactory::AllocateDescriptors(m_hModelMatrixUniformSet, MAX_FRAMES_IN_FLIGHT, m_aModelMatrixDescriptors.data());
+		aug::DescriptorFactory::UpdateDescriptors(m_hModelMatrixUniformSet, MAX_FRAMES_IN_FLIGHT, m_aModelMatrixDescriptors.data(), m_vUniformBuffers.data());
+
 
 		InitImGui();
 	}
@@ -111,9 +137,11 @@ private:
 		glm::mat4 ftrans = static_cast<glm::mat4>(trans);
 		m_pPipeline->PushConstants(m_ActiveCommandBuffer ,&ftrans);
 
+		m_pPipeline->BindDescriptorSets(m_ActiveCommandBuffer, m_hModelMatrixUniformSet, 1, &m_aModelMatrixDescriptors[m_uiCurrentFrame]);
+
 		for (uint32_t i = 0; i < pNode->GetNbMeshes(); ++i)
 		{
-			m_pPipeline->UpdateDescriptors(m_ActiveCommandBuffer, pNode->GetMesh(i)->m_pMaterial, m_uiCurrentFrame);
+			m_pPipeline->UpdateDescriptorSets(m_ActiveCommandBuffer, pNode->GetMesh(i)->m_pMaterial, m_uiCurrentFrame);
 
 			pNode->GetMesh(i)->Draw(m_ActiveCommandBuffer);
 		}
