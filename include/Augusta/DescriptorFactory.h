@@ -27,30 +27,43 @@ namespace aug
 	typedef uint32_t DescriptorSetHandle;
 	class DescriptorTarget
 	{
-		virtual void AllocateDescriptors(DescriptorSetLayoutHandle h)=0;
+	public:
+		virtual void AllocateDescriptor(DescriptorSetLayoutHandle h)=0;
+		virtual void UpdateDescriptor(DescriptorSetLayoutHandle h) = 0;
+
+		void FreeDescriptor();
+
+		DescriptorSetHandle GetDescriptorSetHandle(DescriptorSetLayoutHandle h) { return m_mDescriptorHandles[h]; }
 
 	protected:
-		std::map<DescriptorSetLayoutHandle, std::vector<DescriptorSetHandle>> m_mDescriptorHandles; //one set of descriptors per pipeline
+		std::map<DescriptorSetLayoutHandle, DescriptorSetHandle> m_mDescriptorHandles; //one set of descriptors per pipeline
 	};
 	
 	class Buffer;
 	class DescriptorFactory
 	{
-	public:
+	public:		
 		static DescriptorSetLayoutHandle AllocateDescriptorSetLayout(const SDescriptorSetDesc& desc);
-		static void AllocateDescriptors(DescriptorSetLayoutHandle h, uint8_t uiCount, DescriptorSetHandle* pHandles);
+		static void AllocateDescriptors(DescriptorSetLayoutHandle h, uint8_t uiCount, std::vector<DescriptorSetHandle>& vHandles);
 		static void UpdateDescriptors(DescriptorSetLayoutHandle h, uint8_t uiCount, DescriptorSetHandle* pHandles, Buffer** pBuffers);
+		static void UpdateDescriptor(DescriptorSetHandle h, VkDescriptorBufferInfo* info);
 
-		static VkDescriptorSetLayout GetDescriptorSetLayout(DescriptorSetLayoutHandle h) { return m_mDescriptors[h].layout; }
-		static VkDescriptorSet GetDescriptorSet(DescriptorSetLayoutHandle hL, DescriptorSetHandle hS) { return m_mDescriptors[hL].vDescriptotSets[hS]; }
+		static void DestroyDescriptorSetLayout(DescriptorSetLayoutHandle h);
+		static void FreeDescriptors(DescriptorSetLayoutHandle h, uint32_t uiCount, DescriptorSetHandle* pHandles);
+
+		static VkDescriptorSetLayout GetDescriptorSetLayout(DescriptorSetLayoutHandle h) { return m_vLayouts[h]; }
+		static VkDescriptorSet GetDescriptorSet(DescriptorSetHandle h) { return m_vSets[h]; }
+		static VkDescriptorPool m_VkDescriptorPool;
 	protected:
-		struct SDescriptorSet
-		{
-			VkDescriptorSetLayout layout;
-			std::vector<VkDescriptorSet> vDescriptotSets;
-		};
-		static std::map<DescriptorSetLayoutHandle, SDescriptorSet> m_mDescriptors;
-		static uint32_t m_uiLayoutCount;
+		friend class Application;
+		static void Init();
+		static void Release();
+		static void CreateDescriptorPool();
+
+		
+		static std::map<DescriptorSetLayoutHandle, std::vector<DescriptorSetLayoutHandle>> m_mDescriptorMapping;
+		static std::vector<VkDescriptorSetLayout> m_vLayouts;
+		static std::vector<VkDescriptorSet> m_vSets;
 	};
 }
 

@@ -14,3 +14,4 @@ include/stb_image.h
 include/assimp
 Assets/Textures/
 Assets/Models/
+/enc_temp_folder

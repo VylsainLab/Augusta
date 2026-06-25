@@ -44,8 +44,10 @@ namespace aug
 
 		void UpdateDescriptorSets(const VkCommandBuffer &cb, std::shared_ptr<Material> pMat, uint8_t uiCurrentFrame);
 
-		void BindDescriptorSets(const VkCommandBuffer& cb, DescriptorSetLayoutHandle hL, uint8_t uiDescriptorCount, DescriptorSetHandle* pDescriptorSets);
-
+		DescriptorSetLayoutHandle DeclareResourceLayout(const SDescriptorSetDesc &desc);
+		void RegisterResource(DescriptorSetLayoutHandle h, uint8_t uiBinding, DescriptorTarget* pResource);
+		void UpdateResource(DescriptorSetLayoutHandle h, DescriptorTarget* pResource);
+		void BindResource(const VkCommandBuffer& cb, DescriptorSetLayoutHandle h, DescriptorTarget* pResource);
 	protected:
 
 		void BuildPipeline();
@@ -63,6 +65,8 @@ namespace aug
 		VkPipeline m_VkGraphicsPipeline = VK_NULL_HANDLE;
 
 		std::unique_ptr<Shader> m_pShader = nullptr;
+
+		std::vector<DescriptorSetHandle> m_vDescriptorSetHandles;
 	};
 }
 

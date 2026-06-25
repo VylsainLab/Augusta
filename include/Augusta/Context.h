@@ -52,7 +52,6 @@ namespace aug
 		static VkQueue m_VkGraphicsQueue;
 		static VkQueue m_VkPresentQueue;
 		static VkCommandPool m_VkCommandPool;
-		static VkDescriptorPool m_VkDescriptorPool;
 		static std::vector<const char*> m_vDeviceExtensions;
 		static QueueFamilyIndices m_QueueFamilies;		
 
@@ -66,7 +65,6 @@ namespace aug
 		static void PickPhysicalDevice();
 		static void CreateLogicalDevice();
 		static void CreateCommandPool();
-		static void CreateDescriptorPool();
  
 		static VkDebugUtilsMessengerEXT m_VkDebugMessenger;		
 	};

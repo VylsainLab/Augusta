@@ -48,7 +48,6 @@ private:
 	aug::Camera m_Camera;
 
 	aug::DescriptorSetLayoutHandle m_hModelMatrixUniformSet;
-	std::array<aug::DescriptorSetHandle, MAX_FRAMES_IN_FLIGHT> m_aModelMatrixDescriptors;
 	aug::DescriptorSetLayoutHandle m_hMaterialSet;
 
 	//Utils
@@ -93,7 +92,6 @@ private:
 		};
 		desc.vertexInputInfo = m_VertexFormat.GetPipelineVertexInputStateCreateInfo();
 		desc.uiPushConstantSize = sizeof(PushConstantData);
-		//desc.pvUniformBuffers = &m_vUniformBuffers;
 
 		aug::SDescriptorSetDesc descUB;
 		descUB.uiSet = 0;
@@ -113,10 +111,11 @@ private:
 		desc.vLayoutHandles.push_back(m_hMaterialSet);
 
 		m_pPipeline->Init(desc);
-
-		aug::DescriptorFactory::AllocateDescriptors(m_hModelMatrixUniformSet, MAX_FRAMES_IN_FLIGHT, m_aModelMatrixDescriptors.data());
-		aug::DescriptorFactory::UpdateDescriptors(m_hModelMatrixUniformSet, MAX_FRAMES_IN_FLIGHT, m_aModelMatrixDescriptors.data(), m_vUniformBuffers.data());
-
+		m_hModelMatrixUniformSet = m_pPipeline->DeclareResourceLayout(descUB);
+		m_pPipeline->RegisterResource(m_hModelMatrixUniformSet, 0, m_vUniformBuffers[0]);
+		m_pPipeline->RegisterResource(m_hModelMatrixUniformSet, 0, m_vUniformBuffers[1]);
+		m_pPipeline->UpdateResource(m_hModelMatrixUniformSet, m_vUniformBuffers[0]);
+		m_pPipeline->UpdateResource(m_hModelMatrixUniformSet, m_vUniformBuffers[1]);
 
 		InitImGui();
 	}
@@ -137,7 +136,7 @@ private:
 		glm::mat4 ftrans = static_cast<glm::mat4>(trans);
 		m_pPipeline->PushConstants(m_ActiveCommandBuffer ,&ftrans);
 
-		m_pPipeline->BindDescriptorSets(m_ActiveCommandBuffer, m_hModelMatrixUniformSet, 1, &m_aModelMatrixDescriptors[m_uiCurrentFrame]);
+		m_pPipeline->BindResource(m_ActiveCommandBuffer, m_hModelMatrixUniformSet, m_vUniformBuffers[m_uiCurrentFrame]);
 
 		for (uint32_t i = 0; i < pNode->GetNbMeshes(); ++i)
 		{

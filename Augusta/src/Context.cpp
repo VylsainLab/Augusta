@@ -18,7 +18,6 @@ namespace aug
 	VkQueue Context::m_VkGraphicsQueue = VK_NULL_HANDLE;
 	VkQueue Context::m_VkPresentQueue = VK_NULL_HANDLE;
 	VkCommandPool Context::m_VkCommandPool = VK_NULL_HANDLE;
-	VkDescriptorPool Context::m_VkDescriptorPool = VK_NULL_HANDLE;
 	std::vector<const char*> Context::m_vDeviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 	QueueFamilyIndices Context::m_QueueFamilies = QueueFamilyIndices();
 
@@ -95,15 +94,12 @@ namespace aug
 		PickPhysicalDevice();
 		CreateLogicalDevice();
 		CreateCommandPool();
-		CreateDescriptorPool();
 		MemoryAllocator::Init();
 	}
 
 	void Context::Release()
 	{
 		MemoryAllocator::Release();
-
-		vkDestroyDescriptorPool(m_VkDevice, m_VkDescriptorPool, nullptr);
 
 		vkDestroyCommandPool(m_VkDevice, m_VkCommandPool, nullptr);
 
@@ -388,23 +384,5 @@ namespace aug
 
 		if (vkCreateCommandPool(m_VkDevice, &poolInfo, nullptr, &m_VkCommandPool) != VK_SUCCESS)
 			throw std::runtime_error("Failed to create command pool!");
-	}
-
-	void Context::CreateDescriptorPool()
-	{
-		//Descriptor pool
-		VkDescriptorPoolSize poolSizes[] = 
-		{
-			{VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, AUG_DESCRIPTOR_POOL_SIZE},
-			{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, AUG_DESCRIPTOR_POOL_SIZE}
-		};
-
-		VkDescriptorPoolCreateInfo createInfo = {};
-		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		createInfo.poolSizeCount = COUNT_OF(poolSizes);
-		createInfo.pPoolSizes = poolSizes;
-		createInfo.maxSets = AUG_DESCRIPTOR_POOL_SIZE * createInfo.poolSizeCount;
-		if (vkCreateDescriptorPool(aug::Context::m_VkDevice, &createInfo, nullptr, &m_VkDescriptorPool) != VK_SUCCESS)
-			throw std::runtime_error("Failed to create descriptor pool!");
 	}
 }

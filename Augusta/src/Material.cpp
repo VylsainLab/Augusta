@@ -18,7 +18,7 @@ namespace aug
 	{
 		VkDescriptorSetAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = aug::Context::m_VkDescriptorPool;
+		allocInfo.descriptorPool = aug::DescriptorFactory::m_VkDescriptorPool;
 		allocInfo.descriptorSetCount = MAX_FRAMES_IN_FLIGHT;
 		allocInfo.pSetLayouts = pSetLayouts;
 

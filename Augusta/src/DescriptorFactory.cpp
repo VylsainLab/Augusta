@@ -1,16 +1,55 @@
 #include <Augusta/DescriptorFactory.h>
 #include <Augusta/Context.h>
 #include <Augusta/Buffer.h>
+#include <Augusta/Utils.h>
 
 namespace aug
 {
-	std::map<DescriptorSetLayoutHandle, DescriptorFactory::SDescriptorSet> DescriptorFactory::m_mDescriptors;
-	uint32_t DescriptorFactory::m_uiLayoutCount = 0;
+	void DescriptorTarget::FreeDescriptor()
+	{
+		for (auto& layout : m_mDescriptorHandles)
+		{
+			if (!layout.second)
+				DescriptorFactory::FreeDescriptors(layout.first,1,&layout.second);
+		}
+	}
+
+	VkDescriptorPool DescriptorFactory::m_VkDescriptorPool = VK_NULL_HANDLE;
+	std::map<DescriptorSetLayoutHandle, std::vector<DescriptorSetHandle>> DescriptorFactory::m_mDescriptorMapping;
+	std::vector<VkDescriptorSetLayout> DescriptorFactory::m_vLayouts;
+	std::vector<VkDescriptorSet> DescriptorFactory::m_vSets;
+
+	void DescriptorFactory::Init()
+	{
+		CreateDescriptorPool();
+	}
+
+	void DescriptorFactory::Release()
+	{
+		vkDestroyDescriptorPool(Context::m_VkDevice, m_VkDescriptorPool, nullptr);
+	}
+
+	void DescriptorFactory::CreateDescriptorPool()
+	{
+		//Descriptor pool
+		VkDescriptorPoolSize poolSizes[] =
+		{
+			{VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, AUG_DESCRIPTOR_POOL_SIZE},
+			{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, AUG_DESCRIPTOR_POOL_SIZE}
+		};
+
+		VkDescriptorPoolCreateInfo createInfo = {};
+		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		createInfo.poolSizeCount = COUNT_OF(poolSizes);
+		createInfo.pPoolSizes = poolSizes;
+		createInfo.maxSets = AUG_DESCRIPTOR_POOL_SIZE * createInfo.poolSizeCount;
+		if (vkCreateDescriptorPool(aug::Context::m_VkDevice, &createInfo, nullptr, &m_VkDescriptorPool) != VK_SUCCESS)
+			throw std::runtime_error("Failed to create descriptor pool!");
+	}
 
 	DescriptorSetLayoutHandle DescriptorFactory::AllocateDescriptorSetLayout(const SDescriptorSetDesc& desc)
 	{
-		SDescriptorSet& set = m_mDescriptors[m_uiLayoutCount];
-		VkDescriptorSetLayout& layout = set.layout;
+		VkDescriptorSetLayout& layout = m_vLayouts.emplace_back();
 
 		std::vector<VkDescriptorSetLayoutBinding> vLayoutBindings{};
 		vLayoutBindings.resize(desc.vBindings.size());
@@ -28,21 +67,20 @@ namespace aug
 		layoutInfo.bindingCount = vLayoutBindings.size();
 		layoutInfo.pBindings = vLayoutBindings.data();
 
-		if (vkCreateDescriptorSetLayout(aug::Context::m_VkDevice, &layoutInfo, nullptr, &set.layout) != VK_SUCCESS)
+		if (vkCreateDescriptorSetLayout(aug::Context::m_VkDevice, &layoutInfo, nullptr, &layout) != VK_SUCCESS)
 			throw std::runtime_error("Failed to create descriptor set layout!");
 
-		DescriptorSetLayoutHandle res = m_uiLayoutCount;
-		m_uiLayoutCount++;
+		DescriptorSetLayoutHandle res = m_vLayouts.size()-1;
 		return res;
 	}
 
-	void DescriptorFactory::AllocateDescriptors(DescriptorSetLayoutHandle h, uint8_t uiCount, DescriptorSetHandle* pHandles)
+	void DescriptorFactory::AllocateDescriptors(DescriptorSetLayoutHandle h, uint8_t uiCount, std::vector<DescriptorSetHandle>& vHandles)
 	{
-		std::vector<VkDescriptorSetLayout> layouts(uiCount, m_mDescriptors[h].layout);
+		std::vector<VkDescriptorSetLayout> layouts(uiCount, m_vLayouts[h]);
 
 		VkDescriptorSetAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = aug::Context::m_VkDescriptorPool;
+		allocInfo.descriptorPool = m_VkDescriptorPool;
 		allocInfo.descriptorSetCount = uiCount;
 		allocInfo.pSetLayouts = layouts.data();
 		
@@ -52,30 +90,46 @@ namespace aug
 			throw std::runtime_error("Failed to allocate descriptor sets!");
 
 		for (int i = 0; i < uiCount; ++i)
-			pHandles[i] = m_mDescriptors[h].vDescriptotSets.size() + i;
+		{
+			m_mDescriptorMapping[h].push_back(m_vSets.size() + i);
+			vHandles.push_back(m_vSets.size() + i);
+			m_vSets.push_back(vDescriptorSets[i]);			
+		}
+	}
+	
+	void DescriptorFactory::UpdateDescriptor(DescriptorSetHandle h, VkDescriptorBufferInfo* info)
+	{
+		VkWriteDescriptorSet descriptorWrite{};
+		descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrite.dstSet = m_vSets[h];
+		descriptorWrite.dstBinding = 0;
+		descriptorWrite.dstArrayElement = 0;
+		descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		descriptorWrite.descriptorCount = 1;
+		descriptorWrite.pBufferInfo = info;
 
-		m_mDescriptors[h].vDescriptotSets.insert(m_mDescriptors[h].vDescriptotSets.end(), vDescriptorSets.begin(), vDescriptorSets.end());
+		vkUpdateDescriptorSets(aug::Context::m_VkDevice, 1, &descriptorWrite, 0, nullptr);
 	}
 
-	void DescriptorFactory::UpdateDescriptors(DescriptorSetLayoutHandle h, uint8_t uiCount, DescriptorSetHandle* pHandles, Buffer** pBuffers)
-	{
-		for (size_t i = 0; i < uiCount; i++)
+	void DescriptorFactory::DestroyDescriptorSetLayout(DescriptorSetLayoutHandle h)
+	{		
+		if (m_mDescriptorMapping.find(h)!=m_mDescriptorMapping.end())
 		{
-			VkDescriptorBufferInfo bufferInfo{};
-			bufferInfo.buffer = pBuffers[i]->GetBufferHandle();
-			bufferInfo.offset = 0;
-			bufferInfo.range = pBuffers[i]->GetBufferSize();
+			//free all related sets
+			FreeDescriptors(h,m_mDescriptorMapping[h].size(), m_mDescriptorMapping[h].data());
 
-			VkWriteDescriptorSet descriptorWrite{};
-			descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			descriptorWrite.dstSet = m_mDescriptors[h].vDescriptotSets[pHandles[i]];
-			descriptorWrite.dstBinding = 0;
-			descriptorWrite.dstArrayElement = 0;
-			descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-			descriptorWrite.descriptorCount = 1;
-			descriptorWrite.pBufferInfo = &bufferInfo;
+			//destroy layout
+			vkDestroyDescriptorSetLayout(aug::Context::m_VkDevice, m_vLayouts[h], nullptr);
 
-			vkUpdateDescriptorSets(aug::Context::m_VkDevice, 1, &descriptorWrite, 0, nullptr);
+			m_mDescriptorMapping[h].clear();
 		}
+	}
+
+	void DescriptorFactory::FreeDescriptors(DescriptorSetLayoutHandle h, uint32_t uiCount, DescriptorSetHandle* pHandles)
+	{
+		std::vector<VkDescriptorSet> vSets;
+		for (int i = 0; i < uiCount; ++i)
+			vSets.push_back(m_vSets[pHandles[i]]);
+		vkFreeDescriptorSets(Context::m_VkDevice, m_VkDescriptorPool, uiCount, vSets.data());
 	}
 }

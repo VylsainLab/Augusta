@@ -21,11 +21,13 @@ namespace aug
 			assert(ret == GLFW_TRUE);
 		}
 
-		aug::Context::InitInstance();
+		Context::InitInstance();
+		
 
 		m_pWindow = std::make_unique<Window>(name,width,height, bResizable, bVisible);
 
-		aug::Context::Init(m_pWindow->GetSurface());
+		Context::Init(m_pWindow->GetSurface());
+		DescriptorFactory::Init();
 		m_pWindow->InitAttachments();
 
 		m_pPipeline = std::make_unique<Pipeline>(m_pWindow.get());
@@ -53,6 +55,7 @@ namespace aug
 		m_pPipeline.reset();
 		m_pWindow.reset();
 
+		DescriptorFactory::Release();
 		Context::Release();
 
 		if (m_bGLFWInitialized == true)

@@ -62,8 +62,20 @@ namespace aug
 		}
 	}
 
-	void Buffer::AllocateDescriptors(DescriptorSetLayoutHandle h)
+	void Buffer::AllocateDescriptor(DescriptorSetLayoutHandle h)
 	{
-		
+		std::vector<DescriptorSetHandle> v;
+		DescriptorFactory::AllocateDescriptors(h, 1, v);
+		m_mDescriptorHandles[h] = v[0];
+	}
+
+	void Buffer::UpdateDescriptor(DescriptorSetLayoutHandle h)
+	{
+		VkDescriptorBufferInfo bufferInfo{};
+		bufferInfo.buffer = GetBufferHandle();
+		bufferInfo.offset = 0;
+		bufferInfo.range = GetBufferSize();
+
+		DescriptorFactory::UpdateDescriptor(m_mDescriptorHandles[h], &bufferInfo);		
 	}
 }
