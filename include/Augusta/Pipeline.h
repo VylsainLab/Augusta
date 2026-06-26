@@ -42,7 +42,7 @@ namespace aug
 
 		void PushConstants(const VkCommandBuffer& commandBuffer, void* pData);
 
-		void UpdateDescriptorSets(const VkCommandBuffer &cb, std::shared_ptr<Material> pMat, uint8_t uiCurrentFrame);
+		void UpdateDescriptorSets(const VkCommandBuffer &cb, std::shared_ptr<Material> pMat);
 
 		DescriptorSetLayoutHandle DeclareResourceLayout(const SDescriptorSetDesc &desc);
 		void RegisterResource(DescriptorSetLayoutHandle h, uint8_t uiBinding, DescriptorTarget* pResource);

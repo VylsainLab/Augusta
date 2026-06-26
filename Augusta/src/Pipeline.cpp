@@ -150,14 +150,13 @@ namespace aug
 			pData);
 	}
 
-	void aug::Pipeline::UpdateDescriptorSets(const VkCommandBuffer& cb, std::shared_ptr<Material> pMat, uint8_t uiCurrentFrame)
+	void aug::Pipeline::UpdateDescriptorSets(const VkCommandBuffer& cb, std::shared_ptr<Material> pMat)
 	{
-		if (pMat->m_vDescriptorSets.empty())
+		if (!pMat->m_DescriptorSet)
 		{
-			std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, m_VkDescriptorSetLayoutMaterial);
-			pMat->CreateDescriptorSets(layouts.data());
+			pMat->CreateDescriptorSet(m_VkDescriptorSetLayoutMaterial);
 		}
-		vkCmdBindDescriptorSets(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, m_VkPipelineLayout, 1, 1, &pMat->m_vDescriptorSets[uiCurrentFrame], 0, nullptr);
+		vkCmdBindDescriptorSets(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, m_VkPipelineLayout, 1, 1, &pMat->m_DescriptorSet, 0, nullptr);
 	}
 
 	DescriptorSetLayoutHandle aug::Pipeline::DeclareResourceLayout(const SDescriptorSetDesc& desc)

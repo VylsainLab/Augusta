@@ -24,13 +24,13 @@ namespace aug
 		Material();
 		~Material();
 
-		void CreateDescriptorSets(const VkDescriptorSetLayout* pSetLayouts);
+		void CreateDescriptorSet(const VkDescriptorSetLayout& layout);
 
 		std::string m_sName = "";
 		uint32_t m_uiIndex = 0;
 		std::shared_ptr<Texture> m_aTextures[ETextureChannel::TEXTURE_CHANNEL_COUNT] = { nullptr };
 
-		std::vector<VkDescriptorSet> m_vDescriptorSets;
+		VkDescriptorSet m_DescriptorSet;
 	private:		
 		
 	};

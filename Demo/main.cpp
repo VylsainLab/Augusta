@@ -140,7 +140,7 @@ private:
 
 		for (uint32_t i = 0; i < pNode->GetNbMeshes(); ++i)
 		{
-			m_pPipeline->UpdateDescriptorSets(m_ActiveCommandBuffer, pNode->GetMesh(i)->m_pMaterial, m_uiCurrentFrame);
+			m_pPipeline->UpdateDescriptorSets(m_ActiveCommandBuffer, pNode->GetMesh(i)->m_pMaterial);
 
 			pNode->GetMesh(i)->Draw(m_ActiveCommandBuffer);
 		}
