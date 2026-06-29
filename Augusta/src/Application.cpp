@@ -21,12 +21,13 @@ namespace aug
 			assert(ret == GLFW_TRUE);
 		}
 
-		aug::Context::InitInstance();
+		Context::InitInstance();
 
 		m_pWindow = std::make_unique<Window>(name,width,height, bResizable, bVisible);
 
 		aug::Context::Init(m_pWindow->GetSurface());
 		m_pWindow->InitAttachments();
+		DescriptorFactory::Init();
 
 		m_pPipeline = std::make_unique<Pipeline>(m_pWindow.get());
 		
@@ -50,9 +51,11 @@ namespace aug
 			vkDestroyFence(Context::m_VkDevice, m_vVkInFlightFences[i], nullptr);
 		}
 
+		DescriptorFactory::Release();
+
 		m_pPipeline.reset();
 		m_pWindow.reset();
-
+		
 		Context::Release();
 
 		if (m_bGLFWInitialized == true)

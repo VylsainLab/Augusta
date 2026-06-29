@@ -16,7 +16,7 @@ namespace aug
 
 		void CopyData(uint64_t size, void* pData);
 
-		void AllocateDescriptors(DescriptorSetLayoutHandle h) override;
+		void UpdateDescriptor(DescriptorSetLayoutHandle h) override;
 
 		VkBuffer GetBufferHandle() const { return m_VkBuffer; }
 		uint64_t GetBufferSize() const { return m_uiSize; }

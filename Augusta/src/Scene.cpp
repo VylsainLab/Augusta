@@ -40,7 +40,6 @@ namespace aug
 	{
 		std::shared_ptr<Mesh> pMesh(new Mesh(desc));
 
-		//TODO : material
 		pMesh->m_pMaterial = desc.pMaterial;
 
 		AddExistingMesh(pMesh, pTarget);
@@ -49,7 +48,6 @@ namespace aug
 
 	void Scene::AddExistingMesh(std::shared_ptr<Mesh> pMesh, std::shared_ptr<Node> pTarget)
 	{
-		//pMesh->m_Desc.m_uiIndex = m_vMeshes.size();
 		m_vMeshes.push_back(pMesh);
 
 		if (pTarget)

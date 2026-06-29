@@ -18,19 +18,17 @@ namespace aug
 		TEXTURE_CHANNEL_COUNT
 	};
 
-	class Material
+	class Material : public DescriptorTarget
 	{
 	public:
 		Material();
 		~Material();
 
-		void CreateDescriptorSets(const VkDescriptorSetLayout* pSetLayouts);
+		void UpdateDescriptor(DescriptorSetLayoutHandle h) override;
 
 		std::string m_sName = "";
 		uint32_t m_uiIndex = 0;
 		std::shared_ptr<Texture> m_aTextures[ETextureChannel::TEXTURE_CHANNEL_COUNT] = { nullptr };
-
-		std::vector<VkDescriptorSet> m_vDescriptorSets;
 	private:		
 		
 	};

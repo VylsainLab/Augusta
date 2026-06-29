@@ -48,7 +48,6 @@ private:
 	aug::Camera m_Camera;
 
 	aug::DescriptorSetLayoutHandle m_hModelMatrixUniformSet;
-	std::array<aug::DescriptorSetHandle, MAX_FRAMES_IN_FLIGHT> m_aModelMatrixDescriptors;
 	aug::DescriptorSetLayoutHandle m_hMaterialSet;
 
 	//Utils
@@ -93,12 +92,11 @@ private:
 		};
 		desc.vertexInputInfo = m_VertexFormat.GetPipelineVertexInputStateCreateInfo();
 		desc.uiPushConstantSize = sizeof(PushConstantData);
-		//desc.pvUniformBuffers = &m_vUniformBuffers;
 
 		aug::SDescriptorSetDesc descUB;
 		descUB.uiSet = 0;
 		descUB.AddBinding(0, VK_SHADER_STAGE_VERTEX_BIT, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); //model UB
-		m_hModelMatrixUniformSet = aug::DescriptorFactory::AllocateDescriptorSetLayout(descUB);
+		m_hModelMatrixUniformSet = m_pPipeline->DeclareResourceLayout(descUB);
 		desc.vLayoutHandles.push_back(m_hModelMatrixUniformSet);
 
 		aug::SDescriptorSetDesc descMat;	
@@ -109,14 +107,13 @@ private:
 		descMat.AddBinding(3, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //roughness
 		descMat.AddBinding(4, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //metalness
 		descMat.AddBinding(5, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //emissive
-		m_hMaterialSet = aug::DescriptorFactory::AllocateDescriptorSetLayout(descMat);
-		desc.vLayoutHandles.push_back(m_hMaterialSet);
-
+		m_hMaterialSet = m_pPipeline->DeclareResourceLayout(descMat);
+		desc.vLayoutHandles.push_back(m_hMaterialSet);		
+		
 		m_pPipeline->Init(desc);
-
-		aug::DescriptorFactory::AllocateDescriptors(m_hModelMatrixUniformSet, MAX_FRAMES_IN_FLIGHT, m_aModelMatrixDescriptors.data());
-		aug::DescriptorFactory::UpdateDescriptors(m_hModelMatrixUniformSet, MAX_FRAMES_IN_FLIGHT, m_aModelMatrixDescriptors.data(), m_vUniformBuffers.data());
-
+		
+		m_pPipeline->RegisterResource(m_hModelMatrixUniformSet, 0, m_vUniformBuffers[0]);
+		m_pPipeline->RegisterResource(m_hModelMatrixUniformSet, 0, m_vUniformBuffers[1]);
 
 		InitImGui();
 	}
@@ -137,11 +134,17 @@ private:
 		glm::mat4 ftrans = static_cast<glm::mat4>(trans);
 		m_pPipeline->PushConstants(m_ActiveCommandBuffer ,&ftrans);
 
-		m_pPipeline->BindDescriptorSets(m_ActiveCommandBuffer, m_hModelMatrixUniformSet, 1, &m_aModelMatrixDescriptors[m_uiCurrentFrame]);
+		m_pPipeline->BindResource(m_ActiveCommandBuffer, m_hModelMatrixUniformSet, 0, m_vUniformBuffers[m_uiCurrentFrame]);
 
 		for (uint32_t i = 0; i < pNode->GetNbMeshes(); ++i)
 		{
-			m_pPipeline->UpdateDescriptorSets(m_ActiveCommandBuffer, pNode->GetMesh(i)->m_pMaterial, m_uiCurrentFrame);
+			//Init material descriptors if not done already
+			if (!pNode->GetMesh(i)->m_pMaterial->HasDescriptor(m_hMaterialSet))
+			{
+				m_pPipeline->RegisterResource(m_hMaterialSet, 0, pNode->GetMesh(i)->m_pMaterial.get());
+			}
+
+			m_pPipeline->BindResource(m_ActiveCommandBuffer, m_hMaterialSet, 1, pNode->GetMesh(i)->m_pMaterial.get());
 
 			pNode->GetMesh(i)->Draw(m_ActiveCommandBuffer);
 		}

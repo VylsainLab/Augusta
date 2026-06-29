@@ -62,8 +62,12 @@ namespace aug
 		}
 	}
 
-	void Buffer::AllocateDescriptors(DescriptorSetLayoutHandle h)
+	void Buffer::UpdateDescriptor(DescriptorSetLayoutHandle h)
 	{
-		
+		VkDescriptorBufferInfo info;
+		info.buffer = m_VkBuffer;
+		info.offset = 0;
+		info.range = m_uiSize;
+		DescriptorFactory::UpdateDescriptor(m_mDescriptorHandles[h], &info);	
 	}
 }
