@@ -28,6 +28,9 @@ namespace aug
 
 			DescriptorFactory::UpdateDescriptor(m_mDescriptorHandles[h], &imageInfo, i);
 		}
+		vkUpdateDescriptorSets(aug::Context::m_VkDevice, static_cast<uint32_t>(vWrites.size()), vWrites.data(), 0, nullptr);
+		vWrites.clear();
+		vImageInfos.clear();
 	}
 
 }

@@ -25,7 +25,8 @@ namespace aug
 
 		m_pWindow = std::make_unique<Window>(name,width,height, bResizable, bVisible);
 
-		aug::Context::Init(m_pWindow->GetSurface());
+		Context::Init(m_pWindow->GetSurface());
+		DescriptorFactory::Init();
 		m_pWindow->InitAttachments();
 		DescriptorFactory::Init();
 
