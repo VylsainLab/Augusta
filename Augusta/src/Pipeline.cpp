@@ -16,6 +16,11 @@ namespace aug
 	aug::Pipeline::~Pipeline()
 	{
 		CleanPipeline();
+
+		for (auto& layout : m_vDescriptorSetHandles)
+		{
+			DescriptorFactory::DestroyDescriptorSetLayout(layout);
+		}
 	}
 
 #ifndef USE_DYNAMIC_RENDERING
@@ -313,10 +318,5 @@ namespace aug
 		if (m_VkRenderPass)
 			vkDestroyRenderPass(Context::m_VkDevice, m_VkRenderPass, nullptr);
 #endif
-
-		for (auto& layout : m_vDescriptorSetHandles)
-		{
-			DescriptorFactory::DestroyDescriptorSetLayout(layout);
-		}
 	}
 }
