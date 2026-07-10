@@ -52,8 +52,6 @@ namespace aug
 		void CleanPipeline();
 
 		VkPipelineLayout m_VkPipelineLayout = VK_NULL_HANDLE;
-
-		VkDescriptorSetLayout m_VkDescriptorSetLayoutMaterial = VK_NULL_HANDLE;
 	
 		SPipelineDesc m_Desc;
 #ifndef USE_DYNAMIC_RENDERING

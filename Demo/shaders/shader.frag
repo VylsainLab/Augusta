@@ -23,6 +23,6 @@ void main()
 	vec3 metalness = texture(samplerMetalness, fragTexcoord).rgb;
 	vec3 emissive = texture(samplerEmissive, fragTexcoord).rgb;
 
-    outColor.rgb = normals;
+    outColor.rgb = albedo;
     outColor.a = 1.0;
 }
