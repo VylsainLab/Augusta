@@ -26,9 +26,9 @@ namespace aug
 		m_pWindow = std::make_unique<Window>(name,width,height, bResizable, bVisible);
 
 		Context::Init(m_pWindow->GetSurface());
-		DescriptorFactory::Init();
+		DescriptorFactory::Init();		
 		m_pWindow->InitAttachments();
-		DescriptorFactory::Init();
+		InitImGui();
 
 		m_pPipeline = std::make_unique<Pipeline>(m_pWindow.get());
 		
@@ -72,10 +72,42 @@ namespace aug
 			ProcessEvents();
 			BeginRender();
 			Render(m_vVkSwapChainCommandBuffers[m_pWindow->GetSwapChainCurrentImageIndex()]);
+			RenderImGui();
 			EndRender();
 		}
 
 		vkDeviceWaitIdle(aug::Context::m_VkDevice);
+	}
+
+	void Application::RenderImGui()
+	{
+		if (m_bDisplayImGuiMenu)
+		{
+			if (ImGui::BeginMainMenuBar())
+			{
+				if (ImGui::BeginMenu("Debug"))
+				{
+					if (ImGui::MenuItem("Textures"))
+						m_bDisplayDebugTextures = true;
+
+					if (ImGui::MenuItem("ImGui demo"))
+						m_bDisplayDebugImGui = true;
+
+					ImGui::EndMenu();
+				}
+				ImGui::EndMainMenuBar();
+			}
+
+			if (m_bDisplayDebugTextures)
+			{
+				ImGui::Begin("Textures",&m_bDisplayDebugTextures);
+				TextureFactory::ImGuiDrawTextureDebug();
+				ImGui::End();
+			}
+
+			if(m_bDisplayDebugImGui)
+				ImGui::ShowDemoWindow(&m_bDisplayDebugImGui);
+		}
 	}
 
 	void Application::AddEventObserver(IGLFWEventObserver* pObserver)
@@ -87,8 +119,12 @@ namespace aug
 	{
 		glfwPollEvents();
 
+		//TODO: Move to input management class
 		if (glfwGetKey(m_pWindow->GetGLFWWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(m_pWindow->GetGLFWWindow(), GLFW_TRUE);
+
+		if (glfwGetKey(m_pWindow->GetGLFWWindow(), GLFW_KEY_F1) == GLFW_PRESS)
+			m_bDisplayImGuiMenu = !m_bDisplayImGuiMenu;
 
 		for (auto observer : m_vEventObservers)
 			observer->ProcessEvents(m_pWindow->GetGLFWWindow());
@@ -307,7 +343,7 @@ namespace aug
 		init_info.Device = aug::Context::m_VkDevice;
 		init_info.QueueFamily = aug::Context::m_QueueFamilies.uiGraphicsFamily.value();
 		init_info.Queue = aug::Context::m_VkGraphicsQueue;
-		init_info.DescriptorPoolSize = IMGUI_IMPL_VULKAN_MINIMUM_IMAGE_SAMPLER_POOL_SIZE + 1;
+		init_info.DescriptorPoolSize = IMGUI_IMPL_VULKAN_MINIMUM_IMAGE_SAMPLER_POOL_SIZE + 1000;
 #ifdef USE_DYNAMIC_RENDERING
 		init_info.UseDynamicRendering = true;
 		init_info.PipelineRenderingCreateInfo = renderingInfo;

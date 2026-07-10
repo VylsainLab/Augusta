@@ -40,17 +40,18 @@ namespace aug
 
 		//Create depth resources
 		STextureDesc desc;
-		desc.width = m_pSwapChain->GetExtent().width;
-		desc.height = m_pSwapChain->GetExtent().height;
-		desc.aspect = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
-		desc.filtering = VK_FILTER_LINEAR;
-		desc.format = VK_FORMAT_D32_SFLOAT_S8_UINT;
-		desc.memoryUsage = VMA_MEMORY_USAGE_GPU_ONLY;
-		desc.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-		desc.tiling = VK_IMAGE_TILING_OPTIMAL;
-		desc.samplingMode = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
-		desc.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-		m_pDepthStencilTexture = std::make_unique<Texture>(desc);
+		desc._strName = "WindowDepthBuffer";
+		desc._width = m_pSwapChain->GetExtent().width;
+		desc._height = m_pSwapChain->GetExtent().height;
+		desc._aspect = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+		desc._filtering = VK_FILTER_LINEAR;
+		desc._format = VK_FORMAT_D32_SFLOAT_S8_UINT;
+		desc._memoryUsage = VMA_MEMORY_USAGE_GPU_ONLY;
+		desc._usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+		desc._tiling = VK_IMAGE_TILING_OPTIMAL;
+		desc._samplingMode = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+		desc._layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+		m_pDepthStencilTexture = TextureFactory::LoadTextureFromMemory(desc);// std::make_unique<Texture>(desc);
 	}
 
 #ifndef USE_DYNAMIC_RENDERING

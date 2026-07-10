@@ -19,10 +19,10 @@ public:
 			m_AssimpParser(aug::VERTEX_COMPONENT_NORMAL|aug::VERTEX_COMPONENT_TEXCOORD, true, aiProcess_Triangulate|aiProcess_PreTransformVertices)
 	{
 		aug::SCameraDesc desc;
-		desc.speed = 0.001f;
-		desc.sensitivity = 0.1f;
-		desc.position = glm::vec3(0., 0., 1.);
-		desc.aspect = float(width) / float(height);
+		desc._speed = 0.001f;
+		desc._sensitivity = 0.1f;
+		desc._position = glm::vec3(0., 0., 1.);
+		desc._aspect = float(width) / float(height);
 		m_Camera = aug::Camera(desc);
 		AddEventObserver(&m_Camera);
 	}
@@ -84,23 +84,23 @@ private:
 		CreateUniformBuffers();
 
 		aug::SPipelineDesc desc;
-		desc.pWindow = m_pWindow.get();
-		desc.shaderDesc.vShaderStages =
+		desc._pWindow = m_pWindow.get();
+		desc._shaderDesc._vShaderStages =
 		{
 			{VK_SHADER_STAGE_VERTEX_BIT, "shader"},
 			{VK_SHADER_STAGE_FRAGMENT_BIT, "shader"}
 		};
-		desc.vertexInputInfo = m_VertexFormat.GetPipelineVertexInputStateCreateInfo();
-		desc.uiPushConstantSize = sizeof(PushConstantData);
+		desc._vertexInputInfo = m_VertexFormat.GetPipelineVertexInputStateCreateInfo();
+		desc._uiPushConstantSize = sizeof(PushConstantData);
 
 		aug::SDescriptorSetDesc descUB;
-		descUB.uiSet = 0;
+		descUB._uiSet = 0;
 		descUB.AddBinding(0, VK_SHADER_STAGE_VERTEX_BIT, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); //model UB
 		m_hModelMatrixUniformSet = m_pPipeline->DeclareResourceLayout(descUB);
-		desc.vLayoutHandles.push_back(m_hModelMatrixUniformSet);
+		desc._vLayoutHandles.push_back(m_hModelMatrixUniformSet);
 
 		aug::SDescriptorSetDesc descMat;	
-		descMat.uiSet = 1;
+		descMat._uiSet = 1;
 		descMat.AddBinding(0, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //albedo
 		descMat.AddBinding(1, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //normals
 		descMat.AddBinding(2, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //ao
@@ -108,14 +108,12 @@ private:
 		descMat.AddBinding(4, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //metalness
 		descMat.AddBinding(5, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //emissive
 		m_hMaterialSet = m_pPipeline->DeclareResourceLayout(descMat);
-		desc.vLayoutHandles.push_back(m_hMaterialSet);		
+		desc._vLayoutHandles.push_back(m_hMaterialSet);		
 		
 		m_pPipeline->Init(desc);
 		
 		m_pPipeline->RegisterResource(m_hModelMatrixUniformSet, 0, m_vUniformBuffers[0]);
 		m_pPipeline->RegisterResource(m_hModelMatrixUniformSet, 0, m_vUniformBuffers[1]);
-
-		InitImGui();
 	}
 
 	void Update()
@@ -157,8 +155,6 @@ private:
 		Update();
 
 		RecursiveRender(m_pScene->GetRootNode(), glm::dmat4(1.));
-
-		ImGui::ShowDemoWindow();
 	}
 
 	void Cleanup() 

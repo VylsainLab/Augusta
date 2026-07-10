@@ -9,18 +9,18 @@ namespace aug
 {
 	struct SCameraDesc
 	{
-		glm::dvec3 position = glm::dvec3(0., 0., 0.);
-		glm::dvec3 direction = glm::dvec3(0., 0., -1.);
-		glm::dvec3 up = glm::dvec3(0., 1., 0.);
-		glm::dvec3 right = glm::dvec3(-1., 0., 0.);
+		glm::dvec3 _position = glm::dvec3(0., 0., 0.);
+		glm::dvec3 _direction = glm::dvec3(0., 0., -1.);
+		glm::dvec3 _up = glm::dvec3(0., 1., 0.);
+		glm::dvec3 _right = glm::dvec3(-1., 0., 0.);
 
-		double znear = 0.0001;
-		double zfar = 100.;
-		double aspect = 1.;
-		double deg_vfov = 60.;
+		double _znear = 0.0001;
+		double _zfar = 100.;
+		double _aspect = 1.;
+		double _deg_vfov = 60.;
 
-		float speed = 1.f;
-		float sensitivity = 1.f;
+		float _speed = 1.f;
+		float _sensitivity = 1.f;
 	};
 
 	class Camera : public IGLFWEventObserver

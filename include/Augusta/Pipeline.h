@@ -15,11 +15,11 @@ namespace aug
 {
 	struct SPipelineDesc
 	{
-		Window* pWindow; //TODO replace with framebuffer/render target
-		SShaderDesc shaderDesc;
-		VkPipelineVertexInputStateCreateInfo vertexInputInfo;
-		uint32_t uiPushConstantSize;
-		std::vector<DescriptorSetLayoutHandle> vLayoutHandles;
+		Window* _pWindow; //TODO replace with framebuffer/render target
+		SShaderDesc _shaderDesc;
+		VkPipelineVertexInputStateCreateInfo _vertexInputInfo;
+		uint32_t _uiPushConstantSize;
+		std::vector<DescriptorSetLayoutHandle> _vLayoutHandles;
 	};
 
 	class Pipeline

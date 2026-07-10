@@ -6,21 +6,21 @@ namespace aug
 {
 	struct SDescriptorBinding
 	{
-		uint8_t uiBinding;
-		VkShaderStageFlags shaderStage;
-		VkDescriptorType type;
+		uint8_t _uiBinding;
+		VkShaderStageFlags _shaderStage;
+		VkDescriptorType _type;
 	};
 
 	struct SDescriptorSetDesc
 	{
 		void AddBinding(uint8_t uiBinding, VkShaderStageFlags stage, VkDescriptorType type)
 		{
-			this->uiSet = uiSet;
-			vBindings.push_back({ uiBinding,stage,type });
+			this->_uiSet = _uiSet;
+			_vBindings.push_back({ uiBinding,stage,type });
 		}
 
-		uint8_t uiSet;
-		std::vector<SDescriptorBinding> vBindings;
+		uint8_t _uiSet;
+		std::vector<SDescriptorBinding> _vBindings;
 	};
 
 	typedef uint32_t DescriptorSetLayoutHandle;

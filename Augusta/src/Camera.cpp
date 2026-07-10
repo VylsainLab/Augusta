@@ -5,16 +5,16 @@ namespace aug
 {
 	Camera::Camera(SCameraDesc desc)
 	{
-		m_Position = desc.position;
-		m_Direction = desc.direction;
-		m_Up = desc.up;
-		m_Right = desc.right;
-		m_dZNear = desc.znear;
-		m_dZFar = desc.zfar;
-		m_ddegVFov = desc.deg_vfov;
-		m_dAspect = desc.aspect;
-		m_fSpeed = desc.speed;
-		m_fSensitivity = desc.sensitivity;
+		m_Position = desc._position;
+		m_Direction = desc._direction;
+		m_Up = desc._up;
+		m_Right = desc._right;
+		m_dZNear = desc._znear;
+		m_dZFar = desc._zfar;
+		m_ddegVFov = desc._deg_vfov;
+		m_dAspect = desc._aspect;
+		m_fSpeed = desc._speed;
+		m_fSensitivity = desc._sensitivity;
 
 		ComputeCamera();
 	}

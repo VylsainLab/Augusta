@@ -6,7 +6,7 @@
 
 namespace aug
 {
-	struct SwapChainSupportDetails
+	struct SSwapChainSupportDetails
 	{
 		VkSurfaceCapabilitiesKHR capabilities;
 		std::vector<VkSurfaceFormatKHR> formats;
@@ -16,7 +16,7 @@ namespace aug
 	class SwapChain
 	{
 	public:
-		static SwapChainSupportDetails QuerySwapChainSupport(const VkPhysicalDevice& device, const VkSurfaceKHR& surface);
+		static SSwapChainSupportDetails QuerySwapChainSupport(const VkPhysicalDevice& device, const VkSurfaceKHR& surface);
 
 		SwapChain(const VkSurfaceKHR& surface);
 		virtual ~SwapChain();

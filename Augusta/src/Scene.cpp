@@ -40,7 +40,7 @@ namespace aug
 	{
 		std::shared_ptr<Mesh> pMesh(new Mesh(desc));
 
-		pMesh->m_pMaterial = desc.pMaterial;
+		pMesh->m_pMaterial = desc._pMaterial;
 
 		AddExistingMesh(pMesh, pTarget);
 		return pMesh;

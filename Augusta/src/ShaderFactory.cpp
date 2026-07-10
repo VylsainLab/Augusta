@@ -173,7 +173,7 @@ namespace aug
 	{
 		m_Desc = desc;
 
-		for (auto& stage : desc.vShaderStages)
+		for (auto& stage : desc._vShaderStages)
 		{
 			std::string strExtension;
 			switch (stage.first)

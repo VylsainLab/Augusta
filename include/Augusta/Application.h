@@ -29,6 +29,7 @@ namespace aug
 		void Run();		
 		
 		virtual void Render(VkCommandBuffer commandBuffer)=0;		
+		void RenderImGui();
 
 		void AddEventObserver(IGLFWEventObserver* pObserver);
 
@@ -53,6 +54,10 @@ namespace aug
 		uint32_t m_uiCurrentFrame = 0;
 
 		std::vector<IGLFWEventObserver*> m_vEventObservers;
+
+		bool m_bDisplayImGuiMenu = true;
+		bool m_bDisplayDebugTextures = false;
+		bool m_bDisplayDebugImGui = false;
 	};
 }
 

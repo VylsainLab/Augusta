@@ -10,11 +10,23 @@
 #include <iostream>
 #include <filesystem>
 
+#include <imgui.h>
+#include <imgui-docking\backends\imgui_impl_vulkan.h>
+#include <algorithm>
+
 namespace aug
 {
 	Texture::Texture(STextureDesc& desc, Buffer* pBuffer)
 	{
+		static uint32_t iCount = 0;		
+		if (desc._strName.empty())
+		{
+			desc._strName = "texture_" + std::to_string(iCount);
+		}
+		iCount++;
+
 		m_TextureDesc = desc;
+
 		CreateImage();
 		CreateImageView();
 
@@ -30,12 +42,12 @@ namespace aug
 			region.bufferOffset = 0;
 			region.bufferRowLength = 0; // tightly packed
 			region.bufferImageHeight = 0; //same
-			region.imageSubresource.aspectMask = m_TextureDesc.aspect;
+			region.imageSubresource.aspectMask = m_TextureDesc._aspect;
 			region.imageSubresource.mipLevel = 0;
 			region.imageSubresource.baseArrayLayer = 0;
 			region.imageSubresource.layerCount = 1;
 			region.imageOffset = { 0, 0, 0 };
-			region.imageExtent = { static_cast<uint32_t>(m_TextureDesc.width), static_cast<uint32_t>(m_TextureDesc.height), 1 };
+			region.imageExtent = { static_cast<uint32_t>(m_TextureDesc._width), static_cast<uint32_t>(m_TextureDesc._height), 1 };
 
 			vkCmdCopyBufferToImage(commandBuffer, pBuffer->GetBufferHandle(), m_VkImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
@@ -43,11 +55,14 @@ namespace aug
 		}
 
 		CreateSampler();
-		TransitionImageToLayout(desc.layout);
+
+		TransitionImageToLayout(desc._layout);
 	}
 
 	Texture::~Texture()
 	{
+		ImGui_ImplVulkan_RemoveTexture(m_ImGuiDescriptorSet);
+
 		vkDestroySampler(Context::m_VkDevice, m_VkSampler, nullptr);
 
 		vkDestroyImageView(Context::m_VkDevice, m_VkImageView, nullptr);
@@ -61,21 +76,21 @@ namespace aug
 		VkImageCreateInfo imageInfo{};
 		imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 		imageInfo.imageType = VK_IMAGE_TYPE_2D;
-		imageInfo.extent.width = static_cast<uint32_t>(m_TextureDesc.width);
-		imageInfo.extent.height = static_cast<uint32_t>(m_TextureDesc.height);
+		imageInfo.extent.width = static_cast<uint32_t>(m_TextureDesc._width);
+		imageInfo.extent.height = static_cast<uint32_t>(m_TextureDesc._height);
 		imageInfo.extent.depth = 1;
 		imageInfo.mipLevels = 1;
 		imageInfo.arrayLayers = 1;
-		imageInfo.format = m_TextureDesc.format;
-		imageInfo.tiling = m_TextureDesc.tiling;
+		imageInfo.format = m_TextureDesc._format;
+		imageInfo.tiling = m_TextureDesc._tiling;
 		imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		imageInfo.usage = m_TextureDesc.usage;
+		imageInfo.usage = m_TextureDesc._usage;
 		imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 		imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 		imageInfo.flags = 0; // Optional
 
 		VmaAllocationCreateInfo allocCreateInfo = {};
-		allocCreateInfo.usage = m_TextureDesc.memoryUsage;
+		allocCreateInfo.usage = m_TextureDesc._memoryUsage;
 
 		if (vmaCreateImage(MemoryAllocator::m_VmaAllocator, &imageInfo, &allocCreateInfo, &m_VkImage, &m_VmaAllocation, &m_VmaAllocationInfo) != VK_SUCCESS)
 			throw std::runtime_error("Failed to create image!");
@@ -88,8 +103,8 @@ namespace aug
 		viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 		viewInfo.image = m_VkImage;
 		viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-		viewInfo.format = m_TextureDesc.format;
-		viewInfo.subresourceRange.aspectMask = m_TextureDesc.aspect;
+		viewInfo.format = m_TextureDesc._format;
+		viewInfo.subresourceRange.aspectMask = m_TextureDesc._aspect;
 		viewInfo.subresourceRange.baseMipLevel = 0;
 		viewInfo.subresourceRange.levelCount = 1;
 		viewInfo.subresourceRange.baseArrayLayer = 0;
@@ -104,11 +119,11 @@ namespace aug
 		//Sampler
 		VkSamplerCreateInfo samplerInfo{};
 		samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-		samplerInfo.magFilter = m_TextureDesc.filtering;
-		samplerInfo.minFilter = m_TextureDesc.filtering;
-		samplerInfo.addressModeU = m_TextureDesc.samplingMode;
-		samplerInfo.addressModeV = m_TextureDesc.samplingMode;
-		samplerInfo.addressModeW = m_TextureDesc.samplingMode;
+		samplerInfo.magFilter = m_TextureDesc._filtering;
+		samplerInfo.minFilter = m_TextureDesc._filtering;
+		samplerInfo.addressModeU = m_TextureDesc._samplingMode;
+		samplerInfo.addressModeV = m_TextureDesc._samplingMode;
+		samplerInfo.addressModeW = m_TextureDesc._samplingMode;
 		samplerInfo.anisotropyEnable = VK_TRUE;
 		samplerInfo.maxAnisotropy = 16.0f; //TODO expose in graphics settings
 		samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
@@ -121,6 +136,19 @@ namespace aug
 		samplerInfo.maxLod = 0.0f;
 		if (vkCreateSampler(Context::m_VkDevice, &samplerInfo, nullptr, &m_VkSampler) != VK_SUCCESS)
 			throw std::runtime_error("Failed to create texture sampler!");
+	}
+	
+	//Trick to be able to create shared pointers while keeping Texture constructor protected
+	//so textures can only be allocated by TextureFactory
+	struct STexture : public Texture 
+	{
+		STexture(STextureDesc& desc, Buffer* pBuffer)
+			: Texture(desc, pBuffer)
+		{ }
+	};
+	std::shared_ptr<Texture> Texture::MakeShared(STextureDesc& desc, Buffer* pBuffer)
+	{
+		return std::make_shared<STexture>(desc,pBuffer);
 	}
 
 	void Texture::TransitionImageToLayout(VkImageLayout newLayout)
@@ -136,7 +164,7 @@ namespace aug
 		barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 
 		barrier.image = m_VkImage;
-		barrier.subresourceRange.aspectMask = m_TextureDesc.aspect;
+		barrier.subresourceRange.aspectMask = m_TextureDesc._aspect;
 		barrier.subresourceRange.baseMipLevel = 0;
 		barrier.subresourceRange.levelCount = 1;
 		barrier.subresourceRange.baseArrayLayer = 0;
@@ -180,10 +208,18 @@ namespace aug
 		m_CurrentImageLayout = newLayout;
 	}
 
+	ImTextureID Texture::GetImGuiTextureID()
+	{
+		if(m_ImGuiDescriptorSet== VK_NULL_HANDLE)
+			m_ImGuiDescriptorSet = ImGui_ImplVulkan_AddTexture(m_VkSampler, m_VkImageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+		return (ImTextureID)m_ImGuiDescriptorSet;
+	}
+
 
 	std::vector<std::string> TextureFactory::m_vPaths;
 	std::string TextureFactory::m_sForcedExtension;
-	std::unordered_map<std::string, std::weak_ptr<Texture>> TextureFactory::m_mTextureDictionary;
+	std::map<std::string, std::weak_ptr<Texture>> TextureFactory::m_mTextureDictionary;
 	void TextureFactory::AddTexturePath(const std::string& strPath)
 	{
 		m_vPaths.push_back(strPath);
@@ -192,6 +228,13 @@ namespace aug
 	void TextureFactory::SetTextureExtension(const std::string& strExt)
 	{
 		m_sForcedExtension = strExt;
+	}
+
+	std::shared_ptr<Texture> TextureFactory::LoadTextureFromMemory(STextureDesc& desc, Buffer* pBuffer)
+	{
+		std::shared_ptr<Texture> pTexture = Texture::MakeShared(desc, pBuffer);//std::make_shared<Texture>(desc, pBuffer);
+		m_mTextureDictionary[desc._strName] = pTexture;
+		return pTexture;
 	}
 
 	std::shared_ptr<Texture> TextureFactory::LoadTextureFromFile(const std::string& strPath)
@@ -207,10 +250,66 @@ namespace aug
 
 		std::string strRealPath = FindTexture(strDirPath,strFilename);
 
+		std::shared_ptr<Texture> pTexture = nullptr;
 		if (strRealPath.find(".dds") != std::string::npos)
-			return LoadTextureFromDDS(strRealPath);
+			pTexture = LoadTextureFromDDS(strFilename, strRealPath);
 		else
-			return LoadTextureFromSTBI(strRealPath);		
+			pTexture = LoadTextureFromSTBI(strFilename, strRealPath);
+
+		if (pTexture != nullptr)
+			m_mTextureDictionary[strFilename] = pTexture;
+
+		return pTexture;
+	}
+
+	void TextureFactory::ImGuiDrawTextureDebug()
+	{
+		static int32_t iSelected = -1;
+		std::weak_ptr<Texture> pPreview,pView;
+		if (ImGui::BeginListBox("Texture list"))
+		{
+			int iCount = 0;
+			for (auto& texture : m_mTextureDictionary)
+			{				
+				std::shared_ptr<Texture> pTex = texture.second.lock();
+				if (pTex->GetCurrentLayout() != VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+					continue;
+
+				const bool bIsSelected = (iSelected == iCount);
+				if (ImGui::Selectable(texture.first.c_str(), bIsSelected))
+					iSelected = iCount;
+
+				if (ImGui::IsItemHovered())
+					pPreview = texture.second;
+
+				if (bIsSelected)
+				{
+					ImGui::SetItemDefaultFocus();
+					pView = texture.second;
+				}
+
+				iCount++;
+			}
+			ImGui::EndListBox();
+		}
+
+		std::shared_ptr<Texture> psPreview = pPreview.lock();
+		std::shared_ptr<Texture> psView = pView.lock();
+		if (psPreview !=nullptr)
+		{			
+			ImVec2 size(100,100); //preview
+			ImGui::ImageWithBg(psPreview->GetImGuiTextureID(), size);
+		}
+
+		if (iSelected && psView != nullptr)
+		{
+			STextureDesc desc = psView->GetDesc();
+			ImVec2 size(static_cast<float>(std::min(desc._width, 1024u) + 10), static_cast<float>(std::min(desc._height, 1024u) + 10));
+			ImGui::Begin("Texture Inspector");
+			ImGui::SetWindowSize(size);
+			ImGui::Image(psView->GetImGuiTextureID(), size);
+			ImGui::End();
+		}
 	}
 
 	std::string TextureFactory::FindTexture(const std::string& strDirPath, const std::string& strFilename)
@@ -231,28 +330,29 @@ namespace aug
 		return "";
 	}
 
-	std::shared_ptr<Texture> TextureFactory::LoadTextureFromDDS(const std::string& strPath)
+	std::shared_ptr<Texture> TextureFactory::LoadTextureFromDDS(const std::string& strName, const std::string& strPath)
 	{
 		gli::texture ddsTexture = gli::load_dds(strPath);
 		ddsTexture = gli::flip(ddsTexture);
 
 		uint32_t uiWidth = ddsTexture.extent().x;
 		uint32_t uiHeight = ddsTexture.extent().y;
-		uint32_t uiLevels = ddsTexture.levels();
+		uint32_t uiLevels = static_cast<uint32_t>(ddsTexture.levels());
 		uint64_t uiSize = ddsTexture.size(0);
 		Buffer stagingBuffer(uiSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY, ddsTexture.data());		
 		
 		STextureDesc desc;
-		desc.width = uiWidth;
-		desc.height = uiHeight;
-		desc.levels = 0;// uiLevels; TODO support mipmaps
-		desc.format = VK_FORMAT_BC1_RGBA_UNORM_BLOCK;
-		desc.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
-		desc.layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		return std::make_shared<Texture>(desc, &stagingBuffer);
+		desc._strName = strName;
+		desc._width = uiWidth;
+		desc._height = uiHeight;
+		desc._levels = 0;// uiLevels; TODO support mipmaps
+		desc._format = VK_FORMAT_BC1_RGBA_UNORM_BLOCK;
+		desc._usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+		desc._layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		return Texture::MakeShared(desc, &stagingBuffer);
 	}
 
-	std::shared_ptr<Texture> TextureFactory::LoadTextureFromSTBI(const std::string& strPath)
+	std::shared_ptr<Texture> TextureFactory::LoadTextureFromSTBI(const std::string& strName, const std::string& strPath)
 	{
 		//Load file and create staging buffer
 		int32_t w, h, c;
@@ -270,10 +370,11 @@ namespace aug
 		stbi_image_free(pData);
 
 		STextureDesc desc;
-		desc.width = w;
-		desc.height = h;
-		desc.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
-		desc.layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		return std::make_shared<Texture>(desc, &stagingBuffer);
+		desc._strName = strName;
+		desc._width = w;
+		desc._height = h;
+		desc._usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+		desc._layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		return Texture::MakeShared(desc, &stagingBuffer);
 	}
 }

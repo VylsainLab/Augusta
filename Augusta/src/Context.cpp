@@ -281,7 +281,7 @@ namespace aug
 		bool bSwapChainAdequate = false;
 		if (bExtensionsSupported)
 		{
-			SwapChainSupportDetails details = SwapChain::QuerySwapChainSupport(device, m_ReferenceSurface);
+			SSwapChainSupportDetails details = SwapChain::QuerySwapChainSupport(device, m_ReferenceSurface);
 			bSwapChainAdequate = !details.formats.empty() && !details.presentModes.empty();
 		}
 

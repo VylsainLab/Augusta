@@ -5,7 +5,7 @@ namespace aug
 	Mesh::Mesh(SMeshDesc desc)
 	{
 		VmaMemoryUsage memoryUsage;
-		switch (desc.usage)
+		switch (desc._usage)
 		{
 		case aug::MESH_USAGE_STATIC:
 			memoryUsage = VMA_MEMORY_USAGE_GPU_ONLY;
@@ -17,17 +17,17 @@ namespace aug
 			break;
 		}
 
-		m_uiVertexCount = desc.vertexCount;
+		m_uiVertexCount = desc._vertexCount;
 		m_pVertexBuffer = std::make_unique<Buffer>(
-			static_cast<uint64_t>(desc.vertexCount* desc.pFormat->GetStride()),
+			static_cast<uint64_t>(desc._vertexCount* desc._pFormat->GetStride()),
 			VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 
 			memoryUsage,
-			desc.vertexData);
+			desc._vertexData);
 		
-		if (desc.indexCount >= 0 && desc.indexData != nullptr)
+		if (desc._indexCount >= 0 && desc._indexData != nullptr)
 		{
-			m_uiIndexCount = desc.indexCount;
-			m_pIndexBuffer = std::make_unique<Buffer>((uint64_t)(m_uiIndexCount * sizeof(uint32_t)), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VMA_MEMORY_USAGE_GPU_ONLY, (void*)desc.indexData);
+			m_uiIndexCount = desc._indexCount;
+			m_pIndexBuffer = std::make_unique<Buffer>((uint64_t)(m_uiIndexCount * sizeof(uint32_t)), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VMA_MEMORY_USAGE_GPU_ONLY, (void*)desc._indexData);
 		}
 	}
 

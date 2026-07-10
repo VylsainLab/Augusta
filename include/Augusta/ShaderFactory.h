@@ -12,7 +12,7 @@ namespace aug
 {
 	struct SShaderDesc
 	{
-		std::vector< std::pair<VkShaderStageFlagBits, std::string> > vShaderStages;
+		std::vector< std::pair<VkShaderStageFlagBits, std::string> > _vShaderStages;
 	};
 
 	//Object designed to load a GLSL file, compile it into a Spir-V code and create the related VkShaderModule

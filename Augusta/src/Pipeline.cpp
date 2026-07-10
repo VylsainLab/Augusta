@@ -84,7 +84,7 @@ namespace aug
 	{
 		m_Desc = desc;
 
-		m_pShader = std::make_unique<Shader>(desc.shaderDesc);
+		m_pShader = std::make_unique<Shader>(desc._shaderDesc);
 
 		BuildPipeline();
 	}
@@ -127,7 +127,7 @@ namespace aug
 			m_VkPipelineLayout,
 			VK_SHADER_STAGE_VERTEX_BIT,
 			0,
-			m_Desc.uiPushConstantSize,
+			m_Desc._uiPushConstantSize,
 			pData);
 	}
 
@@ -169,14 +169,14 @@ namespace aug
 		VkViewport viewport = {};
 		viewport.x = 0.0f;
 		viewport.y = 0.0f;
-		viewport.width = (float)m_Desc.pWindow->GetSwapChainExtent().width;
-		viewport.height = (float)m_Desc.pWindow->GetSwapChainExtent().height;
+		viewport.width = (float)m_Desc._pWindow->GetSwapChainExtent().width;
+		viewport.height = (float)m_Desc._pWindow->GetSwapChainExtent().height;
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
 
 		VkRect2D scissor = {};
 		scissor.offset = { 0, 0 };
-		scissor.extent = m_Desc.pWindow->GetSwapChainExtent();
+		scissor.extent = m_Desc._pWindow->GetSwapChainExtent();
 
 		VkPipelineViewportStateCreateInfo viewportState = {};
 		viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -247,11 +247,11 @@ namespace aug
 		VkPushConstantRange pushConstantRange{};
 		pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
 		pushConstantRange.offset = 0;
-		pushConstantRange.size = m_Desc.uiPushConstantSize;
+		pushConstantRange.size = m_Desc._uiPushConstantSize;
 
 		//Pipeline layout
 		std::vector<VkDescriptorSetLayout> descriptorLayouts;
-		for (auto& h : m_Desc.vLayoutHandles)
+		for (auto& h : m_Desc._vLayoutHandles)
 			descriptorLayouts.push_back(DescriptorFactory::GetDescriptorSetLayout(h));
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -267,16 +267,16 @@ namespace aug
 		VkPipelineRenderingCreateInfo renderingInfo = {};
 		renderingInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO_KHR;
 		renderingInfo.colorAttachmentCount = 1;
-		VkFormat colorFormat = m_Desc.pWindow->GetColorFormat();
+		VkFormat colorFormat = m_Desc._pWindow->GetColorFormat();
 		renderingInfo.pColorAttachmentFormats = &colorFormat;
-		renderingInfo.depthAttachmentFormat = m_Desc.pWindow->GetDepthStencilFormat();
+		renderingInfo.depthAttachmentFormat = m_Desc._pWindow->GetDepthStencilFormat();
 
 		//Graphics pipeline
 		VkGraphicsPipelineCreateInfo pipelineInfo = {};
 		pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		pipelineInfo.stageCount = m_pShader->GetStageCount();
 		pipelineInfo.pStages = m_pShader->GetPipelineShaderStagesCreateInfo();
-		pipelineInfo.pVertexInputState = &m_Desc.vertexInputInfo;
+		pipelineInfo.pVertexInputState = &m_Desc._vertexInputInfo;
 		pipelineInfo.pInputAssemblyState = &inputAssembly;
 		pipelineInfo.pViewportState = &viewportState;
 		pipelineInfo.pRasterizationState = &rasterizer;

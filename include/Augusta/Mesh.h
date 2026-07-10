@@ -17,13 +17,13 @@ namespace aug
 	//* Index data is optional and draw command will depend on it
 	struct SMeshDesc
 	{
-		MeshUsage usage;
-		VertexFormat* pFormat;
-		uint32_t vertexCount = 0;
-		void* vertexData = nullptr;
-		uint32_t indexCount = 0;
-		const uint32_t* indexData = nullptr;
-		std::shared_ptr<Material> pMaterial = nullptr;
+		MeshUsage _usage;
+		VertexFormat* _pFormat;
+		uint32_t _vertexCount = 0;
+		void* _vertexData = nullptr;
+		uint32_t _indexCount = 0;
+		const uint32_t* _indexData = nullptr;
+		std::shared_ptr<Material> _pMaterial = nullptr;
 	};
 
 	class Mesh

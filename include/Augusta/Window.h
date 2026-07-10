@@ -50,7 +50,7 @@ namespace aug
 #ifndef USE_DYNAMIC_RENDERING
 		std::vector<VkFramebuffer> m_vVkSwapChainFramebuffers;
 #endif
-		std::unique_ptr<Texture> m_pDepthStencilTexture;
+		std::shared_ptr<Texture> m_pDepthStencilTexture;
 	};
 }
 #endif

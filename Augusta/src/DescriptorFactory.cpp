@@ -57,13 +57,13 @@ namespace aug
 		VkDescriptorSetLayout& layout = m_vLayouts.emplace_back();
 
 		std::vector<VkDescriptorSetLayoutBinding> vLayoutBindings{};
-		vLayoutBindings.resize(desc.vBindings.size());
+		vLayoutBindings.resize(desc._vBindings.size());
 		for (int i=0; i<vLayoutBindings.size(); ++i)
 		{
-			vLayoutBindings[i].binding = desc.vBindings[i].uiBinding;
-			vLayoutBindings[i].descriptorType = desc.vBindings[i].type;
+			vLayoutBindings[i].binding = desc._vBindings[i]._uiBinding;
+			vLayoutBindings[i].descriptorType = desc._vBindings[i]._type;
 			vLayoutBindings[i].descriptorCount = 1;
-			vLayoutBindings[i].stageFlags = desc.vBindings[i].shaderStage;
+			vLayoutBindings[i].stageFlags = desc._vBindings[i]._shaderStage;
 			vLayoutBindings[i].pImmutableSamplers = nullptr;
 		}
 

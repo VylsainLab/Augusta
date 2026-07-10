@@ -152,9 +152,9 @@ namespace aug
 			{
 				SMeshDesc meshDesc;
 				//meshDesc.m_uiIndex = i;
-				meshDesc.pMaterial = pTarget->GetMaterialByName(mMaterialIndirection[pMesh->mMaterialIndex].c_str());
-				meshDesc.usage = MESH_USAGE_STATIC;
-				meshDesc.pFormat = &vertexFormat;
+				meshDesc._pMaterial = pTarget->GetMaterialByName(mMaterialIndirection[pMesh->mMaterialIndex].c_str());
+				meshDesc._usage = MESH_USAGE_STATIC;
+				meshDesc._pFormat = &vertexFormat;
 
 				if ((m_uiVertexComponentFlags & VERTEX_COMPONENT_NORMAL) && pMesh->mNormals == nullptr)
 					std::cerr << "Mesh " << pMesh->mName.C_Str() << " is missing normals";
@@ -189,8 +189,8 @@ namespace aug
 						else
 							p += 2 * sizeof(float);
 					}
-					meshDesc.vertexCount = pMesh->mNumVertices;
-					meshDesc.vertexData = pBuf;
+					meshDesc._vertexCount = pMesh->mNumVertices;
+					meshDesc._vertexData = pBuf;
 
 					std::vector<uint32_t> vIndices;
 					for (uint32_t j = 0; j < pMesh->mNumFaces; ++j)
@@ -199,8 +199,8 @@ namespace aug
 						vIndices.push_back(pMesh->mFaces[j].mIndices[1]);
 						vIndices.push_back(pMesh->mFaces[j].mIndices[2]);
 					}
-					meshDesc.indexCount = static_cast<uint32_t>(vIndices.size());
-					meshDesc.indexData = &vIndices[0];
+					meshDesc._indexCount = static_cast<uint32_t>(vIndices.size());
+					meshDesc._indexData = &vIndices[0];
 					pTarget->CreateMesh(meshDesc);
 
 					delete[] pBuf;

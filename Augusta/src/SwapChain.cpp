@@ -4,9 +4,9 @@
 
 namespace aug
 {
-	SwapChainSupportDetails SwapChain::QuerySwapChainSupport(const VkPhysicalDevice& device, const VkSurfaceKHR& surface)
+	SSwapChainSupportDetails SwapChain::QuerySwapChainSupport(const VkPhysicalDevice& device, const VkSurfaceKHR& surface)
 	{
-		SwapChainSupportDetails details;
+		SSwapChainSupportDetails details;
 
 		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
 
@@ -59,7 +59,7 @@ namespace aug
 
 	SwapChain::SwapChain(const VkSurfaceKHR& surface)
 	{
-		aug::SwapChainSupportDetails swapChainSupport = SwapChain::QuerySwapChainSupport(Context::m_VkPhysicalDevice, surface);
+		aug::SSwapChainSupportDetails swapChainSupport = SwapChain::QuerySwapChainSupport(Context::m_VkPhysicalDevice, surface);
 
 		VkSurfaceFormatKHR surfaceFormat = ChooseSwapSurfaceFormat(swapChainSupport.formats);
 		VkPresentModeKHR presentMode = ChooseSwapPresentMode(swapChainSupport.presentModes);
