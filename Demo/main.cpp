@@ -174,7 +174,7 @@ private:
 
 		aug::SRenderPass pass;
 		pass._RenderFunc = std::bind(&AugustaDemo::RenderScreenTriangle, this);
-		//AddRenderPass(pass);
+		AddRenderPass(pass);
 
 		VkCommandBufferAllocateInfo allocInfo = {};
 		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
