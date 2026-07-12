@@ -179,11 +179,11 @@ namespace aug
 			switch (stage.first)
 			{
 			case VK_SHADER_STAGE_VERTEX_BIT:
-				strExtension = ".vert";
+				strExtension = ".glsl_vert";
 				break;
 
 			case VK_SHADER_STAGE_FRAGMENT_BIT:
-				strExtension = ".frag";
+				strExtension = ".glsl_frag";
 				break;
 
 			default:

@@ -29,7 +29,7 @@ RaceEngineer::RaceEngineer(const std::string& name, uint16_t width, uint16_t hei
     m_pFlagFont = io.Fonts->AddFontFromFileTTF(strPath.c_str(), 24.0f, &cfg, ranges);
 }
 
-void RaceEngineer::Render(VkCommandBuffer commandBuffer)
+void RaceEngineer::MainRenderPass(const VkCommandBuffer& commandBuffer)
 {
     m_IRModel.Update();
     sSession& session = m_IRModel.m_sSessionData;

@@ -31,8 +31,9 @@ namespace aug
 	class Texture
 	{
 	public:
-		void TransitionImageToLayout(VkImageLayout newLayout);
+		void TransitionImageToLayout(VkImageLayout newLayout, VkCommandBuffer cb=VK_NULL_HANDLE);
 
+		VkImage GetImage() const { return m_VkImage; }
 		VkImageView GetImageView() const { return m_VkImageView; }
 		VkSampler GetSampler() const { return m_VkSampler; }
 		VkFormat GetFormat() const { return m_TextureDesc._format; }

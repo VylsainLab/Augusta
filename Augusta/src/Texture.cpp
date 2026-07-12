@@ -151,9 +151,12 @@ namespace aug
 		return std::make_shared<STexture>(desc,pBuffer);
 	}
 
-	void Texture::TransitionImageToLayout(VkImageLayout newLayout)
+	void Texture::TransitionImageToLayout(VkImageLayout newLayout, VkCommandBuffer cb)
 	{
-		VkCommandBuffer commandBuffer = Context::BuildSingleTimeCommandBuffer();	
+		if (m_CurrentImageLayout == newLayout)
+			return;
+
+		VkCommandBuffer commandBuffer = cb==VK_NULL_HANDLE ? Context::BuildSingleTimeCommandBuffer() : cb;	
 
 		VkImageMemoryBarrier barrier{};
 		barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -181,7 +184,7 @@ namespace aug
 			sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
 			destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
 		}
-		else if (m_CurrentImageLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+		else if (/*m_CurrentImageLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL &&*/ newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
 		{
 			//Wait until transfer is complete before transition and then allow shader read
 			barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
@@ -190,7 +193,7 @@ namespace aug
 			sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
 			destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
 		}
-		else if (m_CurrentImageLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
+		else if (/*m_CurrentImageLayout == VK_IMAGE_LAYOUT_UNDEFINED &&*/ newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
 		{
 			barrier.srcAccessMask = 0;
 			barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
@@ -198,12 +201,37 @@ namespace aug
 			sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
 			destinationStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
 		}
+		else if (/*m_CurrentImageLayout == VK_IMAGE_LAYOUT_UNDEFINED &&*/ newLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
+		{
+			barrier.srcAccessMask = 0;
+			barrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+			sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+			destinationStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		}
+		else if (newLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL)
+		{
+			barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+			barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+			
+			sourceStage = VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT;
+			destinationStage = VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT;
+		}
+		else if (newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
+		{
+			barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+			barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+
+			sourceStage = VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT;
+			destinationStage = VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT;
+		}
 		else
 			throw std::invalid_argument("Unsupported layout transition!");
 
 		vkCmdPipelineBarrier( commandBuffer, sourceStage, destinationStage, 0, 0, nullptr,	0, nullptr, 1, &barrier	);
 
-		Context::SubmitAndFreeCommandBuffer(commandBuffer);
+		if(cb == VK_NULL_HANDLE)
+			Context::SubmitAndFreeCommandBuffer(commandBuffer);
 
 		m_CurrentImageLayout = newLayout;
 	}
@@ -301,7 +329,7 @@ namespace aug
 			ImGui::ImageWithBg(psPreview->GetImGuiTextureID(), size);
 		}
 
-		if (iSelected && psView != nullptr)
+		if (iSelected>-1 && psView != nullptr)
 		{
 			STextureDesc desc = psView->GetDesc();
 			ImVec2 size(static_cast<float>(std::min(desc._width, 1024u) + 10), static_cast<float>(std::min(desc._height, 1024u) + 10));

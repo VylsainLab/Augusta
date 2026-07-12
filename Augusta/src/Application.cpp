@@ -23,17 +23,17 @@ namespace aug
 
 		Context::InitInstance();
 
-		m_pWindow = std::make_unique<Window>(name,width,height, bResizable, bVisible);
+		m_pWindow = std::make_unique<Window>(name, width, height, bResizable, bVisible);
 
 		Context::Init(m_pWindow->GetSurface());
-		DescriptorFactory::Init();		
+		DescriptorFactory::Init();
 		m_pWindow->InitAttachments();
 		InitImGui();
 
-		m_pPipeline = std::make_unique<Pipeline>(m_pWindow.get());
+		m_pMainPipeline = std::make_unique<Pipeline>(m_pWindow.get());
 		
 #ifndef USE_DYNAMIC_RENDERING
-		m_pWindow->InitFramebuffers(m_pPipeline->GetRenderPass());
+		m_pWindow->InitFramebuffers(m_pMainPipeline->GetRenderPass());
 #endif
 		CreateSwapChainCommandBuffers();
 		CreateSyncObjects();
@@ -54,7 +54,7 @@ namespace aug
 
 		DescriptorFactory::Release();
 
-		m_pPipeline.reset();
+		m_pMainPipeline.reset();
 		m_pWindow.reset();
 		
 		Context::Release();
@@ -70,8 +70,12 @@ namespace aug
 		while (!m_pWindow->IsClosed())
 		{
 			ProcessEvents();
+
+			for (auto& pass : m_vRenderPasses)
+				pass._RenderFunc();
+
 			BeginRender();
-			Render(m_vVkSwapChainCommandBuffers[m_pWindow->GetSwapChainCurrentImageIndex()]);
+			MainRenderPass(m_vVkSwapChainCommandBuffers[m_pWindow->GetSwapChainCurrentImageIndex()]);
 			RenderImGui();
 			EndRender();
 		}
@@ -157,55 +161,17 @@ namespace aug
 		beginInfo.pInheritanceInfo = nullptr;
 
 		if (vkBeginCommandBuffer(m_vVkSwapChainCommandBuffers[currentImage], &beginInfo) != VK_SUCCESS)
-			throw std::runtime_error("Failed to begin recording command buffer!");
-
-		//Swapchain image transition
-		m_pWindow->TransitionCurrentSwapChainImageToLayout(m_vVkSwapChainCommandBuffers[currentImage], VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-
-#ifdef USE_DYNAMIC_RENDERING
-		//Dynamic rendering
-		VkClearValue clearColors{};
-		clearColors.color = { 0.0f, 0.0f, 0.0f, 0.0f };
-		
-
-		VkRenderingAttachmentInfo colorAttachmentInfo{};
-		colorAttachmentInfo.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
-		colorAttachmentInfo.imageView = m_pWindow->GetCurrentColorImageView();
-		colorAttachmentInfo.imageLayout = VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL;
-		colorAttachmentInfo.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		colorAttachmentInfo.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-		colorAttachmentInfo.clearValue = clearColors;
-
-		clearColors.depthStencil = { 1.0f, 0 };
-
-		VkRenderingAttachmentInfo depthAttachmentInfo{};
-		depthAttachmentInfo.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
-		depthAttachmentInfo.imageView = m_pWindow->GetDepthImageView();
-		depthAttachmentInfo.imageLayout = VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL;
-		depthAttachmentInfo.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		depthAttachmentInfo.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		depthAttachmentInfo.clearValue = clearColors;
-
-		VkRenderingInfo renderingInfo{};
-		renderingInfo.sType = VK_STRUCTURE_TYPE_RENDERING_INFO;
-		VkRect2D renderArea{};
-		renderArea.extent = m_pWindow->GetSwapChainExtent();
-		renderingInfo.renderArea = renderArea;
-		renderingInfo.layerCount = 1;
-		renderingInfo.colorAttachmentCount = 1;
-		renderingInfo.pColorAttachments = &colorAttachmentInfo;
-		renderingInfo.pDepthAttachment = &depthAttachmentInfo;
-
-		vkCmdBeginRendering(m_vVkSwapChainCommandBuffers[currentImage], &renderingInfo);
-        
-        if (m_pPipeline)
-            m_pPipeline->Bind(m_vVkSwapChainCommandBuffers[currentImage], 1, m_uiCurrentFrame);
+			throw std::runtime_error("Failed to begin recording command buffer!");		
+     
+		if (m_pMainPipeline)
+		{
+#ifdef USE_DYNAMIC_RENDERING   
+			m_pMainPipeline->BeginRendering(m_vVkSwapChainCommandBuffers[currentImage],m_pWindow.get(),Window::WINDOW_LAYOUT_ATTACHMENT);
+			m_pMainPipeline->Bind(m_vVkSwapChainCommandBuffers[currentImage]);
 #else
-        if (m_pPipeline)
-            m_pPipeline->Bind(m_vVkSwapChainCommandBuffers[currentImage], m_pWindow->GetSwapChainFramebuffer(currentImage), m_pWindow->GetSwapChainExtent(), 1, m_uiCurrentFrame);
+			m_pMainPipeline->Bind(m_vVkSwapChainCommandBuffers[currentImage], m_pWindow->GetSwapChainFramebuffer(currentImage), m_pWindow->GetSwapChainExtent(), 1, m_uiCurrentFrame);
 #endif
-
-		
+		}	
 	}
 
 	void Application::EndRender()
@@ -217,14 +183,8 @@ namespace aug
 		ImDrawData* main_draw_data = ImGui::GetDrawData();
 		ImGui_ImplVulkan_RenderDrawData(main_draw_data, m_vVkSwapChainCommandBuffers[uiCurrentImage]);		
 
-#ifdef USE_DYNAMIC_RENDERING
-		vkCmdEndRendering(m_vVkSwapChainCommandBuffers[uiCurrentImage]);
-#else
-		vkCmdEndRenderPass(m_vVkSwapChainCommandBuffers[uiCurrentImage]);
-#endif
-
-		//Transition swap chain images for presentation
-		m_pWindow->TransitionCurrentSwapChainImageToLayout(m_vVkSwapChainCommandBuffers[uiCurrentImage], VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+		if (m_pMainPipeline)
+			m_pMainPipeline->EndRendering(m_vVkSwapChainCommandBuffers[uiCurrentImage],m_pWindow.get(),Window::WINDOW_LAYOUT_PRESENT);
 
 		if (vkEndCommandBuffer(m_vVkSwapChainCommandBuffers[uiCurrentImage]) != VK_SUCCESS)
 			throw std::runtime_error("Failed to record command buffer!");
@@ -332,10 +292,10 @@ namespace aug
 
 		VkPipelineRenderingCreateInfo renderingInfo = {};
 		renderingInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO_KHR;
-		renderingInfo.colorAttachmentCount = 1;
-		VkFormat colorFormat = m_pWindow->GetColorFormat();
-		renderingInfo.pColorAttachmentFormats = &colorFormat;
-		renderingInfo.depthAttachmentFormat = m_pWindow->GetDepthStencilFormat();
+		std::vector<VkFormat> vColorFormats = m_pWindow->GetColorFormats();
+		renderingInfo.colorAttachmentCount = static_cast<uint32_t>(vColorFormats.size());
+		renderingInfo.pColorAttachmentFormats = vColorFormats.data();
+		renderingInfo.depthAttachmentFormat = m_pWindow->GetDepthFormat();
 
 		ImGui_ImplVulkan_InitInfo init_info = {};
 		init_info.Instance = aug::Context::m_VkInstance;

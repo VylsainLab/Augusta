@@ -36,6 +36,7 @@
     <ClInclude Include="..\include\Augusta\DescriptorFactory.h" />
     <ClInclude Include="..\include\Augusta\FrameBuffer.h" />
     <ClInclude Include="..\include\Augusta\Geodetics.h" />
+    <ClInclude Include="..\include\Augusta\IRenderTarget.h" />
     <ClInclude Include="..\include\Augusta\Material.h" />
     <ClInclude Include="..\include\Augusta\Pipeline.h" />
     <ClInclude Include="..\include\Augusta\MemoryAllocator.h" />
@@ -151,7 +152,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLM_ENABLE_EXPERIMENTAL;USE_DYNAMIC_RENDERING;PLUTOSVG_BUILD_STATIC;_CRT_SECURE_NO_WARNINGS;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USE_DYNAMIC_RENDERING;GLM_ENABLE_EXPERIMENTAL;PLUTOSVG_BUILD_STATIC;_CRT_SECURE_NO_WARNINGS;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>

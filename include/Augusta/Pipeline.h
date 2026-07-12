@@ -5,6 +5,8 @@
 #include <Augusta/Buffer.h>
 #include <Augusta/ShaderFactory.h>
 #include <Augusta/Material.h>
+#include <Augusta/FrameBuffer.h>
+#include <Augusta/IRenderTarget.h>
 #include <vector>
 
 #ifndef MAX_FRAMES_IN_FLIGHT
@@ -15,30 +17,32 @@ namespace aug
 {
 	struct SPipelineDesc
 	{
-		Window* _pWindow; //TODO replace with framebuffer/render target
+		IRenderTarget* _pRenderTarget;		
 		SShaderDesc _shaderDesc;
 		VkPipelineVertexInputStateCreateInfo _vertexInputInfo;
-		uint32_t _uiPushConstantSize;
+		uint32_t _uiPushConstantSize = 0;
 		std::vector<DescriptorSetLayoutHandle> _vLayoutHandles;
 	};
 
 	class Pipeline
 	{
 	public:
-		Pipeline(aug::Window* pWindow);
+		Pipeline(IRenderTarget* pRT);
 		virtual ~Pipeline();
 
 #ifndef USE_DYNAMIC_RENDERING
-		void CreateRenderPass(aug::Window* pWindow); //TODO configurable
+		void CreateRenderPass(IRenderTarget* pRT); //TODO configurable
         const VkRenderPass& GetRenderPass() { return m_VkRenderPass; }
 #endif
 		void Init(const SPipelineDesc& desc);
 
 #ifdef USE_DYNAMIC_RENDERING
-        void Bind(const VkCommandBuffer& commandBuffer, uint32_t descriptorSetCount, uint8_t uiCurrentFrame);
+		void BeginRendering(const VkCommandBuffer& commandBuffer, IRenderTarget* pRT, SRenderTargetLayout layout);
+        void Bind(const VkCommandBuffer& commandBuffer);
 #else
-        void Bind(const VkCommandBuffer& commandBuffer, const VkFramebuffer& framebuffer, const VkExtent2D& extent, uint32_t descriptorSetCount, uint8_t uiCurrentFrame);
+        void Bind(const VkCommandBuffer& commandBuffer, const VkFramebuffer& framebuffer, const VkExtent2D& extent);
 #endif
+		void EndRendering(const VkCommandBuffer& commandBuffer, IRenderTarget* pRT, SRenderTargetLayout layout);
 
 		void PushConstants(const VkCommandBuffer& commandBuffer, void* pData);
 

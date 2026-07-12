@@ -7,6 +7,9 @@
 
 namespace aug
 {
+	SRenderTargetLayout Window::WINDOW_LAYOUT_ATTACHMENT = { VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL };
+	SRenderTargetLayout Window::WINDOW_LAYOUT_PRESENT = { VK_IMAGE_LAYOUT_PRESENT_SRC_KHR };
+
 	Window::Window(const std::string& name, uint16_t width, uint16_t height, bool bResizable, bool bVisible)
 	{					
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -83,13 +86,6 @@ namespace aug
     }
 #endif
 
-	void Window::TransitionCurrentSwapChainImageToLayout(const VkCommandBuffer& cb, VkImageLayout layout)
-	{
-		m_pSwapChain->TransitionCurrentImageToLayout(cb,layout);
-
-		//m_pDepthStencilTexture->TransitionImageToLayout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
-	}
-
 	bool Window::IsClosed()
 	{
 		return glfwWindowShouldClose(m_pWindow);
@@ -115,27 +111,34 @@ namespace aug
 		return m_pSwapChain->GetSwapChainHandle();
 	}
 
-	VkFormat Window::GetColorFormat() const
-	{
-		return m_pSwapChain->GetImageFormat();
-	}
-
-	VkFormat Window::GetDepthStencilFormat() const
-	{
-		return m_pDepthStencilTexture->GetFormat();
-	}
-
-	VkExtent2D Window::GetSwapChainExtent() const
+	VkExtent2D Window::GetExtent() const
 	{
 		return m_pSwapChain->GetExtent();
 	}
 
-	VkImageView Window::GetCurrentColorImageView() const
+	std::vector<VkFormat> Window::GetColorFormats() const
 	{
-		return m_pSwapChain->GetImageViewAtIndex(m_pSwapChain->GetCurrentImageIndex());
+		return std::vector<VkFormat>({ m_pSwapChain->GetImageFormat() });
 	}
+
+	VkFormat Window::GetDepthFormat() const
+	{
+		return m_pDepthStencilTexture->GetFormat();
+	}
+
+	std::vector<VkImageView> Window::GetColorImageViews() const
+	{
+		return std::vector<VkImageView>({ m_pSwapChain->GetImageViewAtIndex(m_pSwapChain->GetCurrentImageIndex()) });
+	}
+
 	VkImageView Window::GetDepthImageView() const
 	{
 		return m_pDepthStencilTexture->GetImageView();
+	}
+
+	void Window::TransitionToLayout(const VkCommandBuffer& cb, SRenderTargetLayout layout)
+	{
+		//depth transition unnecessary
+		m_pSwapChain->TransitionCurrentImageToLayout(cb, layout._colorLayout);		
 	}
 }

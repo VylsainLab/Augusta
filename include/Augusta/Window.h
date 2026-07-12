@@ -1,6 +1,8 @@
 #ifndef AUG_WINDOW_H
 #define AUG_WINDOW_H
 
+#include <Augusta/IRenderTarget.h>
+
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include <string>
@@ -12,7 +14,7 @@ namespace aug
 {
 	class SwapChain;
 
-	class Window
+	class Window : public IRenderTarget
 	{		
 	public:
 		Window(const std::string &name, uint16_t width, uint16_t height, bool bResizable, bool bVisible);
@@ -22,9 +24,7 @@ namespace aug
 #ifndef USE_DYNAMIC_RENDERING
 		void InitFramebuffers(const VkRenderPass& renderPass);
         VkFramebuffer GetSwapChainFramebuffer(uint32_t index) const;
-#endif
-
-		void TransitionCurrentSwapChainImageToLayout(const VkCommandBuffer& cb, VkImageLayout layout);
+#endif	
 
 		VkSurfaceKHR GetSurface() { return m_VkSurface; }
 		bool IsClosed();
@@ -33,14 +33,20 @@ namespace aug
 
 		uint32_t GetSwapChainImageCount();
 		uint32_t GetSwapChainCurrentImageIndex();
-		VkSwapchainKHR GetSwapChainHandle() const;
-		VkFormat GetColorFormat() const;
-		VkFormat GetDepthStencilFormat() const;
-		VkExtent2D GetSwapChainExtent() const;		
+		VkSwapchainKHR GetSwapChainHandle() const;		
+		
 		GLFWwindow* GetGLFWWindow() const { return m_pWindow; }
 
-		VkImageView GetCurrentColorImageView() const;
-		VkImageView GetDepthImageView() const;
+		//IRenderTarget		
+		VkExtent2D GetExtent() const override;
+		std::vector<VkFormat> GetColorFormats() const override;
+		VkFormat GetDepthFormat() const override;
+		std::vector<VkImageView> GetColorImageViews() const override;
+		VkImageView GetDepthImageView() const override;
+		void TransitionToLayout(const VkCommandBuffer& cb, SRenderTargetLayout layout) override;
+
+		static SRenderTargetLayout WINDOW_LAYOUT_ATTACHMENT;
+		static SRenderTargetLayout WINDOW_LAYOUT_PRESENT;
 
 	protected:
 		GLFWwindow* m_pWindow = nullptr;

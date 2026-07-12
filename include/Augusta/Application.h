@@ -7,10 +7,12 @@
 #include <Augusta/Context.h>
 #include <Augusta/Buffer.h>
 #include <Augusta/Scene.h>
+#include <Augusta/FrameBuffer.h>
 #include <vector>
 #include <memory>
 #include <imgui-docking/misc/freetype/imgui_freetype.h>
 #include <imgui-docking/imgui.h>
+#include <functional>
 
 namespace aug
 {
@@ -18,6 +20,11 @@ namespace aug
 	{
 	public:
 		virtual void ProcessEvents(GLFWwindow* pWindow) = 0;
+	};
+
+	struct SRenderPass
+	{
+		std::function<void(void)> _RenderFunc;
 	};
 
 	class Application : public ISceneRenderer
@@ -28,10 +35,12 @@ namespace aug
 
 		void Run();		
 		
-		virtual void Render(VkCommandBuffer commandBuffer)=0;		
+		virtual void MainRenderPass(const VkCommandBuffer& commandBuffer)=0;		
 		void RenderImGui();
 
 		void AddEventObserver(IGLFWEventObserver* pObserver);
+
+		void AddRenderPass(SRenderPass& pass){ m_vRenderPasses.push_back(pass);	}
 
 	protected:
 		void ProcessEvents();
@@ -44,8 +53,9 @@ namespace aug
 
 		static bool m_bGLFWInitialized;
 		std::unique_ptr<Window> m_pWindow;
-		std::unique_ptr<Pipeline> m_pPipeline;
+		std::unique_ptr<Pipeline> m_pMainPipeline;
 		std::vector<VkCommandBuffer> m_vVkSwapChainCommandBuffers;
+		
 		
 		std::vector<VkSemaphore> m_vVkImageAvailableSemaphores;
 		std::vector<VkSemaphore> m_vVkRenderFinishedSemaphores;
@@ -58,6 +68,8 @@ namespace aug
 		bool m_bDisplayImGuiMenu = true;
 		bool m_bDisplayDebugTextures = false;
 		bool m_bDisplayDebugImGui = false;
+
+		std::vector<SRenderPass> m_vRenderPasses;
 	};
 }
 

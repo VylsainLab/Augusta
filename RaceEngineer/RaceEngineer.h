@@ -7,7 +7,7 @@ class RaceEngineer : public aug::Application
 public:
 	RaceEngineer(const std::string& name, uint16_t width, uint16_t height, bool bResizable, bool bVisible);
 
-	virtual void Render(VkCommandBuffer commandBuffer) override;
+	virtual void MainRenderPass(const VkCommandBuffer& commandBuffer) override;
 
 	void DrawTelemetry();
 	void DrawSession();

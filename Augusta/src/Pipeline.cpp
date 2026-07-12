@@ -6,10 +6,10 @@
 
 namespace aug
 {
-	aug::Pipeline::Pipeline(aug::Window* pWindow)
+	aug::Pipeline::Pipeline(IRenderTarget* pRT)
 	{
 #ifndef USE_DYNAMIC_RENDERING
-		CreateRenderPass(pWindow);
+		CreateRenderPass(pRT);
 #endif
 	}
 
@@ -24,7 +24,7 @@ namespace aug
 	}
 
 #ifndef USE_DYNAMIC_RENDERING
-	void aug::Pipeline::CreateRenderPass(aug::Window* pWindow)
+	void aug::Pipeline::CreateRenderPass(IRenderTarget* pRT)
 	{
 		VkAttachmentDescription colorAttachment = {};
 		colorAttachment.format = pWindow->GetColorFormat();
@@ -94,10 +94,57 @@ namespace aug
 		BuildPipeline();
 	}
 
+	void Pipeline::BeginRendering(const VkCommandBuffer& commandBuffer, IRenderTarget* pRT, SRenderTargetLayout layout)
+	{
+		//Swapchain image transition
+		pRT->TransitionToLayout(commandBuffer, layout);
+
 #ifdef USE_DYNAMIC_RENDERING
-	void aug::Pipeline::Bind(const VkCommandBuffer& commandBuffer, uint32_t descriptorSetCount, uint8_t uiCurrentFrame)
+		//Dynamic rendering
+		VkClearValue clearColors{};
+		clearColors.color = { 0.1f, 0.1f, 0.1f, 1.0f };		
+
+		std::vector<VkRenderingAttachmentInfo> vColorAttachmentInfo{};
+		std::vector<VkImageView> vColorImageViews = pRT->GetColorImageViews();
+		vColorAttachmentInfo.resize(vColorImageViews.size());
+		for (int i = 0; i < vColorAttachmentInfo.size(); ++i)
+		{
+			vColorAttachmentInfo[i].sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
+			vColorAttachmentInfo[i].imageView = vColorImageViews[i];
+			vColorAttachmentInfo[i].imageLayout = layout._colorLayout;
+			vColorAttachmentInfo[i].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			vColorAttachmentInfo[i].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+			vColorAttachmentInfo[i].clearValue = clearColors;
+		}
+
+		clearColors.depthStencil = { 1.0f, 0 };
+
+		VkRenderingAttachmentInfo depthAttachmentInfo{};
+		depthAttachmentInfo.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO;
+		depthAttachmentInfo.imageView = pRT->GetDepthImageView();
+		depthAttachmentInfo.imageLayout = layout._depthStencilLayout;
+		depthAttachmentInfo.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		depthAttachmentInfo.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		depthAttachmentInfo.clearValue = clearColors;
+
+		VkRenderingInfo renderingInfo{};
+		renderingInfo.sType = VK_STRUCTURE_TYPE_RENDERING_INFO;
+		VkRect2D renderArea{};
+		renderArea.extent = pRT->GetExtent();
+		renderingInfo.renderArea = renderArea;
+		renderingInfo.layerCount = 1;
+		renderingInfo.colorAttachmentCount = static_cast<uint32_t>(vColorAttachmentInfo.size());
+		renderingInfo.pColorAttachments = vColorAttachmentInfo.data();
+		renderingInfo.pDepthAttachment = &depthAttachmentInfo;
+
+		vkCmdBeginRendering(commandBuffer, &renderingInfo);
+#endif
+	}
+
+#ifdef USE_DYNAMIC_RENDERING
+	void aug::Pipeline::Bind(const VkCommandBuffer& commandBuffer)
 #else
-	void aug::Pipeline::Bind(const VkCommandBuffer& commandBuffer, const VkFramebuffer& framebuffer, const VkExtent2D& extent, uint32_t descriptorSetCount, uint8_t uiCurrentFrame)
+	void aug::Pipeline::Bind(const VkCommandBuffer& commandBuffer, const VkFramebuffer& framebuffer, const VkExtent2D& extent)
 #endif
 	{
 #ifndef USE_DYNAMIC_RENDERING
@@ -123,6 +170,16 @@ namespace aug
 		}
 
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_VkGraphicsPipeline);
+	}
+
+	void Pipeline::EndRendering(const VkCommandBuffer& commandBuffer, IRenderTarget* pRT, SRenderTargetLayout layout)
+	{
+#ifdef USE_DYNAMIC_RENDERING
+		vkCmdEndRendering(commandBuffer);
+#else
+		vkCmdEndRenderPass(commandBuffer);
+#endif
+		pRT->TransitionToLayout(commandBuffer, layout);
 	}
 
 	void aug::Pipeline::PushConstants(const VkCommandBuffer& commandBuffer, void* pData)
@@ -163,7 +220,7 @@ namespace aug
 	void aug::Pipeline::BuildPipeline()
 	{
 		CleanPipeline();
-
+		
 		//Input assembly
 		VkPipelineInputAssemblyStateCreateInfo inputAssembly = {};
 		inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -171,17 +228,18 @@ namespace aug
 		inputAssembly.primitiveRestartEnable = VK_FALSE;
 
 		//Viewport
+		VkExtent2D extent = m_Desc._pRenderTarget->GetExtent();
 		VkViewport viewport = {};
 		viewport.x = 0.0f;
 		viewport.y = 0.0f;
-		viewport.width = (float)m_Desc._pWindow->GetSwapChainExtent().width;
-		viewport.height = (float)m_Desc._pWindow->GetSwapChainExtent().height;
+		viewport.width = (float)extent.width;
+		viewport.height = (float)extent.height;
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
 
 		VkRect2D scissor = {};
 		scissor.offset = { 0, 0 };
-		scissor.extent = m_Desc._pWindow->GetSwapChainExtent();
+		scissor.extent = extent;
 
 		VkPipelineViewportStateCreateInfo viewportState = {};
 		viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -262,8 +320,11 @@ namespace aug
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorLayouts.size());
 		pipelineLayoutInfo.pSetLayouts = descriptorLayouts.data();
-		pipelineLayoutInfo.pushConstantRangeCount = 1;
-		pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
+		if (m_Desc._uiPushConstantSize > 0)
+		{
+			pipelineLayoutInfo.pushConstantRangeCount = 1;
+			pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
+		}
 
 		if (vkCreatePipelineLayout(aug::Context::m_VkDevice, &pipelineLayoutInfo, nullptr, &m_VkPipelineLayout) != VK_SUCCESS)
 			throw std::runtime_error("Failed to create pipeline layout!");
@@ -271,10 +332,10 @@ namespace aug
 		//Dynamic rendering (replaces render passes)
 		VkPipelineRenderingCreateInfo renderingInfo = {};
 		renderingInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO_KHR;
-		renderingInfo.colorAttachmentCount = 1;
-		VkFormat colorFormat = m_Desc._pWindow->GetColorFormat();
-		renderingInfo.pColorAttachmentFormats = &colorFormat;
-		renderingInfo.depthAttachmentFormat = m_Desc._pWindow->GetDepthStencilFormat();
+		std::vector<VkFormat> vColorFormats = m_Desc._pRenderTarget->GetColorFormats();
+		renderingInfo.colorAttachmentCount = static_cast<uint32_t>(vColorFormats.size());
+		renderingInfo.pColorAttachmentFormats = vColorFormats.data();
+		renderingInfo.depthAttachmentFormat = m_Desc._pRenderTarget->GetDepthFormat();
 
 		//Graphics pipeline
 		VkGraphicsPipelineCreateInfo pipelineInfo = {};

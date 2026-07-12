@@ -82,14 +82,14 @@ namespace aug
 	}
 
 	//*****************************ISCENERENDERER**********************************
-	void ISceneRenderer::RecursiveRender(std::shared_ptr<Node> pNode, glm::dmat4 trans)
+	void ISceneRenderer::RecursiveRender(const VkCommandBuffer& commandBuffer, std::shared_ptr<Node> pNode, glm::dmat4 trans)
 	{
 		glm::dmat4 localTrans = trans * pNode->GetTransform();
-		RenderNode(pNode, localTrans);
+		RenderNode(commandBuffer, pNode, localTrans);
 
 		for (uint32_t i = 0; i < pNode->GetNbChildren(); ++i)
 		{
-			RecursiveRender(pNode->GetChild(i), localTrans);
+			RecursiveRender(commandBuffer, pNode->GetChild(i), localTrans);
 		}
 	}
 }
