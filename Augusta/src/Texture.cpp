@@ -294,13 +294,17 @@ namespace aug
 	{
 		static int32_t iSelected = -1;
 		std::weak_ptr<Texture> pPreview,pView;
+
+		static ImGuiTextFilter filter;
+		filter.Draw();
+
 		if (ImGui::BeginListBox("Texture list"))
 		{
 			int iCount = 0;
 			for (auto& texture : m_mTextureDictionary)
 			{				
 				std::shared_ptr<Texture> pTex = texture.second.lock();
-				if (pTex->GetCurrentLayout() != VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+				if (pTex->GetCurrentLayout() != VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL || !filter.PassFilter(pTex->m_TextureDesc._strName.c_str()))
 					continue;
 
 				const bool bIsSelected = (iSelected == iCount);

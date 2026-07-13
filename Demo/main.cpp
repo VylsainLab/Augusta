@@ -151,14 +151,17 @@ private:
 			VMA_MEMORY_USAGE_GPU_ONLY,
 			vertexData);
 
+		uint8_t uiCount = 0;
 		for (auto& fb : m_aScreenTriangleFBs)
 		{
 			aug::SFramebufferDesc fbDesc;
+			fbDesc._strName = "ScreenTriangle" + std::to_string(uiCount);
 			fbDesc._uiWidth = WINDOW_WIDTH;
 			fbDesc._uiHeight = WINDOW_HEIGHT;
 			fbDesc._vColorAttachmentsFormats.push_back(VK_FORMAT_B8G8R8A8_UNORM);
 			fbDesc._DepthFormat = VK_FORMAT_D32_SFLOAT_S8_UINT;
 			fb = std::make_shared<aug::Framebuffer>(fbDesc);
+			uiCount++;
 		}
 
 		aug::SPipelineDesc gbufferPipelineDesc;
