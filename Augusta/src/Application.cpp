@@ -37,6 +37,7 @@ namespace aug
 #endif
 		CreateSwapChainCommandBuffers();
 		CreateSyncObjects();
+		CreateQueryPool();
 	}
 
 	Application::~Application()
@@ -69,6 +70,8 @@ namespace aug
 	{
 		while (!m_pWindow->IsClosed())
 		{
+			StartFrameTiming();
+
 			ProcessEvents();
 
 			for (auto& pass : m_vRenderPasses)
@@ -78,6 +81,9 @@ namespace aug
 			MainRenderPass(m_vVkSwapChainCommandBuffers[m_pWindow->GetSwapChainCurrentImageIndex()]);
 			RenderImGui();
 			EndRender();
+
+			EndFrameTiming();
+			GetTimestamps();
 		}
 
 		vkDeviceWaitIdle(aug::Context::m_VkDevice);
@@ -163,6 +169,8 @@ namespace aug
 		if (vkBeginCommandBuffer(m_vVkSwapChainCommandBuffers[currentImage], &beginInfo) != VK_SUCCESS)
 			throw std::runtime_error("Failed to begin recording command buffer!");		
      
+		WriteTimestamp(m_vVkSwapChainCommandBuffers[currentImage], VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT);
+
 		if (m_pMainPipeline)
 		{
 #ifdef USE_DYNAMIC_RENDERING   
@@ -186,6 +194,8 @@ namespace aug
 		if (m_pMainPipeline)
 			m_pMainPipeline->EndRendering(m_vVkSwapChainCommandBuffers[uiCurrentImage],m_pWindow.get(),Window::WINDOW_LAYOUT_PRESENT);
 
+		WriteTimestamp(m_vVkSwapChainCommandBuffers[uiCurrentImage], VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT);
+		
 		if (vkEndCommandBuffer(m_vVkSwapChainCommandBuffers[uiCurrentImage]) != VK_SUCCESS)
 			throw std::runtime_error("Failed to record command buffer!");
 
@@ -207,6 +217,7 @@ namespace aug
 
 		if (vkQueueSubmit(aug::Context::m_VkGraphicsQueue, 1, &submitInfo, m_vVkInFlightFences[m_uiCurrentFrame]) != VK_SUCCESS)
 			throw std::runtime_error("Failed to submit draw command buffer!");
+
 
 		ImGuiIO& io = ImGui::GetIO();
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -269,6 +280,25 @@ namespace aug
 		}
 	}
 
+	void Application::CreateQueryPool()
+	{
+		VkQueryPoolCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
+		createInfo.pNext = nullptr; // Optional
+		createInfo.flags = 0; // Reserved for future use, must be 0!
+
+		createInfo.queryType = VK_QUERY_TYPE_TIMESTAMP;
+		createInfo.queryCount = NB_QUERIES;
+
+		VkResult result = vkCreateQueryPool(Context::m_VkDevice, &createInfo, nullptr, &m_TimingQueryPool);
+		if (result != VK_SUCCESS)
+		{
+			throw std::runtime_error("Failed to create time query pool!");
+		}
+
+		vkResetQueryPool(Context::m_VkDevice, m_TimingQueryPool, 0, NB_QUERIES);
+	}
+
 	void Application::InitImGui()
 	{
 		IMGUI_CHECKVERSION();
@@ -320,5 +350,37 @@ namespace aug
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 		beginInfo.pInheritanceInfo = nullptr;
+	}
+
+	void Application::WriteTimestamp(const VkCommandBuffer& cb, VkPipelineStageFlagBits stage)
+	{
+		vkCmdWriteTimestamp(cb, stage, m_TimingQueryPool, m_uiCurrentQuery);
+		m_uiCurrentQuery = (m_uiCurrentQuery + 1) % NB_QUERIES;
+	}
+
+	void Application::GetTimestamps()
+	{
+		static uint32_t prevStartFrameQuery=0, prevEndFrameQuery=0;
+		if (prevStartFrameQuery != prevEndFrameQuery)
+		{
+			uint32_t queryCount = prevEndFrameQuery - prevStartFrameQuery;
+			std::vector<uint64_t> vQueries;
+			vQueries.resize(queryCount);
+			VkResult result = vkGetQueryPoolResults(Context::m_VkDevice, m_TimingQueryPool, prevStartFrameQuery, queryCount, queryCount * sizeof(uint64_t), vQueries.data(), sizeof(uint64_t), VK_QUERY_RESULT_64_BIT);
+			vkResetQueryPool(Context::m_VkDevice, m_TimingQueryPool, prevStartFrameQuery, queryCount);
+
+			if (result == VK_SUCCESS)
+			{
+				for (int i = 1; i < vQueries.size(); ++i)
+				{
+					uint64_t nbNano = vQueries[i] - vQueries[i - 1];
+					//printf("\nDelta %d-%d: %f ms", i - 1, i, static_cast<float>(nbNano) / 1000000.0f);
+				}
+				uint64_t nbNano = vQueries.back() - vQueries[0];
+				printf("\nFrame : %f ms", static_cast<float>(nbNano) / 1000000.0f);
+			}
+		}
+		prevStartFrameQuery = m_uiStartFrameQuery;
+		prevEndFrameQuery = m_uiEndFrameQuery;
 	}
 }

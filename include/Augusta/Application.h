@@ -14,6 +14,8 @@
 #include <imgui-docking/imgui.h>
 #include <functional>
 
+#define NB_QUERIES 100
+
 namespace aug
 {
 	class IGLFWEventObserver
@@ -49,7 +51,13 @@ namespace aug
 
 		void CreateSwapChainCommandBuffers();
 		void CreateSyncObjects();
+		void CreateQueryPool();
 		void InitImGui();
+
+		void StartFrameTiming() { m_uiStartFrameQuery = m_uiCurrentQuery; }
+		void EndFrameTiming() { m_uiEndFrameQuery = m_uiCurrentQuery == 0 ? NB_QUERIES : m_uiCurrentQuery; }
+		void WriteTimestamp(const VkCommandBuffer& cb, VkPipelineStageFlagBits stage);
+		void GetTimestamps();
 
 		static bool m_bGLFWInitialized;
 		std::unique_ptr<Window> m_pWindow;
@@ -62,6 +70,11 @@ namespace aug
 		std::vector<VkFence> m_vVkInFlightFences;
 		std::vector<VkFence> m_vVkImagesInFlightFences;
 		uint32_t m_uiCurrentFrame = 0;
+
+		VkQueryPool m_TimingQueryPool;
+		uint32_t m_uiCurrentQuery = 0;
+		uint32_t m_uiStartFrameQuery = 0;
+		uint32_t m_uiEndFrameQuery = 0;
 
 		std::vector<IGLFWEventObserver*> m_vEventObservers;
 

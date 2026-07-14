@@ -348,6 +348,11 @@ namespace aug
 #endif
 		vk13Features.pNext = nullptr;
 
+		VkPhysicalDeviceHostQueryResetFeatures resetFeatures;
+		resetFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES;
+		resetFeatures.hostQueryReset = VK_TRUE;
+		resetFeatures.pNext = &vk13Features;
+
 		VkDeviceCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 		createInfo.queueCreateInfoCount = (uint32_t)vQueueCreateInfos.size();
@@ -355,7 +360,7 @@ namespace aug
 		createInfo.pEnabledFeatures = &deviceFeatures;
 		createInfo.enabledExtensionCount = (uint32_t)m_vDeviceExtensions.size();
 		createInfo.ppEnabledExtensionNames = m_vDeviceExtensions.data();
-		createInfo.pNext = &vk13Features;
+		createInfo.pNext = &resetFeatures;
 
 		//needed for older Vulkan versions compatibility 
 		if (ENABLE_VALIDATION_LAYERS)
