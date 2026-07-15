@@ -200,7 +200,7 @@ namespace aug
 		return h;
 	}
 
-	void aug::Pipeline::RegisterResource(DescriptorSetLayoutHandle h, uint8_t uiBinding, DescriptorTarget* pResource)
+	void aug::Pipeline::RegisterResource(DescriptorSetLayoutHandle h, DescriptorTarget* pResource)
 	{
 		pResource->AllocateDescriptor(h);
 		pResource->UpdateDescriptor(h);
@@ -275,22 +275,26 @@ namespace aug
 		//TODO : depth stencil
 
 		//Blending
-		VkPipelineColorBlendAttachmentState colorBlendAttachment = {};
-		colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-		colorBlendAttachment.blendEnable = VK_FALSE;
-		colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-		colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
-		colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
-		colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-		colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-		colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+		std::vector<VkFormat> vColorFormats = m_Desc._pRenderTarget->GetColorFormats();
+
+		std::vector<VkPipelineColorBlendAttachmentState> vColorBlendAttachment(vColorFormats.size(),
+			{
+				VK_FALSE,
+				VK_BLEND_FACTOR_ONE,
+				VK_BLEND_FACTOR_ZERO,
+				VK_BLEND_OP_ADD,
+				VK_BLEND_FACTOR_ONE,
+				VK_BLEND_FACTOR_ZERO,
+				VK_BLEND_OP_ADD,
+				VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT
+			});		
 
 		VkPipelineColorBlendStateCreateInfo colorBlending = {};
 		colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 		colorBlending.logicOpEnable = VK_FALSE;
 		colorBlending.logicOp = VK_LOGIC_OP_COPY;
-		colorBlending.attachmentCount = 1;
-		colorBlending.pAttachments = &colorBlendAttachment;
+		colorBlending.attachmentCount = vColorBlendAttachment.size();
+		colorBlending.pAttachments = vColorBlendAttachment.data();
 		colorBlending.blendConstants[0] = 0.0f;
 		colorBlending.blendConstants[1] = 0.0f;
 		colorBlending.blendConstants[2] = 0.0f;
@@ -332,7 +336,6 @@ namespace aug
 		//Dynamic rendering (replaces render passes)
 		VkPipelineRenderingCreateInfo renderingInfo = {};
 		renderingInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO_KHR;
-		std::vector<VkFormat> vColorFormats = m_Desc._pRenderTarget->GetColorFormats();
 		renderingInfo.colorAttachmentCount = static_cast<uint32_t>(vColorFormats.size());
 		renderingInfo.pColorAttachmentFormats = vColorFormats.data();
 		renderingInfo.depthAttachmentFormat = m_Desc._pRenderTarget->GetDepthFormat();

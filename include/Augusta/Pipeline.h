@@ -47,7 +47,7 @@ namespace aug
 		void PushConstants(const VkCommandBuffer& commandBuffer, void* pData);
 
 		DescriptorSetLayoutHandle DeclareResourceLayout(const SDescriptorSetDesc &desc);
-		void RegisterResource(DescriptorSetLayoutHandle h, uint8_t uiBinding, DescriptorTarget* pResource);
+		void RegisterResource(DescriptorSetLayoutHandle h, DescriptorTarget* pResource);
 		void UpdateResource(DescriptorSetLayoutHandle h, DescriptorTarget* pResource);
 		void BindResource(const VkCommandBuffer& cb, DescriptorSetLayoutHandle h, uint8_t uiSet, DescriptorTarget* pResource);
 	protected:

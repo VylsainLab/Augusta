@@ -377,7 +377,7 @@ namespace aug
 					//printf("\nDelta %d-%d: %f ms", i - 1, i, static_cast<float>(nbNano) / 1000000.0f);
 				}
 				uint64_t nbNano = vQueries.back() - vQueries[0];
-				printf("\nFrame : %f ms", static_cast<float>(nbNano) / 1000000.0f);
+				//printf("\nFrame : %f ms", static_cast<float>(nbNano) / 1000000.0f);
 			}
 		}
 		prevStartFrameQuery = m_uiStartFrameQuery;

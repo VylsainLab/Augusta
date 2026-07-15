@@ -336,10 +336,13 @@ namespace aug
 		if (iSelected>-1 && psView != nullptr)
 		{
 			STextureDesc desc = psView->GetDesc();
+			float ratio = static_cast<float>(desc._height) / static_cast<float>(desc._width);
+			float texW = static_cast<float>(std::min(desc._width, 1024u));
+			float texH = texW * ratio;
 			ImVec2 size(static_cast<float>(std::min(desc._width, 1024u) + 10), static_cast<float>(std::min(desc._height, 1024u) + 10));
 			ImGui::Begin("Texture Inspector");
-			ImGui::SetWindowSize(size);
-			ImGui::Image(psView->GetImGuiTextureID(), size);
+			ImGui::SetWindowSize(ImVec2(texW+10, texH+10));
+			ImGui::Image(psView->GetImGuiTextureID(), ImVec2(texW,texH));
 			ImGui::End();
 		}
 	}
@@ -378,7 +381,18 @@ namespace aug
 		desc._width = uiWidth;
 		desc._height = uiHeight;
 		desc._levels = 0;// uiLevels; TODO support mipmaps
-		desc._format = VK_FORMAT_BC1_RGBA_UNORM_BLOCK;
+
+		switch(ddsTexture.format())
+		{
+		case gli::FORMAT_RGBA_DXT1_UNORM_BLOCK8:
+			desc._format = VK_FORMAT_BC1_RGBA_UNORM_BLOCK;
+			break;
+		case gli::FORMAT_RGBA_DXT5_UNORM_BLOCK16:
+			desc._format = VK_FORMAT_BC3_UNORM_BLOCK;
+			break;
+		default:
+			throw std::invalid_argument("Unsupported DDS texture format!");
+		}
 		desc._usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 		desc._layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		return Texture::MakeShared(desc, &stagingBuffer);

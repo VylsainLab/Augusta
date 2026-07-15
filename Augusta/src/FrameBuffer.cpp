@@ -47,7 +47,7 @@ namespace aug
 			texDesc._width = desc._uiWidth;
 			texDesc._height = desc._uiHeight;
 			texDesc._format = desc._DepthFormat;
-			texDesc._aspect = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+			texDesc._aspect = VK_IMAGE_ASPECT_DEPTH_BIT;
 			texDesc._filtering = VK_FILTER_LINEAR;
 			texDesc._memoryUsage = VMA_MEMORY_USAGE_GPU_ONLY;
 			texDesc._usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
@@ -58,6 +58,12 @@ namespace aug
 			SAttachment att;
 			att._pAttachmentTexture = TextureFactory::LoadTextureFromMemory(texDesc);
 			vImageViews.push_back(att._pAttachmentTexture->GetImageView());
+
+			texDesc._strName = desc._strName + "_depth_target";
+			texDesc._usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+			texDesc._layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			att._pRenderTargetTexture = TextureFactory::LoadTextureFromMemory(texDesc);
+
 			m_DepthAttachment = att;
 		}
 
@@ -162,5 +168,65 @@ namespace aug
 			att._pAttachmentTexture->TransitionImageToLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, cb);
 			att._pRenderTargetTexture->TransitionImageToLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, cb);
 		}
+
+		//Depth blit
+		m_DepthAttachment->_pAttachmentTexture->TransitionImageToLayout(VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, cb);
+		m_DepthAttachment->_pRenderTargetTexture->TransitionImageToLayout(VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, cb);
+
+		VkImageBlit imgBlit;
+
+		imgBlit.srcSubresource.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+		imgBlit.srcSubresource.mipLevel = 0;
+		imgBlit.srcSubresource.baseArrayLayer = 0;
+		imgBlit.srcSubresource.layerCount = 1;
+
+		imgBlit.srcOffsets[0] = { 0, 0, 0 };
+		imgBlit.srcOffsets[1].x = m_Desc._uiWidth;
+		imgBlit.srcOffsets[1].y = m_Desc._uiHeight;
+		imgBlit.srcOffsets[1].z = 1;
+
+		imgBlit.dstSubresource.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+		imgBlit.dstSubresource.mipLevel = 0;
+		imgBlit.dstSubresource.baseArrayLayer = 0;
+		imgBlit.dstSubresource.layerCount = 1;
+
+		imgBlit.dstOffsets[0] = { 0, 0, 0 };
+		imgBlit.dstOffsets[1].x = m_Desc._uiWidth;
+		imgBlit.dstOffsets[1].y = m_Desc._uiHeight;
+		imgBlit.dstOffsets[1].z = 1;
+
+		vkCmdBlitImage(
+			cb,
+			m_DepthAttachment->_pAttachmentTexture->GetImage(),
+			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+			m_DepthAttachment->_pRenderTargetTexture->GetImage(),
+			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+			1,
+			&imgBlit,
+			VK_FILTER_LINEAR
+		);
+
+		m_DepthAttachment->_pAttachmentTexture->TransitionImageToLayout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, cb);
+		m_DepthAttachment->_pRenderTargetTexture->TransitionImageToLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, cb);
+	}
+
+	void Framebuffer::UpdateDescriptor(DescriptorSetLayoutHandle h)
+	{
+		for (uint32_t i = 0; i < m_vColorAttachments.size(); i++)
+		{
+			VkDescriptorImageInfo imageInfo;
+			imageInfo.imageLayout = VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL;
+			imageInfo.imageView = m_vColorAttachments[i]._pRenderTargetTexture->GetImageView();
+			imageInfo.sampler = m_vColorAttachments[i]._pRenderTargetTexture->GetSampler();
+
+			DescriptorFactory::UpdateDescriptor(m_mDescriptorHandles[h], &imageInfo, i);
+		}
+
+		VkDescriptorImageInfo imageInfo;
+		imageInfo.imageLayout = VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL;
+		imageInfo.imageView = m_DepthAttachment->_pRenderTargetTexture->GetImageView();
+		imageInfo.sampler = m_DepthAttachment->_pRenderTargetTexture->GetSampler();
+
+		DescriptorFactory::UpdateDescriptor(m_mDescriptorHandles[h], &imageInfo, m_vColorAttachments.size());
 	}
 }

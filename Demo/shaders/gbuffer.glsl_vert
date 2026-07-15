@@ -1,12 +1,26 @@
-#version 450 core
+#version 450
+#extension GL_ARB_separate_shader_objects : enable
 
-layout(location=0) in vec2 pos;
+layout(location = 0) in vec3 inPosition;
+layout(location = 1) in vec3 inNormal;
+layout(location = 2) in vec2 inTexcoord;
 
-layout(location = 0) out vec2 uv;
+layout(location = 0) out vec3 fragNormal;
+layout(location = 1) out vec2 fragTexcoord;
 
-void main()
+layout(set=0, binding = 0) uniform UniformBufferObject 
 {
-	gl_Position = vec4(pos,0.,1.);
+    mat4 view;
+    mat4 proj;
+} ubo;
 
-	uv = 0.5*(pos+vec2(1.));
+layout(push_constant) uniform PushConstantData 
+{
+  mat4 model;
+} pcd;
+
+void main() {
+    gl_Position = ubo.proj * ubo.view * pcd.model * vec4(inPosition, 1.0);
+    fragNormal = inNormal;
+	fragTexcoord = inTexcoord;
 }

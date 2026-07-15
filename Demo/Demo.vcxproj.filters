@@ -23,16 +23,16 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\shader.glsl_frag">
-      <Filter>shaders</Filter>
-    </None>
-    <None Include="shaders\shader.glsl_vert">
+    <None Include="shaders\gbuffer.glsl_frag">
       <Filter>shaders</Filter>
     </None>
     <None Include="shaders\gbuffer.glsl_vert">
       <Filter>shaders</Filter>
     </None>
-    <None Include="shaders\gbuffer.glsl_frag">
+    <None Include="shaders\composition.glsl_vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\composition.glsl_frag">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>

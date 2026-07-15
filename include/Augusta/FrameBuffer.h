@@ -18,7 +18,7 @@ namespace aug
 		VkFormat _DepthFormat = VK_FORMAT_UNDEFINED;
 	};	
 
-	class Framebuffer : public IRenderTarget
+	class Framebuffer : public IRenderTarget, public DescriptorTarget
 	{
 	public:
 		Framebuffer(const SFramebufferDesc& desc);
@@ -38,6 +38,10 @@ namespace aug
 
 		static SRenderTargetLayout FRAMEBUFFER_LAYOUT_ATTACHMENT;
 		static SRenderTargetLayout FRAMEBUFFER_LAYOUT_SAMPLING;
+
+		const Texture* GetColorRenderTargetAtIndex(uint8_t uiIndex) { return m_vColorAttachments[uiIndex]._pRenderTargetTexture.get(); }
+
+		void UpdateDescriptor(DescriptorSetLayoutHandle h) override;
 
 	protected:
 		SFramebufferDesc m_Desc;

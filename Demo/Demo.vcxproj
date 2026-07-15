@@ -163,10 +163,10 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\composition.glsl_frag" />
+    <None Include="shaders\composition.glsl_vert" />
     <None Include="shaders\gbuffer.glsl_frag" />
     <None Include="shaders\gbuffer.glsl_vert" />
-    <None Include="shaders\shader.glsl_frag" />
-    <None Include="shaders\shader.glsl_vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

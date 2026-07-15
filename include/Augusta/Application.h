@@ -44,6 +44,8 @@ namespace aug
 
 		void AddRenderPass(SRenderPass& pass){ m_vRenderPasses.push_back(pass);	}
 
+		void WriteTimestamp(const VkCommandBuffer& cb, VkPipelineStageFlagBits stage);
+
 	protected:
 		void ProcessEvents();
 		void BeginRender();
@@ -56,7 +58,7 @@ namespace aug
 
 		void StartFrameTiming() { m_uiStartFrameQuery = m_uiCurrentQuery; }
 		void EndFrameTiming() { m_uiEndFrameQuery = m_uiCurrentQuery == 0 ? NB_QUERIES : m_uiCurrentQuery; }
-		void WriteTimestamp(const VkCommandBuffer& cb, VkPipelineStageFlagBits stage);
+		
 		void GetTimestamps();
 
 		static bool m_bGLFWInitialized;
