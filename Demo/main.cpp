@@ -20,7 +20,7 @@ public:
 			m_AssimpParser(aug::VERTEX_COMPONENT_NORMAL|aug::VERTEX_COMPONENT_TEXCOORD, true, aiProcess_Triangulate|aiProcess_PreTransformVertices)
 	{
 		aug::SCameraDesc desc;
-		desc._speed = 0.1f;
+		desc._speed = 1.0f;
 		desc._sensitivity = 0.1f;
 		desc._position = glm::vec3(0., 0., 1.);
 		desc._aspect = float(width) / float(height);
@@ -131,10 +131,10 @@ private:
 	void Init()
 	{
 		m_pScene = std::make_shared<aug::Scene>();
-		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/KV2/kv2.FBX", "../../Assets/KV2/textures/","dds"); m_Camera.SetSpeed(0.01);
-		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/F18/F18_opaque.FBX", "../../Assets/F18/", "dds"); m_Camera.SetSpeed(0.1);
+		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/KV2/kv2.FBX", "../../Assets/KV2/textures/","dds");
+		m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/F18/F18_opaque.FBX", "../../Assets/F18/", "dds");
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Lighthouse/lighthouse.FBX", "../../Assets/Lighthouse/Textures/", "dds");
-		m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Sponza/untitled.FBX", "../../Assets/Sponza/", "dds");
+		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Sponza/untitled.FBX", "../../Assets/Sponza/", "dds");
 		m_pScene->GetRootNode()->Scale(glm::dvec3(0.01));
 	
 		aug::Shader::SetDirectory("shaders/");

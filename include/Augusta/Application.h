@@ -21,7 +21,7 @@ namespace aug
 	class IGLFWEventObserver
 	{
 	public:
-		virtual void ProcessEvents(GLFWwindow* pWindow) = 0;
+		virtual void ProcessEvents(GLFWwindow* pWindow, float fDeltaT) = 0;
 	};
 
 	struct SRenderPass
@@ -85,6 +85,8 @@ namespace aug
 		bool m_bDisplayDebugImGui = false;
 
 		std::vector<SRenderPass> m_vRenderPasses;
+
+		float m_fDeltaT = 0;
 	};
 }
 

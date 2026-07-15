@@ -70,6 +70,12 @@ namespace aug
 	{
 		while (!m_pWindow->IsClosed())
 		{
+			std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+			static std::chrono::system_clock::time_point last = now;
+			int64_t iNbNanoseconds = std::chrono::duration_cast<std::chrono::nanoseconds>(now - last).count();
+			m_fDeltaT = static_cast<float>(iNbNanoseconds) / 1000000000.0f;			
+			last = now;
+
 			StartFrameTiming();
 
 			ProcessEvents();
@@ -137,7 +143,7 @@ namespace aug
 			m_bDisplayImGuiMenu = !m_bDisplayImGuiMenu;
 
 		for (auto observer : m_vEventObservers)
-			observer->ProcessEvents(m_pWindow->GetGLFWWindow());
+			observer->ProcessEvents(m_pWindow->GetGLFWWindow(), m_fDeltaT);
 	}
 
 	void Application::BeginRender()

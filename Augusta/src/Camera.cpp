@@ -25,7 +25,7 @@ namespace aug
 		ComputeProjectionMatrix();
 	}
 
-	void Camera::ProcessEvents(GLFWwindow* window)
+	void Camera::ProcessEvents(GLFWwindow* window, float fDeltaT)
 	{
 		double x, y, deltax, deltay;
 		glfwGetCursorPos(window, &x, &y);
@@ -89,7 +89,7 @@ namespace aug
 		if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 			m_ddegRoll -= 1.;
 
-		ComputeMovement();
+		ComputeMovement(fDeltaT);
 	}
 
 	void Camera::ComputeViewMatrix()
@@ -114,12 +114,12 @@ namespace aug
 		m_ProjectionMatrix[1][1] *= -1; //GLM was designed for OpenGL and Y clip coordinates is reversed
 	}
 
-	void Camera::ComputeMovement()
+	void Camera::ComputeMovement(float fDeltaT)
 	{
 		glm::dvec3 vDir = glm::dvec3(m_OrientationMatrix * glm::dvec4(m_Direction, 0.));
 		glm::dvec3 vUp = glm::dvec3(m_OrientationMatrix * glm::dvec4(m_Up, 0.));
 		glm::dvec3 vRight = glm::cross(vDir, vUp);
-		m_Movement = static_cast<double>(m_fSpeed) * 
+		m_Movement = static_cast<double>(m_fSpeed) * fDeltaT *
 			(static_cast<double>(m_Input.mouseSpeed + m_Input.moveForwardFlag) * vDir 
 				+ static_cast<double>(m_Input.moveUpFlag) * vUp 
 				+ static_cast<double>(m_Input.moveRightFlag) * vRight);

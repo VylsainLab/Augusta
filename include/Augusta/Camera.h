@@ -30,7 +30,7 @@ namespace aug
 		Camera(SCameraDesc desc);
 		
 		void ComputeCamera();
-		virtual void ProcessEvents(GLFWwindow* window) override;
+		virtual void ProcessEvents(GLFWwindow* window, float fDeltaT) override;
 
 		void SetSpeed(float s) { m_fSpeed = s; }	
 
@@ -42,7 +42,7 @@ namespace aug
 		virtual void ComputeViewMatrix();
 		virtual void ComputeProjectionMatrix();
 
-		virtual void ComputeMovement();
+		virtual void ComputeMovement(float fDeltaT);
 		virtual void ApplyMovement();
 
 		glm::dvec3 m_Position = glm::dvec3(0., 0., 0.);
