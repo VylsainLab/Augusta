@@ -10,4 +10,15 @@ inline std::string GetRootDirectory()
     return cwd.parent_path().parent_path().string() + "\\";
 }
 
+inline std::string ReplaceString(const std::string& str, const char* szSearch, const char* szReplace)
+{
+	std::string ret = str;
+	std::string::size_type pos = 0u;
+	while ((pos = ret.find(szSearch, pos)) != std::string::npos) {
+		ret.replace(pos, strlen(szSearch), szReplace);
+		pos += strlen(szReplace);
+	}
+	return ret;
+}
+
 #endif

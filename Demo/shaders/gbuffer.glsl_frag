@@ -20,13 +20,15 @@ void main()
     vec3 normals = texture(samplerNormal, fragTexcoord).rgb;
 	//vec3 ao = texture(samplerAO, fragTexcoord).rgb;
 	vec3 roughness = texture(samplerRoughness, fragTexcoord).rgb;
-	//vec3 metalness = texture(samplerMetalness, fragTexcoord).rgb;
-	//vec3 emissive = texture(samplerEmissive, fragTexcoord).rgb;
+	vec3 metalness = texture(samplerMetalness, fragTexcoord).rgb;
+	vec3 emissive = texture(samplerEmissive, fragTexcoord).rgb;
 
     outAlbedo.rgb = albedo;
 	outAlbedo.a = 1.0;
     outNormals.rgb = normals;
 	outNormals.a = 1.0;
 	outRoughMetalAO.r = roughness.r;
+	outRoughMetalAO.g = metalness.r;
+	//outRoughMetalAO.b = ao.r;
 	outRoughMetalAO.a = 1.0;
 }

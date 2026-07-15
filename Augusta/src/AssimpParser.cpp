@@ -1,4 +1,5 @@
 #include <Augusta/AssimpParser.h>
+#include <Augusta/Utils.h>
 #include <map>
 #include <iostream>
 
@@ -122,18 +123,15 @@ namespace aug
 					pMat->m_MaterialUBO.m_fRoughness = factor;*/
 
 				//TODO normalize naming with suffix for each type
-				if(pAiMat->GetTexture(aiTextureType_DIFFUSE, 0, &str)== aiReturn_SUCCESS)
-					pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_ALBEDO] = TextureFactory::LoadTextureFromFile(str.C_Str());
-				if (pAiMat->GetTexture(aiTextureType_NORMALS, 0, &str) == aiReturn_SUCCESS)
-					pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_NORMAL] = TextureFactory::LoadTextureFromFile(str.C_Str());
-				if (pAiMat->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &str) == aiReturn_SUCCESS)
-					pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_AO] = TextureFactory::LoadTextureFromFile(str.C_Str());
-				if (pAiMat->GetTexture(aiTextureType_SHININESS, 0, &str) == aiReturn_SUCCESS)
-					pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_ROUGHNESS] = TextureFactory::LoadTextureFromFile(str.C_Str());
-				if (pAiMat->GetTexture(aiTextureType_METALNESS, 0, &str) == aiReturn_SUCCESS)
-					pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_METALNESS] = TextureFactory::LoadTextureFromFile(str.C_Str());
-				if (pAiMat->GetTexture(aiTextureType_EMISSIVE, 0, &str) == aiReturn_SUCCESS)
-					pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_EMISSVE] = TextureFactory::LoadTextureFromFile(str.C_Str());
+
+				pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_ALBEDO] = LoadTexture(pAiMat, aiTextureType_DIFFUSE);
+				std::string strBaseName = pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_ALBEDO]->GetDesc()._strName;
+				
+				pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_NORMAL] = LoadTexture(pAiMat, aiTextureType_NORMALS, strBaseName);				
+				pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_AO] = LoadTexture(pAiMat, aiTextureType_AMBIENT_OCCLUSION, strBaseName);
+				pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_ROUGHNESS] = LoadTexture(pAiMat, aiTextureType_SHININESS, strBaseName);
+				pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_METALNESS] = LoadTexture(pAiMat, aiTextureType_METALNESS, strBaseName);
+				pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_EMISSVE] = LoadTexture(pAiMat, aiTextureType_EMISSIVE, strBaseName);
 			}
 		}
 
@@ -230,5 +228,47 @@ namespace aug
 		m_pAiScene = NULL;
 
 		return true;
+	}
+
+	std::shared_ptr<Texture> AssimpParser::LoadTexture(const aiMaterial* pAiMat, const aiTextureType& type, const std::string& baseName)
+	{
+		std::string strLookFor;
+		ETextureChannel eChannel;
+		switch (type)
+		{
+		case aiTextureType_DIFFUSE:
+			eChannel = TEXTURE_CHANNEL_ALBEDO;
+			break;
+		case aiTextureType_NORMALS:
+			eChannel = TEXTURE_CHANNEL_NORMAL;
+			strLookFor = "normal";
+			break;
+		case aiTextureType_AMBIENT_OCCLUSION:
+			eChannel = TEXTURE_CHANNEL_AO;
+			strLookFor = "ao";
+			break;
+		case aiTextureType_SHININESS:
+			eChannel = TEXTURE_CHANNEL_ROUGHNESS;
+			strLookFor = "roughness";
+			break;
+		case aiTextureType_METALNESS:
+			eChannel = TEXTURE_CHANNEL_METALNESS;
+			strLookFor = "metalness";
+			break;
+		case aiTextureType_EMISSIVE:
+			eChannel = TEXTURE_CHANNEL_EMISSVE;
+			strLookFor = "emissive";
+			break;
+		}
+		aiString str;
+		std::string strPath;
+		if (pAiMat->GetTexture(type, 0, &str) == aiReturn_SUCCESS)
+			strPath = str.C_Str();
+		else if(!baseName.empty() && baseName.find("albedo")!=std::string::npos)
+		{
+			strPath = ReplaceString(baseName, "albedo", strLookFor.c_str());
+		}
+		
+		return TextureFactory::LoadTextureFromFile(strPath);
 	}
 }
