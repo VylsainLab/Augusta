@@ -277,6 +277,8 @@ namespace aug
 		}
 
 		std::string strRealPath = FindTexture(strDirPath,strFilename);
+		if (strRealPath.empty())
+			return nullptr;
 
 		std::shared_ptr<Texture> pTexture = nullptr;
 		if (strRealPath.find(".dds") != std::string::npos)

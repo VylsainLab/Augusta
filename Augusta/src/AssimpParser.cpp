@@ -101,37 +101,43 @@ namespace aug
 					pMat = pTarget->GetMaterialByName("Default");
 
 				/*if (aiGetMaterialColor(pAiMat, AI_MATKEY_COLOR_AMBIENT, &color) == AI_SUCCESS)
-					pMat->m_MaterialUBO.m_AmbientColor = glm::vec3(color.r, color.g, color.b);
+					pMat->m_MaterialUBO.m_AmbientColor = glm::vec3(color.r, color.g, color.b);*/
 				if (aiGetMaterialColor(pAiMat, AI_MATKEY_COLOR_DIFFUSE, &color) == AI_SUCCESS)
 				{
-					pMat->m_MaterialUBO.m_DiffuseColor = glm::vec3(color.r, color.g, color.b);
-					pMat->m_MaterialUBO.m_fTransparency = color.a;
+					//pMat->m_MaterialUBO.m_DiffuseColor = glm::vec3(color.r, color.g, color.b);
+					pMat->m_Desc._fOpacity = color.a;
 				}
-				if (aiGetMaterialColor(pAiMat, AI_MATKEY_COLOR_SPECULAR, &color) == AI_SUCCESS)
+				/*if (aiGetMaterialColor(pAiMat, AI_MATKEY_COLOR_SPECULAR, &color) == AI_SUCCESS)
 					pMat->m_MaterialUBO.m_SpecularColor = glm::vec3(color.r, color.g, color.b);
 				if (aiGetMaterialFloat(pAiMat, AI_MATKEY_SHININESS, &factor) == AI_SUCCESS)
 					pMat->m_MaterialUBO.m_fShininess = factor;
 				if (aiGetMaterialFloat(pAiMat, AI_MATKEY_SHININESS_STRENGTH, &factor) == AI_SUCCESS)
-					pMat->m_MaterialUBO.m_fShininessStrength = factor;
+					pMat->m_MaterialUBO.m_fShininessStrength = factor;*/
 				if (aiGetMaterialFloat(pAiMat, AI_MATKEY_OPACITY, &factor) == AI_SUCCESS)
-					pMat->m_MaterialUBO.m_fTransparency = factor;
+					pMat->m_Desc._fOpacity = factor;
 
-				if (aiGetMaterialFloat(pAiMat, AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_METALLIC_FACTOR, &factor) == AI_SUCCESS)
-					pMat->m_MaterialUBO.m_fMetalness = factor;
+				/*if (aiGetMaterialFloat(pAiMat, AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_METALLIC_FACTOR, &factor) == AI_SUCCESS)
+					pMat->m_Desc._fMetalness = factor;
 
 				if (aiGetMaterialFloat(pAiMat, AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_ROUGHNESS_FACTOR, &factor) == AI_SUCCESS)
 					pMat->m_MaterialUBO.m_fRoughness = factor;*/
 
 				//TODO normalize naming with suffix for each type
 
-				pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_ALBEDO] = LoadTexture(pAiMat, aiTextureType_DIFFUSE);
+				if(pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_ALBEDO] = LoadTexture(pAiMat, aiTextureType_DIFFUSE))
+					pMat->m_Desc._iTexMask |= TEXTURE_CHANNEL_ALBEDO_BIT;
 				std::string strBaseName = pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_ALBEDO]->GetDesc()._strName;
 				
-				pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_NORMAL] = LoadTexture(pAiMat, aiTextureType_NORMALS, strBaseName);				
-				pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_AO] = LoadTexture(pAiMat, aiTextureType_AMBIENT_OCCLUSION, strBaseName);
-				pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_ROUGHNESS] = LoadTexture(pAiMat, aiTextureType_SHININESS, strBaseName);
-				pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_METALNESS] = LoadTexture(pAiMat, aiTextureType_METALNESS, strBaseName);
-				pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_EMISSVE] = LoadTexture(pAiMat, aiTextureType_EMISSIVE, strBaseName);
+				if (pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_NORMAL] = LoadTexture(pAiMat, aiTextureType_NORMALS, strBaseName))
+					pMat->m_Desc._iTexMask |= TEXTURE_CHANNEL_NORMAL_BIT;
+				if (pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_AO] = LoadTexture(pAiMat, aiTextureType_AMBIENT_OCCLUSION, strBaseName))
+					pMat->m_Desc._iTexMask |= TEXTURE_CHANNEL_AO_BIT;
+				if (pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_ROUGHNESS] = LoadTexture(pAiMat, aiTextureType_SHININESS, strBaseName))
+					pMat->m_Desc._iTexMask |= TEXTURE_CHANNEL_ROUGHNESS_BIT;
+				if (pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_METALNESS] = LoadTexture(pAiMat, aiTextureType_METALNESS, strBaseName))
+					pMat->m_Desc._iTexMask |= TEXTURE_CHANNEL_METALNESS_BIT;
+				if (pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_EMISSVE] = LoadTexture(pAiMat, aiTextureType_EMISSIVE, strBaseName))
+					pMat->m_Desc._iTexMask |= TEXTURE_CHANNEL_EMISSIVE_BIT;
 			}
 		}
 

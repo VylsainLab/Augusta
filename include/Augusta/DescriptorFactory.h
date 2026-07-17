@@ -48,7 +48,7 @@ namespace aug
 		static DescriptorSetLayoutHandle AllocateDescriptorSetLayout(const SDescriptorSetDesc& desc);
 		static DescriptorSetHandle AllocateDescriptor(DescriptorSetLayoutHandle h);
 		static void UpdateDescriptors(DescriptorSetLayoutHandle h, uint8_t uiCount, DescriptorSetHandle* pHandles, Buffer** pBuffers);
-		static void UpdateDescriptor(DescriptorSetHandle h, VkDescriptorBufferInfo* info);
+		static void UpdateDescriptor(DescriptorSetHandle h, VkDescriptorBufferInfo* info, uint8_t uiBinding=0);
 		static void UpdateDescriptor(DescriptorSetHandle h, VkDescriptorImageInfo* info, uint8_t uiBinding=0);
 
 		static void DestroyDescriptorSetLayout(DescriptorSetLayoutHandle h);

@@ -98,12 +98,12 @@ namespace aug
 		return sh;
 	}
 	
-	void DescriptorFactory::UpdateDescriptor(DescriptorSetHandle h, VkDescriptorBufferInfo* info)
+	void DescriptorFactory::UpdateDescriptor(DescriptorSetHandle h, VkDescriptorBufferInfo* info, uint8_t uiBinding)
 	{
 		VkWriteDescriptorSet descriptorWrite{};
 		descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		descriptorWrite.dstSet = m_vSets[h];
-		descriptorWrite.dstBinding = 0;
+		descriptorWrite.dstBinding = uiBinding;
 		descriptorWrite.dstArrayElement = 0;
 		descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 		descriptorWrite.descriptorCount = 1;
