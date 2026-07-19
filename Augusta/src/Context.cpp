@@ -18,7 +18,7 @@ namespace aug
 	VkQueue Context::m_VkGraphicsQueue = VK_NULL_HANDLE;
 	VkQueue Context::m_VkPresentQueue = VK_NULL_HANDLE;
 	VkCommandPool Context::m_VkCommandPool = VK_NULL_HANDLE;
-	std::vector<const char*> Context::m_vDeviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+	std::vector<const char*> Context::m_vDeviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_KHR_SHADER_NON_SEMANTIC_INFO_EXTENSION_NAME };
 	QueueFamilyIndices Context::m_QueueFamilies = QueueFamilyIndices();
 
 	void PrintExtensions()
@@ -52,7 +52,12 @@ namespace aug
 		const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
 		void* pUserData)
 	{
-		std::cerr << "\nValidation layer: " << pCallbackData->pMessage << std::endl;
+		//keep only shader debug info typed messages
+		if ((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) != 0 && pCallbackData->messageIdNumber != 0x4fe1fef9)
+			return VK_FALSE;
+
+		if((messageSeverity&VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT)==0)
+			std::cerr << "\nValidation layer: " << pCallbackData->pMessage << std::endl;
 
 		return VK_FALSE;
 	}
@@ -61,7 +66,7 @@ namespace aug
 	{
 		createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-		createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+		createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT;
 		createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
 		createInfo.pfnUserCallback = DebugCallback;
 	}
@@ -162,11 +167,19 @@ namespace aug
 		createInfo.ppEnabledExtensionNames = extensions.data();
 		if (ENABLE_VALIDATION_LAYERS)
 		{
+			//Enable shader printf
+			VkValidationFeatureEnableEXT validationFeatureEnable = VK_VALIDATION_FEATURE_ENABLE_DEBUG_PRINTF_EXT;
+			VkValidationFeaturesEXT validationFeature = {};
+			validationFeature.sType = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT;
+			validationFeature.enabledValidationFeatureCount = 1;
+			validationFeature.pEnabledValidationFeatures = &validationFeatureEnable;
+			validationFeature.pNext = &debugCreateInfo;
+
 			createInfo.enabledLayerCount = (uint32_t)m_vValidationLayers.size();
 			createInfo.ppEnabledLayerNames = m_vValidationLayers.data();
 
 			PopulateDebugMessengerCreateInfo(debugCreateInfo);
-			createInfo.pNext = &debugCreateInfo;
+			createInfo.pNext = &validationFeature;
 		}
 		else
 		{
@@ -340,6 +353,7 @@ namespace aug
 
 		VkPhysicalDeviceFeatures deviceFeatures = {};
 		deviceFeatures.samplerAnisotropy = VK_TRUE;
+		deviceFeatures.shaderInt64 = VK_TRUE;
 
 		VkPhysicalDeviceVulkan13Features vk13Features = {};
 		vk13Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES;

@@ -82,6 +82,7 @@ namespace aug
 
 		bool m_bDisplayImGuiMenu = true;
 		bool m_bDisplayDebugTextures = false;
+		bool m_bDisplayDebugMaterials = false;
 		bool m_bDisplayDebugImGui = false;
 
 		std::vector<SRenderPass> m_vRenderPasses;

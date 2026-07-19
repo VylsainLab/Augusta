@@ -47,7 +47,7 @@ namespace aug
 		std::shared_ptr<Mesh> CreateMesh(SMeshDesc desc, std::shared_ptr<Node> pTarget = nullptr);
 		void AddExistingMesh(std::shared_ptr<Mesh> pMesh, std::shared_ptr<Node> pTarget = nullptr);
 
-		std::shared_ptr<Material> GetMaterialByName(const char* szName, bool* pbAlreadyExists = NULL);
+		//std::shared_ptr<Material> GetMaterialByName(const char* szName, bool* pbAlreadyExists = NULL);
 
 		void SetRootTransform(const glm::dmat4& mat);
 
@@ -56,7 +56,7 @@ namespace aug
 	private:
 		std::shared_ptr<Node> m_pRootNode = nullptr;
 		std::vector< std::shared_ptr<Mesh> > m_vMeshes;
-		std::vector< std::shared_ptr<Material> > m_vMaterials;
+		//std::vector< std::shared_ptr<Material> > m_vMaterials;
 
 		friend class AssimpParser;
 	};

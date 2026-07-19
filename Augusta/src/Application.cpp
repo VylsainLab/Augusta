@@ -38,6 +38,8 @@ namespace aug
 		CreateSwapChainCommandBuffers();
 		CreateSyncObjects();
 		CreateQueryPool();
+
+		aug::MaterialFactory::Init();
 	}
 
 	Application::~Application()
@@ -106,6 +108,9 @@ namespace aug
 					if (ImGui::MenuItem("Textures"))
 						m_bDisplayDebugTextures = true;
 
+					if (ImGui::MenuItem("Materials"))
+						m_bDisplayDebugMaterials = true;
+
 					if (ImGui::MenuItem("ImGui demo"))
 						m_bDisplayDebugImGui = true;
 
@@ -117,7 +122,14 @@ namespace aug
 			if (m_bDisplayDebugTextures)
 			{
 				ImGui::Begin("Textures",&m_bDisplayDebugTextures);
-				TextureFactory::ImGuiDrawTextureDebug();
+				TextureFactory::ImGuiDrawDebug();
+				ImGui::End();
+			}
+
+			if (m_bDisplayDebugMaterials)
+			{
+				ImGui::Begin("Materials", &m_bDisplayDebugMaterials);
+				MaterialFactory::ImGuiDrawDebug();
 				ImGui::End();
 			}
 
@@ -360,6 +372,8 @@ namespace aug
 
 	void Application::WriteTimestamp(const VkCommandBuffer& cb, VkPipelineStageFlagBits stage)
 	{
+		vkResetQueryPool(Context::m_VkDevice, m_TimingQueryPool, m_uiCurrentQuery, 1);
+		//printf("\nWrite query %d", m_uiCurrentQuery);
 		vkCmdWriteTimestamp(cb, stage, m_TimingQueryPool, m_uiCurrentQuery);
 		m_uiCurrentQuery = (m_uiCurrentQuery + 1) % NB_QUERIES;
 	}
@@ -373,7 +387,9 @@ namespace aug
 			std::vector<uint64_t> vQueries;
 			vQueries.resize(queryCount);
 			VkResult result = vkGetQueryPoolResults(Context::m_VkDevice, m_TimingQueryPool, prevStartFrameQuery, queryCount, queryCount * sizeof(uint64_t), vQueries.data(), sizeof(uint64_t), VK_QUERY_RESULT_64_BIT);
-			vkResetQueryPool(Context::m_VkDevice, m_TimingQueryPool, prevStartFrameQuery, queryCount);
+			//vkResetQueryPool(Context::m_VkDevice, m_TimingQueryPool, prevStartFrameQuery, queryCount);
+
+			//printf("\nReset query %d (%d)", prevStartFrameQuery, queryCount);
 
 			if (result == VK_SUCCESS)
 			{

@@ -43,6 +43,8 @@ namespace aug
 		const STextureDesc& GetDesc() { return m_TextureDesc; }
 		const VkImageLayout& GetCurrentLayout() { return m_CurrentImageLayout; }
 
+		void ImGuiDrawDebug();
+
 	protected:
 		friend class TextureFactory;
 
@@ -77,7 +79,7 @@ namespace aug
 		static std::shared_ptr<Texture> LoadTextureFromMemory(STextureDesc& desc, Buffer* pBuffer = nullptr);
 		static std::shared_ptr<Texture> LoadTextureFromFile(const std::string& strPath);
 
-		static void ImGuiDrawTextureDebug();
+		static void ImGuiDrawDebug();
 
 	protected:
 		static std::string FindTexture(const std::string& strDirPath, const std::string& strFilename);

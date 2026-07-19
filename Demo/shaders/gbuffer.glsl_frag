@@ -1,4 +1,6 @@
 #version 450
+#extension GL_EXT_debug_printf : enable
+#extension GL_ARB_gpu_shader_int64 : enable
 
 //INPUTS
 layout(location = 0) in vec3 fragNormal;
@@ -19,10 +21,11 @@ layout(location = 2) out vec4 outRoughMetalAO;
 
 layout(set=1, binding = 0) uniform UniformBufferObject 
 {
+	uint64_t _uiAddress;
     float _fOpacity;
 	float _fRoughness;
 	float _fMetalness;
-	int _iTexMask;
+	uint _iTexMask;
 } materialUBO;
 
 layout(set=1, binding = 1) uniform sampler2D samplerAlbedo;
@@ -34,6 +37,8 @@ layout(set=1, binding = 6) uniform sampler2D samplerEmissive;
 
 void main() 
 {
+	//debugPrintfEXT("Material mask: %lx %d %d", materialUBO._uiAddress, materialUBO._iTexMask, bNormal);
+
 	vec3 debugColor = vec3(1.0,0.0,1.0);
 
     vec3 albedo = (materialUBO._iTexMask & TEXTURE_CHANNEL_ALBEDO_BIT)==TEXTURE_CHANNEL_ALBEDO_BIT ? texture(samplerAlbedo, fragTexcoord).rgb : debugColor;

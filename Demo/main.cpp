@@ -280,7 +280,7 @@ private:
 
 	virtual void MainRenderPass(const VkCommandBuffer& cb) override
 	{
-		m_pGBufferPipeline->BindResource(cb, m_hGBufferSet, 0, m_aGBufferFBs[m_uiCurrentFrame].get());
+		m_pMainPipeline->BindResource(cb, m_hGBufferSet, 0, m_aGBufferFBs[m_uiCurrentFrame].get());
 
 		//Draw screen triangle
 		VkBuffer vertexBuffers[] = { m_pScreenTriangleVB->GetBufferHandle() };

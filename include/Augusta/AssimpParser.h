@@ -26,7 +26,7 @@ namespace aug
 
 	protected:
 
-		std::shared_ptr<Texture> LoadTexture(const aiMaterial* pAiMat, const aiTextureType& type, const std::string& baseName="");
+		bool LoadTexture(std::shared_ptr<Texture> &pTex, const aiMaterial* pAiMat, const aiTextureType& type, const std::string& baseName="");
 
 		const aiScene* m_pAiScene = NULL;
 		std::string m_strFilePath;

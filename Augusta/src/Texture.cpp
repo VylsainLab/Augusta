@@ -244,6 +244,17 @@ namespace aug
 		return (ImTextureID)m_ImGuiDescriptorSet;
 	}
 
+	void Texture::ImGuiDrawDebug()
+	{
+		float ratio = static_cast<float>(m_TextureDesc._height) / static_cast<float>(m_TextureDesc._width);
+		float texW = static_cast<float>(std::min(m_TextureDesc._width, 1024u));
+		float texH = texW * ratio;
+		ImVec2 size(static_cast<float>(std::min(m_TextureDesc._width, 1024u) + 10), static_cast<float>(std::min(m_TextureDesc._height, 1024u) + 10));
+		ImGui::Begin("Texture Inspector");
+		ImGui::SetWindowSize(ImVec2(std::max(texW, 128.f) + 10, std::max(texH, 128.f) + 10));
+		ImGui::Image(GetImGuiTextureID(), ImVec2(texW, texH));
+		ImGui::End();
+	}
 
 	std::vector<std::string> TextureFactory::m_vPaths;
 	std::string TextureFactory::m_sForcedExtension;
@@ -292,7 +303,7 @@ namespace aug
 		return pTexture;
 	}
 
-	void TextureFactory::ImGuiDrawTextureDebug()
+	void TextureFactory::ImGuiDrawDebug()
 	{
 		static int32_t iSelected = -1;
 		std::weak_ptr<Texture> pPreview,pView;
@@ -336,17 +347,7 @@ namespace aug
 		}
 
 		if (iSelected>-1 && psView != nullptr)
-		{
-			STextureDesc desc = psView->GetDesc();
-			float ratio = static_cast<float>(desc._height) / static_cast<float>(desc._width);
-			float texW = static_cast<float>(std::min(desc._width, 1024u));
-			float texH = texW * ratio;
-			ImVec2 size(static_cast<float>(std::min(desc._width, 1024u) + 10), static_cast<float>(std::min(desc._height, 1024u) + 10));
-			ImGui::Begin("Texture Inspector");
-			ImGui::SetWindowSize(ImVec2(texW+10, texH+10));
-			ImGui::Image(psView->GetImGuiTextureID(), ImVec2(texW,texH));
-			ImGui::End();
-		}
+			psView->ImGuiDrawDebug();
 	}
 
 	std::string TextureFactory::FindTexture(const std::string& strDirPath, const std::string& strFilename)

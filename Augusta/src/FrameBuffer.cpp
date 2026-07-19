@@ -48,7 +48,7 @@ namespace aug
 			texDesc._height = desc._uiHeight;
 			texDesc._format = desc._DepthFormat;
 			texDesc._aspect = VK_IMAGE_ASPECT_DEPTH_BIT;
-			texDesc._filtering = VK_FILTER_LINEAR;
+			texDesc._filtering = VK_FILTER_NEAREST;
 			texDesc._memoryUsage = VMA_MEMORY_USAGE_GPU_ONLY;
 			texDesc._usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
 			texDesc._tiling = VK_IMAGE_TILING_OPTIMAL;
@@ -162,7 +162,7 @@ namespace aug
 				VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 				1,
 				&imgBlit,
-				VK_FILTER_LINEAR
+				att._pAttachmentTexture->GetDesc()._filtering
 			);
 
 			att._pAttachmentTexture->TransitionImageToLayout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, cb);
@@ -203,7 +203,7 @@ namespace aug
 			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 			1,
 			&imgBlit,
-			VK_FILTER_LINEAR
+			m_DepthAttachment->_pAttachmentTexture->GetDesc()._filtering
 		);
 
 		m_DepthAttachment->_pAttachmentTexture->TransitionImageToLayout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, cb);

@@ -27,29 +27,51 @@ namespace aug
 	
 	struct SMaterialDesc
 	{
+		uint64_t _uAddress = 0;
 		float _fOpacity;
 		float _fRoughness=0.5;
 		float _fMetalness=0.;
-		int32_t _iTexMask;
+		uint32_t _iTexMask=0;
 	};
 
 	class Material : public DescriptorTarget
 	{
 	public:
-		Material();
-		~Material();
+		friend class MaterialFactory;
+
+		static std::shared_ptr<Material> MakeShared();
 
 		void UpdateDescriptor(DescriptorSetLayoutHandle h) override;
 
 		void BuildUniformBuffer();
 
+		void ImGuiDrawDebug();
+
 		std::string m_sName = "";
-		uint32_t m_uiIndex = 0;
+		//uint32_t m_uiIndex = 0;
 		std::shared_ptr<Texture> m_aTextures[ETextureChannel::TEXTURE_CHANNEL_COUNT] = { nullptr };
 		SMaterialDesc m_Desc;
 		std::unique_ptr<Buffer> m_pMaterialUniformBuffer;
-	private:		
+
+	protected:		
+		Material();
+		~Material();
 		
+	};
+
+	class MaterialFactory
+	{
+	public:
+		static void Init();
+
+		static std::shared_ptr<Material> CreateMaterial(const std::string& strName);
+		static std::shared_ptr<Material> GetMaterialByName(const std::string& strName);
+
+		static void ImGuiDrawDebug();
+
+	protected:
+		static std::map<std::string, std::shared_ptr<Material>> m_mMaterials; //use weak pointer instead
+		static std::unique_ptr<Buffer> m_pDefaultTextureBuffer;
 	};
 }
 
