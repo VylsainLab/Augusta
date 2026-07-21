@@ -4,7 +4,7 @@
 namespace aug
 {
 	bool Debug::m_bShowConsole;
-	std::queue<std::string> Debug::m_qLog;
+	std::queue<LogEntry> Debug::m_qLog;
 	std::unordered_map<std::string, std::vector<DebugEntry>> Debug::m_mDebugees;
 
 	void Debug::RegisterDebugee(const char* szMenu, const char* szName, const std::function<void(void)> drawFunc)
@@ -45,6 +45,9 @@ namespace aug
 
 	void Debug::Log(const ELogType& type, const char* szEntry)
 	{
+		m_qLog.push({ type,szEntry });
+		if (m_qLog.size() == LOG_DEPTH)
+			m_qLog.pop();
 	}
 
 	void Debug::DrawConsole()

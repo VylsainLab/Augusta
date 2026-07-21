@@ -22,6 +22,7 @@ namespace aug
 	#define DEBUG_ENTRY_FUNCTION	1
 	#define DEBUG_ENTRY_ENABLED		2
 	typedef std::tuple<std::string, std::function<void(void)>, bool> DebugEntry;
+	typedef std::pair<ELogType,std::string> LogEntry;
 	class Debug
 	{
 	public:
@@ -35,7 +36,7 @@ namespace aug
 
 	protected:
 		static bool m_bShowConsole;
-		static std::queue<std::string> m_qLog;		
+		static std::queue<LogEntry> m_qLog;
 		static std::unordered_map<std::string, std::vector<DebugEntry>> m_mDebugees;
 	};
 }
