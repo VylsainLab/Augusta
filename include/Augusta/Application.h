@@ -81,8 +81,7 @@ namespace aug
 		std::vector<IGLFWEventObserver*> m_vEventObservers;
 
 		bool m_bDisplayImGuiMenu = true;
-		bool m_bDisplayDebugTextures = false;
-		bool m_bDisplayDebugMaterials = false;
+		bool m_bDisplayConsole = false;
 		bool m_bDisplayDebugImGui = false;
 
 		std::vector<SRenderPass> m_vRenderPasses;

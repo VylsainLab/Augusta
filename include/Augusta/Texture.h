@@ -2,6 +2,7 @@
 #define AUG_TEXTURE_H
 
 #include <Augusta/Buffer.h>
+#include <Augusta/Debug.h>
 #include <vulkan/vulkan.h>
 #include <string>
 #include <vma/vk_mem_alloc.h>
@@ -79,7 +80,7 @@ namespace aug
 		static std::shared_ptr<Texture> LoadTextureFromMemory(STextureDesc& desc, Buffer* pBuffer = nullptr);
 		static std::shared_ptr<Texture> LoadTextureFromFile(const std::string& strPath);
 
-		static void ImGuiDrawDebug();
+		static void DrawDebug();
 
 	protected:
 		static std::string FindTexture(const std::string& strDirPath, const std::string& strFilename);

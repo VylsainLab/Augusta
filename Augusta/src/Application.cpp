@@ -40,6 +40,9 @@ namespace aug
 		CreateQueryPool();
 
 		aug::MaterialFactory::Init();
+
+		Debug::RegisterDebugee("Debug", "Materials", std::bind(&MaterialFactory::DrawDebug));
+		Debug::RegisterDebugee("Debug", "Textures", std::bind(&TextureFactory::DrawDebug));
 	}
 
 	Application::~Application()
@@ -101,7 +104,8 @@ namespace aug
 	{
 		if (m_bDisplayImGuiMenu)
 		{
-			if (ImGui::BeginMainMenuBar())
+			Debug::DrawDebugees();
+			/*if (ImGui::BeginMainMenuBar())
 			{
 				if (ImGui::BeginMenu("Debug"))
 				{
@@ -122,16 +126,18 @@ namespace aug
 			if (m_bDisplayDebugTextures)
 			{
 				ImGui::Begin("Textures",&m_bDisplayDebugTextures);
-				TextureFactory::ImGuiDrawDebug();
+				TextureFactory::DrawDebug();
 				ImGui::End();
 			}
 
 			if (m_bDisplayDebugMaterials)
 			{
 				ImGui::Begin("Materials", &m_bDisplayDebugMaterials);
-				MaterialFactory::ImGuiDrawDebug();
+				MaterialFactory::DrawDebug();
 				ImGui::End();
-			}
+			}*/
+			if (m_bDisplayConsole)
+				Debug::DrawConsole();
 
 			if(m_bDisplayDebugImGui)
 				ImGui::ShowDemoWindow(&m_bDisplayDebugImGui);
@@ -153,6 +159,9 @@ namespace aug
 
 		if (glfwGetKey(m_pWindow->GetGLFWWindow(), GLFW_KEY_F1) == GLFW_PRESS)
 			m_bDisplayImGuiMenu = !m_bDisplayImGuiMenu;
+
+		if (glfwGetKey(m_pWindow->GetGLFWWindow(), GLFW_KEY_GRAVE_ACCENT) == GLFW_PRESS)
+			m_bDisplayConsole = !m_bDisplayConsole;
 
 		for (auto observer : m_vEventObservers)
 			observer->ProcessEvents(m_pWindow->GetGLFWWindow(), m_fDeltaT);
@@ -373,7 +382,6 @@ namespace aug
 	void Application::WriteTimestamp(const VkCommandBuffer& cb, VkPipelineStageFlagBits stage)
 	{
 		vkResetQueryPool(Context::m_VkDevice, m_TimingQueryPool, m_uiCurrentQuery, 1);
-		//printf("\nWrite query %d", m_uiCurrentQuery);
 		vkCmdWriteTimestamp(cb, stage, m_TimingQueryPool, m_uiCurrentQuery);
 		m_uiCurrentQuery = (m_uiCurrentQuery + 1) % NB_QUERIES;
 	}
@@ -387,9 +395,6 @@ namespace aug
 			std::vector<uint64_t> vQueries;
 			vQueries.resize(queryCount);
 			VkResult result = vkGetQueryPoolResults(Context::m_VkDevice, m_TimingQueryPool, prevStartFrameQuery, queryCount, queryCount * sizeof(uint64_t), vQueries.data(), sizeof(uint64_t), VK_QUERY_RESULT_64_BIT);
-			//vkResetQueryPool(Context::m_VkDevice, m_TimingQueryPool, prevStartFrameQuery, queryCount);
-
-			//printf("\nReset query %d (%d)", prevStartFrameQuery, queryCount);
 
 			if (result == VK_SUCCESS)
 			{

@@ -14,18 +14,16 @@ namespace aug
 	Material::~Material()
 	{
 	}
-
-	//Trick to be able to create shared pointers while keeping Texture constructor protected
-	//so textures can only be allocated by TextureFactory
-	struct SMaterial : public Material
-	{
-		SMaterial()
-			: Material()
-		{
-		}
-	};
+		
 	std::shared_ptr<Material> Material::MakeShared()
 	{
+		//Trick to be able to create shared pointers while keeping Texture constructor protected
+		//so textures can only be allocated by TextureFactory
+		struct SMaterial : public Material
+		{
+			SMaterial() : Material() {}
+		};
+
 		return std::make_shared<SMaterial>();
 	}
 
@@ -62,7 +60,7 @@ namespace aug
 		m_pMaterialUniformBuffer = std::make_unique<Buffer>(sizeof(m_Desc), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU, &m_Desc);
 	}
 
-	void Material::ImGuiDrawDebug()
+	void Material::DrawDebug()
 	{
 		ImGui::Begin("Material Inspector");
 		if (!m_aTextures[TEXTURE_CHANNEL_ALBEDO])
@@ -145,7 +143,7 @@ namespace aug
 		return m_mMaterials["Default"];
 	}
 
-	void MaterialFactory::ImGuiDrawDebug()
+	void MaterialFactory::DrawDebug()
 	{
 		static int32_t iSelected = -1;
 		Material* pSelectedMaterial = nullptr;
@@ -174,6 +172,6 @@ namespace aug
 		}
 
 		if (pSelectedMaterial != nullptr)
-			pSelectedMaterial->ImGuiDrawDebug();
+			pSelectedMaterial->DrawDebug();
 	}
 }

@@ -138,16 +138,15 @@ namespace aug
 			throw std::runtime_error("Failed to create texture sampler!");
 	}
 	
-	//Trick to be able to create shared pointers while keeping Texture constructor protected
-	//so textures can only be allocated by TextureFactory
-	struct STexture : public Texture 
-	{
-		STexture(STextureDesc& desc, Buffer* pBuffer)
-			: Texture(desc, pBuffer)
-		{ }
-	};
 	std::shared_ptr<Texture> Texture::MakeShared(STextureDesc& desc, Buffer* pBuffer)
 	{
+		//Trick to be able to create shared pointers while keeping Texture constructor protected
+		//so textures can only be allocated by TextureFactory
+		struct STexture : public Texture
+		{
+			STexture(STextureDesc& desc, Buffer* pBuffer) : Texture(desc, pBuffer){}
+		};
+
 		return std::make_shared<STexture>(desc,pBuffer);
 	}
 
@@ -303,7 +302,7 @@ namespace aug
 		return pTexture;
 	}
 
-	void TextureFactory::ImGuiDrawDebug()
+	void TextureFactory::DrawDebug()
 	{
 		static int32_t iSelected = -1;
 		std::weak_ptr<Texture> pPreview,pView;
