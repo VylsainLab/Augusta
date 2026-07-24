@@ -82,7 +82,7 @@ namespace aug
 
 		bool m_bDisplayImGuiMenu = true;
 		bool m_bDisplayConsole = false;
-		bool m_bDisplayDebugImGui = false;
+		bool m_bDisplayDebugImGui = true;
 
 		std::vector<SRenderPass> m_vRenderPasses;
 

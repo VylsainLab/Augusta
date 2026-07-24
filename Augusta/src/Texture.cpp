@@ -408,7 +408,8 @@ namespace aug
 		stbi_uc* pData = stbi_load(strPath.c_str(), &w, &h, &c, STBI_rgb_alpha);
 		if (pData == nullptr)
 		{
-			std::cout << "Failed to load image " << strPath << std::endl;
+			Debug::Log(LOG_TYPE_ERROR, std::string("Failed to load image ") + strPath);
+			//std::cout << "Failed to load image " << strPath << std::endl;
 			return nullptr;
 		}
 

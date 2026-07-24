@@ -2,6 +2,7 @@
 #include <Augusta/Context.h>
 #include <Augusta/SwapChain.h>
 #include <Augusta/MemoryAllocator.h>
+#include <Augusta/Debug.h>
 #include <set>
 #include <string>
 #include <iostream>
@@ -29,7 +30,8 @@ namespace aug
 		vkEnumerateInstanceExtensionProperties(nullptr, &uiExtensionCount, vExtensions.data());
 
 		for (const auto& extension : vExtensions)
-			std::cout << "\t" << extension.extensionName << std::endl;
+			Debug::Log(LOG_TYPE_INFO, extension.extensionName);
+			//std::cout << "\t" << extension.extensionName << std::endl;
 	}
 
 	std::vector<const char*> GetRequiredExtensions()
@@ -56,8 +58,20 @@ namespace aug
 		if ((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) != 0 && pCallbackData->messageIdNumber != 0x4fe1fef9)
 			return VK_FALSE;
 
-		if((messageSeverity&VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT)==0)
-			std::cerr << "\nValidation layer: " << pCallbackData->pMessage << std::endl;
+		switch (messageSeverity)
+		{
+		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
+			Debug::Log(LOG_TYPE_ERROR, pCallbackData->pMessage);
+			break;
+		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
+			Debug::Log(LOG_TYPE_WARNING, pCallbackData->pMessage);
+			break;
+		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
+			break;
+		default:
+			Debug::Log(LOG_TYPE_INFO, pCallbackData->pMessage);
+			break;
+		}
 
 		return VK_FALSE;
 	}
@@ -322,7 +336,8 @@ namespace aug
 				deviceProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
 				deviceProperties.pNext = nullptr;
 				vkGetPhysicalDeviceProperties2(device, &deviceProperties);
-				std::cout << "Selected physical device: " << deviceProperties.properties.deviceName << "\n";
+				Debug::Log(LOG_TYPE_INFO, std::string("Selected physical device: ") + deviceProperties.properties.deviceName);
+				//std::cout << "Selected physical device: " << deviceProperties.properties.deviceName << "\n";
 				m_VkPhysicalDevice = device;
 				break;
 			}

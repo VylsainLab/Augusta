@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <queue>
+#include <deque>
 #include <unordered_map>
 #include <memory>
 #include <functional>
@@ -30,13 +30,13 @@ namespace aug
 
 		static void DrawDebugees();
 
-		static void Log(const ELogType& type, const char* szEntry);
+		static void Log(const ELogType& type, const std::string& strEntry);
 		static void DrawConsole();
 		static void ShowConsole(bool bShow) { m_bShowConsole = bShow; }
 
 	protected:
 		static bool m_bShowConsole;
-		static std::queue<LogEntry> m_qLog;
+		static std::deque<LogEntry> m_dqLog;
 		static std::unordered_map<std::string, std::vector<DebugEntry>> m_mDebugees;
 	};
 }

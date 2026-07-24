@@ -1,10 +1,12 @@
 #include <Augusta/Debug.h>
 #include <imgui.h>
 
+#define LOG_PREVIEW_LENGTH 64
+
 namespace aug
 {
 	bool Debug::m_bShowConsole;
-	std::queue<LogEntry> Debug::m_qLog;
+	std::deque<LogEntry> Debug::m_dqLog;
 	std::unordered_map<std::string, std::vector<DebugEntry>> Debug::m_mDebugees;
 
 	void Debug::RegisterDebugee(const char* szMenu, const char* szName, const std::function<void(void)> drawFunc)
@@ -43,16 +45,72 @@ namespace aug
 			}
 	}
 
-	void Debug::Log(const ELogType& type, const char* szEntry)
+	void Debug::Log(const ELogType& type, const std::string& strEntry)
 	{
-		m_qLog.push({ type,szEntry });
-		if (m_qLog.size() == LOG_DEPTH)
-			m_qLog.pop();
+		m_dqLog.push_back({ type,strEntry });
+		if (m_dqLog.size() == LOG_DEPTH)
+			m_dqLog.pop_front();
 	}
 
 	void Debug::DrawConsole()
 	{
 		ImGui::Begin("Console");
+
+		if (ImGui::BeginTable("LogTable", 2, ImGuiTableFlags_RowBg| ImGuiTableFlags_Borders))
+		{
+			ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed,64);
+			ImGui::TableSetupColumn("Message");
+			ImGui::TableHeadersRow();
+
+			static LogEntry* pSelectedEntry = nullptr;
+			uint32_t uiCount = 0;
+			for (auto& entry : m_dqLog)
+			{
+				ImGui::TableNextRow();
+				ImGui::TableNextColumn();
+				switch (entry.first)
+				{
+				case LOG_TYPE_ERROR:
+					ImGui::TextColored(ImVec4(1., 0., 0., 1.), "Error");
+					break;
+				case LOG_TYPE_WARNING:
+					ImGui::TextColored(ImVec4(1., 1., 0., 1.), "Warning");
+					break;
+				case LOG_TYPE_INFO:
+					ImGui::TextColored(ImVec4(1., 1., 1., 1.), "Info");
+					break;
+				default:
+					break;
+				}
+					
+				ImGui::TableNextColumn();
+				std::string strPreview = entry.second;
+				if(entry.second.length()> LOG_PREVIEW_LENGTH)
+					strPreview = entry.second.substr(0, LOG_PREVIEW_LENGTH) + "...";
+				//ImGui::Text(strPreview.c_str());
+				bool bIsSelected = false;
+				char szID[16];
+				sprintf(szID, "ID%d", uiCount);
+				ImGui::PushID(szID);
+				if(ImGui::Selectable(strPreview.c_str(), &bIsSelected))
+					pSelectedEntry = &entry;
+				ImGui::PopID();
+				if (bIsSelected)
+					pSelectedEntry = &entry;
+
+				uiCount++;
+			}
+
+			ImGui::EndTable();
+
+			ImGui::BeginChild("Details", ImVec2(0,250), ImGuiChildFlags_Borders);
+			if (pSelectedEntry)
+			{
+				ImGui::TextWrapped(pSelectedEntry->second.c_str());
+			}
+			ImGui::EndChild();
+		}
+
 		ImGui::End();
 	}
 }

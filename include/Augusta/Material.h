@@ -48,7 +48,6 @@ namespace aug
 		void DrawDebug();
 
 		std::string m_sName = "";
-		//uint32_t m_uiIndex = 0;
 		std::shared_ptr<Texture> m_aTextures[ETextureChannel::TEXTURE_CHANNEL_COUNT] = { nullptr };
 		SMaterialDesc m_Desc;
 		std::unique_ptr<Buffer> m_pMaterialUniformBuffer;
