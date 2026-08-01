@@ -1,5 +1,4 @@
-#ifndef AUG_SHADERFACTORY_H
-#define AUG_SHADERFACTORY_H
+#pragma once
 
 #include <vulkan/vulkan.h>
 #include <shaderc/shaderc.hpp>
@@ -89,5 +88,3 @@ namespace aug
 		std::vector<VkPipelineShaderStageCreateInfo> m_vVkPipelineShaderStageCreateInfo;
 	};
 }
-
-#endif

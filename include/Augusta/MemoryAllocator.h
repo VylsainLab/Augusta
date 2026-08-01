@@ -1,5 +1,4 @@
-#ifndef AUG_MEMORYALLOCATOR_H
-#define AUG_MEMORYALLOCATOR_H
+#pragma once
 
 #include <vma/vk_mem_alloc.h>
 
@@ -14,5 +13,3 @@ namespace aug
 		static VmaAllocator m_VmaAllocator;
 	};
 }
-
-#endif

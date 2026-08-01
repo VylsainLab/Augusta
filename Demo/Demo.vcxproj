@@ -108,7 +108,7 @@
       <PreprocessorDefinitions>USE_DYNAMIC_RENDERING;_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>../../Dependencies/;../../Dependencies/imgui-docking/;../../Dependencies/GLFW/include;../include;C:\VulkanSDK\1.4.341.1\Include</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

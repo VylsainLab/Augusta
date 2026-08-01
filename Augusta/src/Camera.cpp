@@ -1,4 +1,5 @@
 #include <Augusta/Camera.h>
+#include <Augusta/InputManager.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace aug
@@ -25,68 +26,68 @@ namespace aug
 		ComputeProjectionMatrix();
 	}
 
-	void Camera::ProcessEvents(GLFWwindow* window, float fDeltaT)
+	void Camera::ProcessEvents(float fDeltaT)
 	{
-		double x, y, deltax, deltay;
-		glfwGetCursorPos(window, &x, &y);
+		double deltax, deltay;
+		glm::dvec2 pos = InputManager::GetMousePosition();
 
 		if (m_Input.firstInput)
 		{
 			m_Input.firstInput = false;
-			m_Input.cursor_x = x;
-			m_Input.cursor_y = y;
+			m_Input.cursor_x = pos.x;
+			m_Input.cursor_y = pos.y;
 		}
 
-		deltax = x - m_Input.cursor_x;
-		deltay = y - m_Input.cursor_y;
-		m_Input.cursor_x = x;
-		m_Input.cursor_y = y;
-		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
+		deltax = pos.x - m_Input.cursor_x;
+		deltay = pos.y - m_Input.cursor_y;
+		m_Input.cursor_x = pos.x;
+		m_Input.cursor_y = pos.y;
+		if (InputManager::InputPressed(GLFW_MOUSE_BUTTON_1))
 		{
 			m_ddegYaw += deltax * m_dAspect * m_fSensitivity;
 			m_ddegPitch += deltay * m_fSensitivity;
 		}
 
-		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_4) == GLFW_PRESS)
+		if (InputManager::InputPressed(GLFW_MOUSE_BUTTON_4))
 			m_Input.mouseSpeed += 1;
 
-		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_5) == GLFW_PRESS)
+		if (InputManager::InputPressed(GLFW_MOUSE_BUTTON_5))
 			m_Input.mouseSpeed -= 1;
 
-		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS)
+		if (InputManager::InputPressed(GLFW_MOUSE_BUTTON_2))
 			m_Input.mouseSpeed = 0;
 
-		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
+		if (InputManager::InputReleased(GLFW_KEY_LEFT_SHIFT))
 			m_Input.moveUpFlag = 0;
-		if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE)
+		if (InputManager::InputReleased(GLFW_KEY_LEFT_CONTROL))
 			m_Input.moveUpFlag = 0;
 
-		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		if (InputManager::InputPressed(GLFW_KEY_LEFT_SHIFT))
 			m_Input.moveUpFlag = 1;
-		if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+		if (InputManager::InputReleased(GLFW_KEY_LEFT_CONTROL))
 			m_Input.moveUpFlag = -1;
 
-		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE)
+		if (InputManager::InputReleased(GLFW_KEY_W))
 			m_Input.moveForwardFlag = 0;
-		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE)
+		if (InputManager::InputReleased(GLFW_KEY_S))
 			m_Input.moveForwardFlag = 0;
-		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE)
+		if (InputManager::InputReleased(GLFW_KEY_A))
 			m_Input.moveRightFlag = 0;
-		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE)
+		if (InputManager::InputReleased(GLFW_KEY_D))
 			m_Input.moveRightFlag = 0;
 
-		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		if (InputManager::InputPressed(GLFW_KEY_W))
 			m_Input.moveForwardFlag = 1;
-		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		if (InputManager::InputPressed(GLFW_KEY_S))
 			m_Input.moveForwardFlag = -1;
-		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		if (InputManager::InputPressed(GLFW_KEY_A))
 			m_Input.moveRightFlag = -1;
-		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		if (InputManager::InputPressed(GLFW_KEY_D))
 			m_Input.moveRightFlag = 1;
 
-		if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+		if (InputManager::InputPressed(GLFW_KEY_Q))
 			m_ddegRoll += 1.;
-		if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+		if (InputManager::InputPressed(GLFW_KEY_E))
 			m_ddegRoll -= 1.;
 
 		ComputeMovement(fDeltaT);

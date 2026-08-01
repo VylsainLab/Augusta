@@ -1,5 +1,4 @@
-#ifndef AUG_ASSIMPPARSER_H
-#define AUG_ASSIMPPARSER_H
+#pragma once
 
 #include <Augusta/Scene.h>
 #include <assimp/cimport.h>
@@ -34,5 +33,3 @@ namespace aug
 		uint32_t m_uiImportFlags = 0;
 	};
 }
-
-#endif

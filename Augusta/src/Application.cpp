@@ -1,5 +1,6 @@
 #include <Augusta/Application.h>
 #include <Augusta/SwapChain.h>
+#include <Augusta/InputManager.h>
 #include <cassert>
 #include <string>
 #include <set>
@@ -105,37 +106,7 @@ namespace aug
 		if (m_bDisplayImGuiMenu)
 		{
 			Debug::DrawDebugees();
-			/*if (ImGui::BeginMainMenuBar())
-			{
-				if (ImGui::BeginMenu("Debug"))
-				{
-					if (ImGui::MenuItem("Textures"))
-						m_bDisplayDebugTextures = true;
 
-					if (ImGui::MenuItem("Materials"))
-						m_bDisplayDebugMaterials = true;
-
-					if (ImGui::MenuItem("ImGui demo"))
-						m_bDisplayDebugImGui = true;
-
-					ImGui::EndMenu();
-				}
-				ImGui::EndMainMenuBar();
-			}
-
-			if (m_bDisplayDebugTextures)
-			{
-				ImGui::Begin("Textures",&m_bDisplayDebugTextures);
-				TextureFactory::DrawDebug();
-				ImGui::End();
-			}
-
-			if (m_bDisplayDebugMaterials)
-			{
-				ImGui::Begin("Materials", &m_bDisplayDebugMaterials);
-				MaterialFactory::DrawDebug();
-				ImGui::End();
-			}*/
 			if (m_bDisplayConsole)
 				Debug::DrawConsole();
 
@@ -144,27 +115,26 @@ namespace aug
 		}
 	}
 
-	void Application::AddEventObserver(IGLFWEventObserver* pObserver)
+	void Application::AddEventObserver(IEventObserver* pObserver)
 	{
 		m_vEventObservers.push_back(pObserver);
 	}
 
 	void Application::ProcessEvents()
 	{
-		glfwPollEvents();
+		InputManager::ProcessInputs(m_pWindow->GetGLFWWindow());
 
-		//TODO: Move to input management class
-		if (glfwGetKey(m_pWindow->GetGLFWWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		if (InputManager::InputPressed(GLFW_KEY_ESCAPE))
 			glfwSetWindowShouldClose(m_pWindow->GetGLFWWindow(), GLFW_TRUE);
 
-		if (glfwGetKey(m_pWindow->GetGLFWWindow(), GLFW_KEY_F1) == GLFW_PRESS)
+		if (InputManager::InputReleased(GLFW_KEY_F1))
 			m_bDisplayImGuiMenu = !m_bDisplayImGuiMenu;
 
-		if (glfwGetKey(m_pWindow->GetGLFWWindow(), GLFW_KEY_GRAVE_ACCENT) == GLFW_PRESS)
+		if (InputManager::InputReleased(GLFW_KEY_GRAVE_ACCENT))
 			m_bDisplayConsole = !m_bDisplayConsole;
 
 		for (auto observer : m_vEventObservers)
-			observer->ProcessEvents(m_pWindow->GetGLFWWindow(), m_fDeltaT);
+			observer->ProcessEvents(m_fDeltaT);
 	}
 
 	void Application::BeginRender()

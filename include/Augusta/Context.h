@@ -1,5 +1,4 @@
-#ifndef AUG_CONTEXT_H
-#define AUG_CONTEXT_H
+#pragma once
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -69,4 +68,3 @@ namespace aug
 		static VkDebugUtilsMessengerEXT m_VkDebugMessenger;		
 	};
 }
-#endif

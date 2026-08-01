@@ -1,5 +1,4 @@
-#ifndef AUG_CAMERA_H
-#define AUG_CAMERA_H
+#pragma once
 
 //#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -23,14 +22,14 @@ namespace aug
 		float _sensitivity = 1.f;
 	};
 
-	class Camera : public IGLFWEventObserver
+	class Camera : public IEventObserver
 	{
 	public:
 		Camera() {}
 		Camera(SCameraDesc desc);
 		
 		void ComputeCamera();
-		virtual void ProcessEvents(GLFWwindow* window, float fDeltaT) override;
+		virtual void ProcessEvents(float fDeltaT) override;
 
 		void SetSpeed(float s) { m_fSpeed = s; }	
 
@@ -80,5 +79,3 @@ namespace aug
 		Input m_Input;
 	};
 }
-
-#endif

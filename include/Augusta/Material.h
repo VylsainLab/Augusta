@@ -1,9 +1,9 @@
-#ifndef AUG_MATERIAL_H
-#define AUG_MATERIAL_H
+#pragma once
 
 #include <Augusta/Texture.h>
 #include <memory>
 #include <vector>
+#include <glm/glm.hpp>
 
 namespace aug
 {
@@ -21,12 +21,13 @@ namespace aug
 		TEXTURE_CHANNEL_AO,
 		TEXTURE_CHANNEL_ROUGHNESS,
 		TEXTURE_CHANNEL_METALNESS,
-		TEXTURE_CHANNEL_EMISSVE,
+		TEXTURE_CHANNEL_EMISSIVE,
 		TEXTURE_CHANNEL_COUNT
 	};
 	
 	struct SMaterialDesc
 	{
+		glm::vec4 _Albedo;
 		uint64_t _uAddress = 0;
 		float _fOpacity;
 		float _fRoughness=0.5;
@@ -73,5 +74,3 @@ namespace aug
 		static std::unique_ptr<Buffer> m_pDefaultTextureBuffer;
 	};
 }
-
-#endif

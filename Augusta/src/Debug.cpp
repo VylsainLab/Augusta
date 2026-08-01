@@ -1,5 +1,6 @@
 #include <Augusta/Debug.h>
 #include <imgui.h>
+#include <format>
 
 #define LOG_PREVIEW_LENGTH 64
 
@@ -48,7 +49,7 @@ namespace aug
 	void Debug::Log(const ELogType& type, const std::string& strEntry)
 	{
 		m_dqLog.push_back({ type,strEntry });
-		if (m_dqLog.size() == LOG_DEPTH)
+		if (m_dqLog.size() > LOG_DEPTH)
 			m_dqLog.pop_front();
 	}
 
@@ -62,7 +63,8 @@ namespace aug
 			ImGui::TableSetupColumn("Message");
 			ImGui::TableHeadersRow();
 
-			static LogEntry* pSelectedEntry = nullptr;
+			//static LogEntry* pSelectedEntry = nullptr;
+			int32_t iSelectedEntry = -1;
 			uint32_t uiCount = 0;
 			for (auto& entry : m_dqLog)
 			{
@@ -88,15 +90,12 @@ namespace aug
 				if(entry.second.length()> LOG_PREVIEW_LENGTH)
 					strPreview = entry.second.substr(0, LOG_PREVIEW_LENGTH) + "...";
 				//ImGui::Text(strPreview.c_str());
-				bool bIsSelected = false;
-				char szID[16];
-				sprintf(szID, "ID%d", uiCount);
-				ImGui::PushID(szID);
+				bool bIsSelected = iSelectedEntry==uiCount;
+				std::string strID = std::format("ID%d", uiCount);
+				ImGui::PushID(strID.c_str());
 				if(ImGui::Selectable(strPreview.c_str(), &bIsSelected))
-					pSelectedEntry = &entry;
+					iSelectedEntry = uiCount;
 				ImGui::PopID();
-				if (bIsSelected)
-					pSelectedEntry = &entry;
 
 				uiCount++;
 			}
@@ -104,9 +103,9 @@ namespace aug
 			ImGui::EndTable();
 
 			ImGui::BeginChild("Details", ImVec2(0,250), ImGuiChildFlags_Borders);
-			if (pSelectedEntry)
+			if (iSelectedEntry>=0 && iSelectedEntry<m_dqLog.size())
 			{
-				ImGui::TextWrapped(pSelectedEntry->second.c_str());
+				ImGui::TextWrapped(m_dqLog.at(iSelectedEntry).second.c_str());
 			}
 			ImGui::EndChild();
 		}

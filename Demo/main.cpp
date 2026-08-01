@@ -136,7 +136,8 @@ private:
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Cottage/Cottage.FBX", "../../Assets/Cottage/", "dds");
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Lighthouse/lighthouse.FBX", "../../Assets/Lighthouse/Textures/", "dds");
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Sponza/untitled.FBX", "../../Assets/Sponza/", "dds");
-		m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Voskhod/Voskhod.FBX", "../../Assets/Voskhod/", "dds");
+		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Voskhod/Voskhod.FBX", "../../Assets/Voskhod/", "dds");
+		m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Viper/FINAL_MODEL_96.FBX", "../../Assets/Viper/");
 		m_pScene->GetRootNode()->Scale(glm::dvec3(0.01));
 	
 		aug::Shader::SetDirectory("shaders/");

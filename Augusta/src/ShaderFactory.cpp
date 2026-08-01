@@ -1,8 +1,10 @@
 #include <Augusta/ShaderFactory.h>
 #include <Augusta/Context.h>
+#include <Augusta/Debug.h>
 #include <stdexcept>
 #include <fstream>
 #include <array>
+#include <format>
 
 namespace aug
 {
@@ -209,7 +211,7 @@ namespace aug
 		{
 			if (it.second->CheckForModifications()) //TODO extend to all asset types
 			{
-				printf("\nShader module has changed: %s", it.second->GetName());
+				Debug::Log(LOG_TYPE_INFO, std::format("\nShader module has changed: %s", it.second->GetName()));
 				it.second->ReadAndCompileModule();
 				bRet = true;
 			}

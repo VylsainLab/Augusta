@@ -1,5 +1,4 @@
-#ifndef AUG_GRAPHICSPIPELINE_H
-#define AUG_GRAPHICSPIPELINE_H
+#pragma once
 
 #include <Augusta/Window.h>
 #include <Augusta/Buffer.h>
@@ -69,5 +68,3 @@ namespace aug
 		std::vector<DescriptorSetHandle> m_vDescriptorSetHandles;
 	};
 }
-
-#endif

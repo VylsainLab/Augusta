@@ -120,6 +120,9 @@
     <ClInclude Include="..\include\Augusta\Debug.h">
       <Filter>Source Files\Vulkan</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\Augusta\InputManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp">
@@ -202,6 +205,9 @@
     </ClCompile>
     <ClCompile Include="src\Debug.cpp">
       <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\InputManager.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,5 +1,4 @@
-#ifndef AUG_TEXTURE_H
-#define AUG_TEXTURE_H
+#pragma once
 
 #include <Augusta/Buffer.h>
 #include <Augusta/Debug.h>
@@ -93,5 +92,3 @@ namespace aug
 		static std::map<std::string, std::weak_ptr<Texture>> m_mTextureDictionary;
 	};
 }
-
-#endif

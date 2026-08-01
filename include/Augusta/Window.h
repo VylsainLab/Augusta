@@ -1,5 +1,4 @@
-#ifndef AUG_WINDOW_H
-#define AUG_WINDOW_H
+#pragma once
 
 #include <Augusta/IRenderTarget.h>
 
@@ -59,4 +58,3 @@ namespace aug
 		std::shared_ptr<Texture> m_pDepthStencilTexture;
 	};
 }
-#endif

@@ -90,10 +90,10 @@ namespace aug
 				}
 
 				/*if (aiGetMaterialColor(pAiMat, AI_MATKEY_COLOR_AMBIENT, &color) == AI_SUCCESS)
-					pMat->m_MaterialUBO.m_AmbientColor = glm::vec3(color.r, color.g, color.b);*/
+					pMat->m_Desc._Albedo = glm::vec4(color.r, color.g, color.b, 1.0);*/
 				if (aiGetMaterialColor(pAiMat, AI_MATKEY_COLOR_DIFFUSE, &color) == AI_SUCCESS)
 				{
-					//pMat->m_MaterialUBO.m_DiffuseColor = glm::vec3(color.r, color.g, color.b);
+					pMat->m_Desc._Albedo = glm::vec4(color.r, color.g, color.b, 1.0);
 					pMat->m_Desc._fOpacity = color.a;
 				}
 				/*if (aiGetMaterialColor(pAiMat, AI_MATKEY_COLOR_SPECULAR, &color) == AI_SUCCESS)
@@ -117,7 +117,7 @@ namespace aug
 					pMat->m_Desc._iTexMask |= TEXTURE_CHANNEL_ROUGHNESS_BIT;
 				if (LoadTexture(pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_METALNESS], pAiMat, aiTextureType_METALNESS, strBaseName))
 					pMat->m_Desc._iTexMask |= TEXTURE_CHANNEL_METALNESS_BIT;
-				if (LoadTexture(pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_EMISSVE], pAiMat, aiTextureType_EMISSIVE, strBaseName))
+				if (LoadTexture(pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_EMISSIVE], pAiMat, aiTextureType_EMISSIVE, strBaseName))
 					pMat->m_Desc._iTexMask |= TEXTURE_CHANNEL_EMISSIVE_BIT;
 			}
 		}
@@ -243,7 +243,7 @@ namespace aug
 			strLookFor = "metalness";
 			break;
 		case aiTextureType_EMISSIVE:
-			eChannel = TEXTURE_CHANNEL_EMISSVE;
+			eChannel = TEXTURE_CHANNEL_EMISSIVE;
 			strLookFor = "emissive";
 			break;
 		}

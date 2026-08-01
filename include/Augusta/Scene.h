@@ -1,5 +1,4 @@
-#ifndef AUG_SCENE_H
-#define AUG_SCENE_H
+#pragma once
 
 #include <Augusta/Mesh.h>
 #include <Augusta/Material.h>
@@ -70,5 +69,3 @@ namespace aug
 		void RecursiveRender(const VkCommandBuffer& commandBuffer, std::shared_ptr<Node> pNode, glm::dmat4 trans);
 	};
 }
-
-#endif

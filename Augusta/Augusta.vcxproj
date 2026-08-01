@@ -37,6 +37,7 @@
     <ClInclude Include="..\include\Augusta\DescriptorFactory.h" />
     <ClInclude Include="..\include\Augusta\FrameBuffer.h" />
     <ClInclude Include="..\include\Augusta\Geodetics.h" />
+    <ClInclude Include="..\include\Augusta\InputManager.h" />
     <ClInclude Include="..\include\Augusta\IRenderTarget.h" />
     <ClInclude Include="..\include\Augusta\Material.h" />
     <ClInclude Include="..\include\Augusta\Pipeline.h" />
@@ -68,6 +69,7 @@
     <ClCompile Include="src\Debug.cpp" />
     <ClCompile Include="src\DescriptorFactory.cpp" />
     <ClCompile Include="src\FrameBuffer.cpp" />
+    <ClCompile Include="src\InputManager.cpp" />
     <ClCompile Include="src\Material.cpp" />
     <ClCompile Include="src\Pipeline.cpp" />
     <ClCompile Include="src\MemoryAllocator.cpp" />
@@ -160,7 +162,7 @@
       </PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../../Dependencies/;../../Dependencies/plutosvg/include/;../../Dependencies/freetype/include;../../Dependencies/GLFW/include;../../Dependencies/imgui-docking/;../include;C:\VulkanSDK\1.4.341.1\Include</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)</ObjectFileName>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

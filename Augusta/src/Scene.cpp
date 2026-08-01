@@ -38,7 +38,7 @@ namespace aug
 
 	std::shared_ptr<Mesh> Scene::CreateMesh(SMeshDesc desc, std::shared_ptr<Node> pTarget)
 	{
-		std::shared_ptr<Mesh> pMesh(new Mesh(desc));
+		std::shared_ptr<Mesh> pMesh = std::make_shared<Mesh>(desc);
 
 		pMesh->m_pMaterial = desc._pMaterial;
 

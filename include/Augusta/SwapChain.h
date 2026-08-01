@@ -1,5 +1,4 @@
-#ifndef AUG_SWAPCHAIN_H
-#define AUG_SWAPCHAIN_H
+#pragma once
 
 #include <vulkan/vulkan.h>
 #include <vector>
@@ -45,5 +44,3 @@ namespace aug
 		uint32_t m_uiCurrentImageIndex = 0;
 	};
 }
-
-#endif

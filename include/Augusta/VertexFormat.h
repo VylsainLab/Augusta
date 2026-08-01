@@ -1,5 +1,4 @@
-#ifndef AUG_VERTEXFORMAT_H
-#define AUG_VERTEXFORMAT_H
+#pragma once
 
 #include <vulkan/vulkan.hpp>
 #include <vector>
@@ -31,5 +30,3 @@ namespace aug
 		std::vector<VkVertexInputAttributeDescription> m_vAttributes;
 	};
 }
-
-#endif

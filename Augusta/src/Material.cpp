@@ -31,7 +31,6 @@ namespace aug
 	{
 		VkDescriptorSet s = DescriptorFactory::GetDescriptorSet(m_mDescriptorHandles[h]);
 		m_Desc._uAddress = reinterpret_cast<uint64_t>(s);
-		printf("\nMaterial %s: %lx", m_sName.c_str(), s);
 
 		BuildUniformBuffer();
 
@@ -65,7 +64,7 @@ namespace aug
 		ImGui::Begin("Material Inspector");
 		if (!m_aTextures[TEXTURE_CHANNEL_ALBEDO])
 		{
-			ImGui::SliderFloat("Roughness", &m_Desc._fOpacity, 0.0, 1.0);
+			ImGui::SliderFloat4("Albedo", &m_Desc._Albedo.r, 0.0, 1.0);
 		}
 		if (!m_aTextures[TEXTURE_CHANNEL_ROUGHNESS])
 			ImGui::SliderFloat("Roughness", &m_Desc._fRoughness, 0.0, 1.0);
@@ -126,19 +125,21 @@ namespace aug
 
 	std::shared_ptr<Material> MaterialFactory::CreateMaterial(const std::string& strName)
 	{
-		if (m_mMaterials[strName] != nullptr)
-			return m_mMaterials[strName];
+		auto it = m_mMaterials.find(strName);
+		if (it != m_mMaterials.end() && it->second != nullptr)
+			return it->second;
 
-		m_mMaterials[strName] = Material::MakeShared();
-		m_mMaterials[strName]->m_sName = strName;
-		//m_mMaterials[strName]->m_uiIndex = m_mMaterials.size();
-		return m_mMaterials[strName];
+		auto mat = Material::MakeShared();
+		mat->m_sName = strName;
+		m_mMaterials[strName] = mat;
+		return mat;
 	}
 
 	std::shared_ptr<Material> MaterialFactory::GetMaterialByName(const std::string& strName)
 	{
-		if(m_mMaterials[strName]!=nullptr)
-			return m_mMaterials[strName];
+		auto it = m_mMaterials.find(strName);
+		if (it != m_mMaterials.end() && it->second != nullptr)
+			return it->second;
 		
 		return m_mMaterials["Default"];
 	}

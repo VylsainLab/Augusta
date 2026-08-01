@@ -1,5 +1,4 @@
-#ifndef AUG_MESH_H
-#define AUG_MESH_H
+#pragma once
 
 #include <Augusta/Buffer.h>
 #include <Augusta/VertexFormat.h>
@@ -42,5 +41,3 @@ namespace aug
 		std::unique_ptr<Buffer> m_pIndexBuffer = nullptr;		
 	};
 }
-
-#endif

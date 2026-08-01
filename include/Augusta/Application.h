@@ -1,5 +1,4 @@
-#ifndef AUG_APPLICATION_H
-#define AUG_APPLICATION_H
+#pragma once
 
 #include <Augusta/Context.h>
 #include <Augusta/Window.h>
@@ -18,10 +17,10 @@
 
 namespace aug
 {
-	class IGLFWEventObserver
+	class IEventObserver
 	{
 	public:
-		virtual void ProcessEvents(GLFWwindow* pWindow, float fDeltaT) = 0;
+		virtual void ProcessEvents(float fDeltaT) = 0;
 	};
 
 	struct SRenderPass
@@ -40,7 +39,7 @@ namespace aug
 		virtual void MainRenderPass(const VkCommandBuffer& commandBuffer)=0;		
 		void RenderImGui();
 
-		void AddEventObserver(IGLFWEventObserver* pObserver);
+		void AddEventObserver(IEventObserver* pObserver);
 
 		void AddRenderPass(SRenderPass& pass){ m_vRenderPasses.push_back(pass);	}
 
@@ -78,7 +77,7 @@ namespace aug
 		uint32_t m_uiStartFrameQuery = 0;
 		uint32_t m_uiEndFrameQuery = 0;
 
-		std::vector<IGLFWEventObserver*> m_vEventObservers;
+		std::vector<IEventObserver*> m_vEventObservers;
 
 		bool m_bDisplayImGuiMenu = true;
 		bool m_bDisplayConsole = false;
@@ -89,5 +88,3 @@ namespace aug
 		float m_fDeltaT = 0;
 	};
 }
-
-#endif

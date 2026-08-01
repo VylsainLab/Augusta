@@ -1,5 +1,4 @@
-#ifndef AUG_BUFFER_H
-#define AUG_BUFFER_H
+#pragma once
 
 #include <Augusta/DescriptorFactory.h>
 #include <vma/vk_mem_alloc.h>
@@ -28,5 +27,3 @@ namespace aug
 		VmaAllocationInfo m_VmaAllocationInfo;
 	};
 }
-
-#endif
