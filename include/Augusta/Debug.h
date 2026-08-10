@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <memory>
 #include <functional>
+#include <fstream>
 
 namespace aug
 {
@@ -38,5 +39,6 @@ namespace aug
 		static bool m_bShowConsole;
 		static std::deque<LogEntry> m_dqLog;
 		static std::unordered_map<std::string, std::vector<DebugEntry>> m_mDebugees;
+		static std::ofstream m_LogFile;
 	};
 }

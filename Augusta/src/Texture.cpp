@@ -409,7 +409,6 @@ namespace aug
 		if (pData == nullptr)
 		{
 			Debug::Log(LOG_TYPE_ERROR, std::string("Failed to load image ") + strPath);
-			//std::cout << "Failed to load image " << strPath << std::endl;
 			return nullptr;
 		}
 

@@ -1,0 +1,12 @@
+struct SDirectionalLight
+{
+	float _fIlluminance;
+	vec3 _vDirection;
+};
+
+float GetDirectionalLight(SDirectionalLight l, vec3 N)
+{	
+	vec3 L = normalize(l._vDirection);
+	float NdotL = dot(N,L);
+	return l._fIlluminance * NdotL;
+}

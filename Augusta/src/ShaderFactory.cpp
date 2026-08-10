@@ -211,7 +211,7 @@ namespace aug
 		{
 			if (it.second->CheckForModifications()) //TODO extend to all asset types
 			{
-				Debug::Log(LOG_TYPE_INFO, std::format("\nShader module has changed: %s", it.second->GetName()));
+				Debug::Log(LOG_TYPE_INFO, std::format("Shader module has changed: {}", it.second->GetName()));
 				it.second->ReadAndCompileModule();
 				bRet = true;
 			}

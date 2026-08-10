@@ -121,7 +121,8 @@ namespace aug
 		for (auto& att : m_vColorAttachments)
 			att._pAttachmentTexture->TransitionImageToLayout(layout._colorLayout,cb);
 
-		m_DepthAttachment->_pAttachmentTexture->TransitionImageToLayout(layout._depthStencilLayout,cb);
+		if(m_DepthAttachment.has_value())
+			m_DepthAttachment->_pAttachmentTexture->TransitionImageToLayout(layout._depthStencilLayout,cb);
 	}
 
 
@@ -170,44 +171,47 @@ namespace aug
 		}
 
 		//Depth blit
-		m_DepthAttachment->_pAttachmentTexture->TransitionImageToLayout(VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, cb);
-		m_DepthAttachment->_pRenderTargetTexture->TransitionImageToLayout(VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, cb);
+		if (m_DepthAttachment.has_value())
+		{
+			m_DepthAttachment->_pAttachmentTexture->TransitionImageToLayout(VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, cb);
+			m_DepthAttachment->_pRenderTargetTexture->TransitionImageToLayout(VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, cb);
 
-		VkImageBlit imgBlit;
+			VkImageBlit imgBlit;
 
-		imgBlit.srcSubresource.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
-		imgBlit.srcSubresource.mipLevel = 0;
-		imgBlit.srcSubresource.baseArrayLayer = 0;
-		imgBlit.srcSubresource.layerCount = 1;
+			imgBlit.srcSubresource.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+			imgBlit.srcSubresource.mipLevel = 0;
+			imgBlit.srcSubresource.baseArrayLayer = 0;
+			imgBlit.srcSubresource.layerCount = 1;
 
-		imgBlit.srcOffsets[0] = { 0, 0, 0 };
-		imgBlit.srcOffsets[1].x = m_Desc._uiWidth;
-		imgBlit.srcOffsets[1].y = m_Desc._uiHeight;
-		imgBlit.srcOffsets[1].z = 1;
+			imgBlit.srcOffsets[0] = { 0, 0, 0 };
+			imgBlit.srcOffsets[1].x = m_Desc._uiWidth;
+			imgBlit.srcOffsets[1].y = m_Desc._uiHeight;
+			imgBlit.srcOffsets[1].z = 1;
 
-		imgBlit.dstSubresource.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
-		imgBlit.dstSubresource.mipLevel = 0;
-		imgBlit.dstSubresource.baseArrayLayer = 0;
-		imgBlit.dstSubresource.layerCount = 1;
+			imgBlit.dstSubresource.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+			imgBlit.dstSubresource.mipLevel = 0;
+			imgBlit.dstSubresource.baseArrayLayer = 0;
+			imgBlit.dstSubresource.layerCount = 1;
 
-		imgBlit.dstOffsets[0] = { 0, 0, 0 };
-		imgBlit.dstOffsets[1].x = m_Desc._uiWidth;
-		imgBlit.dstOffsets[1].y = m_Desc._uiHeight;
-		imgBlit.dstOffsets[1].z = 1;
+			imgBlit.dstOffsets[0] = { 0, 0, 0 };
+			imgBlit.dstOffsets[1].x = m_Desc._uiWidth;
+			imgBlit.dstOffsets[1].y = m_Desc._uiHeight;
+			imgBlit.dstOffsets[1].z = 1;
 
-		vkCmdBlitImage(
-			cb,
-			m_DepthAttachment->_pAttachmentTexture->GetImage(),
-			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-			m_DepthAttachment->_pRenderTargetTexture->GetImage(),
-			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-			1,
-			&imgBlit,
-			m_DepthAttachment->_pAttachmentTexture->GetDesc()._filtering
-		);
+			vkCmdBlitImage(
+				cb,
+				m_DepthAttachment->_pAttachmentTexture->GetImage(),
+				VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+				m_DepthAttachment->_pRenderTargetTexture->GetImage(),
+				VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+				1,
+				&imgBlit,
+				m_DepthAttachment->_pAttachmentTexture->GetDesc()._filtering
+			);
 
-		m_DepthAttachment->_pAttachmentTexture->TransitionImageToLayout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, cb);
-		m_DepthAttachment->_pRenderTargetTexture->TransitionImageToLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, cb);
+			m_DepthAttachment->_pAttachmentTexture->TransitionImageToLayout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, cb);
+			m_DepthAttachment->_pRenderTargetTexture->TransitionImageToLayout(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, cb);
+		}
 	}
 
 	void Framebuffer::UpdateDescriptor(DescriptorSetLayoutHandle h)
@@ -222,11 +226,14 @@ namespace aug
 			DescriptorFactory::UpdateDescriptor(m_mDescriptorHandles[h], &imageInfo, i);
 		}
 
-		VkDescriptorImageInfo imageInfo;
-		imageInfo.imageLayout = VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL;
-		imageInfo.imageView = m_DepthAttachment->_pRenderTargetTexture->GetImageView();
-		imageInfo.sampler = m_DepthAttachment->_pRenderTargetTexture->GetSampler();
+		if (m_DepthAttachment.has_value())
+		{
+			VkDescriptorImageInfo imageInfo;
+			imageInfo.imageLayout = VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL;
+			imageInfo.imageView = m_DepthAttachment->_pRenderTargetTexture->GetImageView();
+			imageInfo.sampler = m_DepthAttachment->_pRenderTargetTexture->GetSampler();
 
-		DescriptorFactory::UpdateDescriptor(m_mDescriptorHandles[h], &imageInfo, m_vColorAttachments.size());
+			DescriptorFactory::UpdateDescriptor(m_mDescriptorHandles[h], &imageInfo, m_vColorAttachments.size());
+		}
 	}
 }

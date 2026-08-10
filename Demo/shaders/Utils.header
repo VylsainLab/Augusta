@@ -1,0 +1,33 @@
+//compute Tangent Binormal Normal matrix
+//http://www.thetenthplanet.de/archives/1180
+mat3 cotangent_frame(vec3 N, vec3 p, vec2 uv)
+{
+	// compute derivations of the world position
+	vec3 p_dx = dFdx(p);
+	vec3 p_dy = dFdy(p);
+	// compute derivations of the texture coordinate
+	vec2 tc_dx = dFdx(uv);
+	vec2 tc_dy = dFdy(uv);
+	// compute initial tangent and bi-tangent
+	vec3 t = normalize( tc_dy.y * p_dx - tc_dx.y * p_dy );
+	vec3 b = normalize( tc_dy.x * p_dx - tc_dx.x * p_dy ); // sign inversion
+	// get new tangent from a given mesh normal
+	vec3 n = normalize(N);
+	vec3 x = cross(n, t);
+	t = cross(x, n);
+	t = normalize(t);
+	// get updated bi-tangent
+	x = cross(b, n);
+	b = cross(n, x);
+	b = normalize(b);
+	return mat3(t, b, n);
+}
+
+vec3 perturb_normal(mat3 TBN, vec3 map)
+{
+    map = map*255/127-128/127;
+    map.z = sqrt(1.-dot(map.xy,map.xy));
+    map.y = -map.y;
+	map*=0.5;
+    return normalize(TBN*map); 
+}

@@ -64,7 +64,7 @@ namespace aug
 
 		if (InputManager::InputPressed(GLFW_KEY_LEFT_SHIFT))
 			m_Input.moveUpFlag = 1;
-		if (InputManager::InputReleased(GLFW_KEY_LEFT_CONTROL))
+		if (InputManager::InputPressed(GLFW_KEY_LEFT_CONTROL))
 			m_Input.moveUpFlag = -1;
 
 		if (InputManager::InputReleased(GLFW_KEY_W))

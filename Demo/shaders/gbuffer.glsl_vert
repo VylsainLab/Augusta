@@ -7,6 +7,7 @@ layout(location = 2) in vec2 inTexcoord;
 
 layout(location = 0) out vec3 fragNormal;
 layout(location = 1) out vec2 fragTexcoord;
+layout(location = 2) out vec3 fragPos;
 
 layout(set=0, binding = 0) uniform UniformBufferObject 
 {
@@ -23,4 +24,5 @@ void main() {
     gl_Position = ubo.proj * ubo.view * pcd.model * vec4(inPosition, 1.0);
     fragNormal = inNormal;
 	fragTexcoord = inTexcoord;
+    fragPos = gl_Position.xyz;
 }

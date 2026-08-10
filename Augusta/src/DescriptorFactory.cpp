@@ -94,7 +94,7 @@ namespace aug
 
 		DescriptorSetHandle sh = m_vSets.size();
 		m_mDescriptorMapping[h].push_back(sh);
-		m_vSets.push_back(descriptorSet);	
+		m_vSets.push_back(descriptorSet);
 		return sh;
 	}
 	

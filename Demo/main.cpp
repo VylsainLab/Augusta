@@ -45,6 +45,13 @@ private:
 	VkFence m_GBufferFence;
 	aug::DescriptorSetLayoutHandle m_hGBufferSet;
 
+	//Deferred pass
+	std::unique_ptr<aug::Pipeline> m_pDeferredPipeline;
+	std::array<std::shared_ptr<aug::Framebuffer>, MAX_FRAMES_IN_FLIGHT> m_aDeferredFBs;
+	std::array<VkCommandBuffer, MAX_FRAMES_IN_FLIGHT> m_aDeferredCBs;
+	VkFence m_DeferredFence;
+	aug::DescriptorSetLayoutHandle m_hDeferredSet;
+
 	//Main pass
 	std::unique_ptr<aug::Buffer> m_pScreenTriangleVB = nullptr;
 	aug::VertexFormat m_MainVertexFormat; //move to render subpass
@@ -128,32 +135,69 @@ private:
 			throw std::runtime_error("Failed to submit draw command buffer!");
 	}
 
-	void Init()
+	void RenderDeferred()
 	{
-		m_pScene = std::make_shared<aug::Scene>();
-		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/KV2/kv2.FBX", "../../Assets/KV2/textures/","dds");
-		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/F18/F18_opaque.FBX", "../../Assets/F18/", "dds");
-		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Cottage/Cottage.FBX", "../../Assets/Cottage/", "dds");
-		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Lighthouse/lighthouse.FBX", "../../Assets/Lighthouse/Textures/", "dds");
-		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Sponza/untitled.FBX", "../../Assets/Sponza/", "dds");
-		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Voskhod/Voskhod.FBX", "../../Assets/Voskhod/", "dds");
-		m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Viper/FINAL_MODEL_96.FBX", "../../Assets/Viper/");
-		m_pScene->GetRootNode()->Scale(glm::dvec3(0.01));
-	
-		aug::Shader::SetDirectory("shaders/");
+		VkCommandBuffer& cb = m_aDeferredCBs[m_uiCurrentFrame];
+		vkResetCommandBuffer(cb, VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT);
 
-		CreateUniformBuffers();
+		vkWaitForFences(aug::Context::m_VkDevice, 1, &m_DeferredFence, VK_TRUE, UINT64_MAX);
 
-		//Gbuffer pass
+		//Begin command buffer recording
+		VkCommandBufferBeginInfo beginInfo = {};
+		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		beginInfo.pInheritanceInfo = nullptr;
+
+		if (vkBeginCommandBuffer(cb, &beginInfo) != VK_SUCCESS)
+			throw std::runtime_error("Failed to begin recording command buffer!");
+
+		WriteTimestamp(cb, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT);
+
+		m_pDeferredPipeline->Bind(cb);
+		m_pDeferredPipeline->BeginRendering(cb, m_aDeferredFBs[m_uiCurrentFrame].get(), aug::Framebuffer::FRAMEBUFFER_LAYOUT_ATTACHMENT);
+
+		m_pDeferredPipeline->BindResource(cb, m_hGBufferSet, 0, m_aGBufferFBs[m_uiCurrentFrame].get());
+
+		//Draw screen triangle
+		VkBuffer vertexBuffers[] = { m_pScreenTriangleVB->GetBufferHandle() };
+		VkDeviceSize offsets[] = { 0 };
+		vkCmdBindVertexBuffers(cb, 0, 1, vertexBuffers, offsets);
+		vkCmdDraw(cb, 3, 1, 0, 0);
+
+		m_pDeferredPipeline->EndRendering(cb, m_aDeferredFBs[m_uiCurrentFrame].get(), aug::Framebuffer::FRAMEBUFFER_LAYOUT_SAMPLING);
+
+		m_aDeferredFBs[m_uiCurrentFrame]->BlitToRenderTarget(cb);
+
+		WriteTimestamp(cb, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT);
+
+		if (vkEndCommandBuffer(cb) != VK_SUCCESS)
+			throw std::runtime_error("Failed to record command buffer!");
+
+		//Submit command buffer to graphics queue
+		VkSubmitInfo submitInfo = {};
+		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		submitInfo.waitSemaphoreCount = 0;
+		submitInfo.commandBufferCount = 1;
+		submitInfo.pCommandBuffers = &cb;
+		submitInfo.signalSemaphoreCount = 0;
+
+		vkResetFences(aug::Context::m_VkDevice, 1, &m_DeferredFence);
+
+		if (vkQueueSubmit(aug::Context::m_VkGraphicsQueue, 1, &submitInfo, m_DeferredFence) != VK_SUCCESS)
+			throw std::runtime_error("Failed to submit draw command buffer!");
+	}
+
+	void InitGBuffer()
+	{
 		VkFenceCreateInfo fenceInfo = {};
 		fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 		fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 		vkCreateFence(aug::Context::m_VkDevice, &fenceInfo, nullptr, &m_GBufferFence);
-		glm::vec2 vertexData[] = 
-		{ 
+		glm::vec2 vertexData[] =
+		{
 			{3.0,-1.0},
-			{-1.0,-1.0},			
-			{-1.0,3.0} 
+			{-1.0,-1.0},
+			{-1.0,3.0}
 		};
 		m_pScreenTriangleVB = std::make_unique<aug::Buffer>(static_cast<uint64_t>(3 * m_GBufferVertexFormat.GetStride()),
 			VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
@@ -164,7 +208,7 @@ private:
 		for (auto& fb : m_aGBufferFBs)
 		{
 			aug::SFramebufferDesc fbDesc;
-			fbDesc._strName = "GBuffer" + std::to_string(uiCount);
+			fbDesc._strName = "00_GBuffer" + std::to_string(uiCount);
 			fbDesc._uiWidth = WINDOW_WIDTH;
 			fbDesc._uiHeight = WINDOW_HEIGHT;
 			fbDesc._vColorAttachmentsFormats.push_back(VK_FORMAT_B8G8R8A8_UNORM);//albedo
@@ -185,7 +229,7 @@ private:
 		gbufferPipelineDesc._vertexInputInfo = m_GBufferVertexFormat.GetPipelineVertexInputStateCreateInfo();
 		gbufferPipelineDesc._uiPushConstantSize = sizeof(PushConstantData);
 		m_pGBufferPipeline = std::make_unique<aug::Pipeline>(m_aGBufferFBs[0].get());
-		
+
 		aug::SDescriptorSetDesc descUB;
 		descUB._uiSet = 0;
 		descUB.AddBinding(0, VK_SHADER_STAGE_VERTEX_BIT, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); //model UB
@@ -220,8 +264,89 @@ private:
 
 		if (vkAllocateCommandBuffers(aug::Context::m_VkDevice, &allocInfo, m_aGBufferCBs.data()) != VK_SUCCESS)
 			throw std::runtime_error("Failed to allocate command buffers!");
+	}
 
-		//Main pass
+	void InitDeferred()
+	{
+		VkFenceCreateInfo fenceInfo = {};
+		fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+		vkCreateFence(aug::Context::m_VkDevice, &fenceInfo, nullptr, &m_DeferredFence);
+
+		uint8_t uiCount = 0;
+		for (auto& fb : m_aDeferredFBs)
+		{
+			aug::SFramebufferDesc fbDesc;
+			fbDesc._strName = "00_Deferred" + std::to_string(uiCount);
+			fbDesc._uiWidth = WINDOW_WIDTH;
+			fbDesc._uiHeight = WINDOW_HEIGHT;
+			fbDesc._vColorAttachmentsFormats.push_back(VK_FORMAT_R16G16B16A16_SFLOAT);//HDR
+			//fbDesc._DepthFormat = VK_FORMAT_D32_SFLOAT;
+			fb = std::make_shared<aug::Framebuffer>(fbDesc);
+			uiCount++;
+		}
+
+		aug::SPipelineDesc deferredPipelineDesc;
+		deferredPipelineDesc._pRenderTarget = m_aDeferredFBs[0].get();
+		deferredPipelineDesc._shaderDesc._vShaderStages =
+		{
+			{VK_SHADER_STAGE_VERTEX_BIT, "deferred"},
+			{VK_SHADER_STAGE_FRAGMENT_BIT, "deferred"}
+		};
+		deferredPipelineDesc._vertexInputInfo = m_MainVertexFormat.GetPipelineVertexInputStateCreateInfo();
+		deferredPipelineDesc._uiPushConstantSize = sizeof(PushConstantData);
+		m_pDeferredPipeline = std::make_unique<aug::Pipeline>(m_aDeferredFBs[0].get());
+
+		aug::SDescriptorSetDesc descGBufferTextures;
+		descGBufferTextures._uiSet = 0;
+		descGBufferTextures.AddBinding(0, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //albedo
+		descGBufferTextures.AddBinding(1, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //normals
+		descGBufferTextures.AddBinding(2, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //roughness-metalness-ao
+		descGBufferTextures.AddBinding(3, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //depth
+
+		m_hGBufferSet = m_pDeferredPipeline->DeclareResourceLayout(descGBufferTextures);
+		deferredPipelineDesc._vLayoutHandles.push_back(m_hGBufferSet);
+		m_pDeferredPipeline->Init(deferredPipelineDesc);
+
+		m_pDeferredPipeline->RegisterResource(m_hGBufferSet, m_aGBufferFBs[0].get());
+		m_pDeferredPipeline->RegisterResource(m_hGBufferSet, m_aGBufferFBs[1].get());
+
+		aug::SRenderPass pass;
+		pass._RenderFunc = std::bind(&AugustaDemo::RenderDeferred, this);
+		AddRenderPass(pass);
+
+		VkCommandBufferAllocateInfo allocInfo = {};
+		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		allocInfo.commandPool = aug::Context::m_VkCommandPool;
+		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		allocInfo.commandBufferCount = (uint32_t)m_aDeferredCBs.size();
+
+		if (vkAllocateCommandBuffers(aug::Context::m_VkDevice, &allocInfo, m_aDeferredCBs.data()) != VK_SUCCESS)
+			throw std::runtime_error("Failed to allocate command buffers!");
+	}
+
+	void Init()
+	{
+		m_pScene = std::make_shared<aug::Scene>();
+		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/KV2/kv2.FBX", "../../Assets/KV2/textures/","dds");
+		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/F18/F18_opaque.FBX", "../../Assets/F18/", "dds");
+		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Cottage/Cottage.FBX", "../../Assets/Cottage/", "dds");
+		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Lighthouse/lighthouse.FBX", "../../Assets/Lighthouse/Textures/", "dds");
+		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Sponza/untitled.FBX", "../../Assets/Sponza/", "dds");
+		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Voskhod/Voskhod.FBX", "../../Assets/Voskhod/", "dds");
+		m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Viper/FINAL_MODEL_96.FBX", "../../Assets/Viper/");
+		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Bistro_v5_2/BistroExterior.FBX", "../../Assets/Bistro_v5_2/Textures");
+		m_pScene->GetRootNode()->Scale(glm::dvec3(0.01));
+	
+		aug::Shader::SetDirectory("shaders/");
+
+		CreateUniformBuffers();
+
+		InitGBuffer();
+
+		InitDeferred();
+
+		//Main pass (composition)
 		aug::SPipelineDesc mainPipelineDesc;
 		mainPipelineDesc._pRenderTarget = m_pWindow.get();
 		mainPipelineDesc._shaderDesc._vShaderStages =
@@ -231,19 +356,16 @@ private:
 		};
 		mainPipelineDesc._vertexInputInfo = m_MainVertexFormat.GetPipelineVertexInputStateCreateInfo();	
 
-		aug::SDescriptorSetDesc descGBufferTextures;
-		descGBufferTextures._uiSet = 0;
-		descGBufferTextures.AddBinding(0, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //albedo
-		descGBufferTextures.AddBinding(1, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //normals
-		descGBufferTextures.AddBinding(2, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //roughness-metalness-ao
-		descGBufferTextures.AddBinding(3, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //depth
+		aug::SDescriptorSetDesc descCompositionTextures;
+		descCompositionTextures._uiSet = 0;
+		descCompositionTextures.AddBinding(0, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //HDR texture
 		
-		m_hGBufferSet = m_pMainPipeline->DeclareResourceLayout(descGBufferTextures);
-		mainPipelineDesc._vLayoutHandles.push_back(m_hGBufferSet);
+		m_hDeferredSet = m_pMainPipeline->DeclareResourceLayout(descCompositionTextures);
+		mainPipelineDesc._vLayoutHandles.push_back(m_hDeferredSet);
 		m_pMainPipeline->Init(mainPipelineDesc);
 
-		m_pMainPipeline->RegisterResource(m_hGBufferSet, m_aGBufferFBs[0].get());
-		m_pMainPipeline->RegisterResource(m_hGBufferSet, m_aGBufferFBs[1].get());
+		m_pMainPipeline->RegisterResource(m_hDeferredSet, m_aDeferredFBs[0].get());
+		m_pMainPipeline->RegisterResource(m_hDeferredSet, m_aDeferredFBs[1].get());
 	}	
 
 	void Update()
@@ -281,7 +403,7 @@ private:
 
 	virtual void MainRenderPass(const VkCommandBuffer& cb) override
 	{
-		m_pMainPipeline->BindResource(cb, m_hGBufferSet, 0, m_aGBufferFBs[m_uiCurrentFrame].get());
+		m_pMainPipeline->BindResource(cb, m_hDeferredSet, 0, m_aDeferredFBs[m_uiCurrentFrame].get());
 
 		//Draw screen triangle
 		VkBuffer vertexBuffers[] = { m_pScreenTriangleVB->GetBufferHandle() };

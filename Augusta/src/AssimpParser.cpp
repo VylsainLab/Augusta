@@ -105,9 +105,12 @@ namespace aug
 				if (aiGetMaterialFloat(pAiMat, AI_MATKEY_OPACITY, &factor) == AI_SUCCESS)
 					pMat->m_Desc._fOpacity = factor;
 
-				if(LoadTexture(pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_ALBEDO], pAiMat, aiTextureType_DIFFUSE))
+				std::string strBaseName;
+				if (LoadTexture(pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_ALBEDO], pAiMat, aiTextureType_DIFFUSE))
+				{
 					pMat->m_Desc._iTexMask |= TEXTURE_CHANNEL_ALBEDO_BIT;
-				std::string strBaseName = pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_ALBEDO]->GetDesc()._strName;
+					strBaseName = pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_ALBEDO]->GetDesc()._strName;
+				}
 				
 				if (LoadTexture(pMat->m_aTextures[ETextureChannel::TEXTURE_CHANNEL_NORMAL], pAiMat, aiTextureType_NORMALS, strBaseName))
 					pMat->m_Desc._iTexMask |= TEXTURE_CHANNEL_NORMAL_BIT;
@@ -256,12 +259,17 @@ namespace aug
 			strPath = ReplaceString(baseName, "albedo", strLookFor.c_str());
 		}
 		
-		pTex = TextureFactory::LoadTextureFromFile(strPath);
-		if (pTex == nullptr)
+		if (!strPath.empty())
 		{
-			pTex = MaterialFactory::GetMaterialByName("Default")->m_aTextures[TEXTURE_CHANNEL_ALBEDO];
-			return false;
+			pTex = TextureFactory::LoadTextureFromFile(strPath);
+			if (pTex == nullptr)
+			{
+				pTex = MaterialFactory::GetMaterialByName("Default")->m_aTextures[TEXTURE_CHANNEL_ALBEDO];
+				return false;
+			}
+			return true;
 		}
-		return true;
+		
+		return false;
 	}
 }

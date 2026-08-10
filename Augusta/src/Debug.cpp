@@ -1,6 +1,7 @@
 #include <Augusta/Debug.h>
 #include <imgui.h>
 #include <format>
+#include <iostream>
 
 #define LOG_PREVIEW_LENGTH 64
 
@@ -9,6 +10,7 @@ namespace aug
 	bool Debug::m_bShowConsole;
 	std::deque<LogEntry> Debug::m_dqLog;
 	std::unordered_map<std::string, std::vector<DebugEntry>> Debug::m_mDebugees;
+	std::ofstream Debug::m_LogFile;
 
 	void Debug::RegisterDebugee(const char* szMenu, const char* szName, const std::function<void(void)> drawFunc)
 	{
@@ -35,6 +37,7 @@ namespace aug
 		}		
 
 		for (auto& menu : m_mDebugees)
+		{
 			for (auto& debugEntry : menu.second)
 			{
 				if (std::get<DEBUG_ENTRY_ENABLED>(debugEntry))
@@ -44,6 +47,7 @@ namespace aug
 					ImGui::End();
 				}
 			}
+		}
 	}
 
 	void Debug::Log(const ELogType& type, const std::string& strEntry)
@@ -51,20 +55,49 @@ namespace aug
 		m_dqLog.push_back({ type,strEntry });
 		if (m_dqLog.size() > LOG_DEPTH)
 			m_dqLog.pop_front();
+
+		//log to standard output
+		std::string strOutput;
+		switch (type)
+		{
+		case LOG_TYPE_INFO:
+			strOutput = std::format("\nINFO:\n{}", strEntry);
+			std::cout << strOutput;
+			break;
+		case LOG_TYPE_WARNING:
+			strOutput = std::format("\nINFO:\n{}", strEntry);
+			std::cout << strOutput;
+			break;
+		case LOG_TYPE_ERROR:
+			strOutput = std::format("\nINFO:\n{}", strEntry);
+			std::cerr << strOutput;
+			break;
+		}
+
+		//log to file
+		if (!m_LogFile.is_open())
+		{
+			m_LogFile.open("Augusta.log", std::ios_base::out);
+		}
+
+		if (!strOutput.empty())
+		{
+			m_LogFile << strOutput;
+		}
 	}
 
 	void Debug::DrawConsole()
 	{
 		ImGui::Begin("Console");
 
-		if (ImGui::BeginTable("LogTable", 2, ImGuiTableFlags_RowBg| ImGuiTableFlags_Borders))
+		ImVec2 size(0, ImGui::GetTextLineHeightWithSpacing() * 15);
+		if (ImGui::BeginTable("LogTable", 2, ImGuiTableFlags_RowBg| ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollY, size))
 		{
 			ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed,64);
 			ImGui::TableSetupColumn("Message");
 			ImGui::TableHeadersRow();
 
-			//static LogEntry* pSelectedEntry = nullptr;
-			int32_t iSelectedEntry = -1;
+			static int32_t iSelectedEntry = -1;
 			uint32_t uiCount = 0;
 			for (auto& entry : m_dqLog)
 			{
@@ -89,11 +122,12 @@ namespace aug
 				std::string strPreview = entry.second;
 				if(entry.second.length()> LOG_PREVIEW_LENGTH)
 					strPreview = entry.second.substr(0, LOG_PREVIEW_LENGTH) + "...";
-				//ImGui::Text(strPreview.c_str());
+				
 				bool bIsSelected = iSelectedEntry==uiCount;
-				std::string strID = std::format("ID%d", uiCount);
+				std::string strID = std::format("ID{}", uiCount);
 				ImGui::PushID(strID.c_str());
-				if(ImGui::Selectable(strPreview.c_str(), &bIsSelected))
+				ImGui::Selectable(strPreview.c_str(), &bIsSelected);
+				if(bIsSelected)
 					iSelectedEntry = uiCount;
 				ImGui::PopID();
 

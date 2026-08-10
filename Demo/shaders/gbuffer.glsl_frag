@@ -2,9 +2,12 @@
 #extension GL_EXT_debug_printf : enable
 #extension GL_ARB_gpu_shader_int64 : enable
 
+#include "Utils.header"
+
 //INPUTS
 layout(location = 0) in vec3 fragNormal;
 layout(location = 1) in vec2 fragTexcoord;
+layout(location = 2) in vec3 fragPos;
 
 //OUTPUTS
 layout(location = 0) out vec4 outAlbedo;
@@ -40,21 +43,31 @@ void main()
 {
 	//debugPrintfEXT("Material mask: %lx %d %d", materialUBO._uiAddress, materialUBO._iTexMask, bNormal);
 
-	vec3 debugColor = vec3(1.0,0.0,1.0);
+	bool bAlbedoMap =		(materialUBO._iTexMask & TEXTURE_CHANNEL_ALBEDO_BIT)==TEXTURE_CHANNEL_ALBEDO_BIT;
+	bool bNormalMap =		(materialUBO._iTexMask & TEXTURE_CHANNEL_NORMAL_BIT)==TEXTURE_CHANNEL_NORMAL_BIT;
+	bool bAOMap =			(materialUBO._iTexMask & TEXTURE_CHANNEL_AO_BIT)==TEXTURE_CHANNEL_AO_BIT;
+	bool bRoughnessMap =	(materialUBO._iTexMask & TEXTURE_CHANNEL_ROUGHNESS_BIT)==TEXTURE_CHANNEL_ROUGHNESS_BIT;
+	bool bMetalnessMap =	(materialUBO._iTexMask & TEXTURE_CHANNEL_METALNESS_BIT)==TEXTURE_CHANNEL_METALNESS_BIT;
+	bool bEmissiveMap =		(materialUBO._iTexMask & TEXTURE_CHANNEL_EMISSIVE_BIT)==TEXTURE_CHANNEL_EMISSIVE_BIT;
 
-    vec3 albedo = (materialUBO._iTexMask & TEXTURE_CHANNEL_ALBEDO_BIT)==TEXTURE_CHANNEL_ALBEDO_BIT ? texture(samplerAlbedo, fragTexcoord).rgb : materialUBO._Albedo.rgb;
-    vec3 normals = (materialUBO._iTexMask & TEXTURE_CHANNEL_NORMAL_BIT)==TEXTURE_CHANNEL_NORMAL_BIT ? texture(samplerNormal, fragTexcoord).rgb : debugColor;
-	vec3 ao = (materialUBO._iTexMask & TEXTURE_CHANNEL_AO_BIT)==TEXTURE_CHANNEL_AO_BIT ? texture(samplerAO, fragTexcoord).rgb : debugColor;
-	vec3 roughness = (materialUBO._iTexMask & TEXTURE_CHANNEL_ROUGHNESS_BIT)==TEXTURE_CHANNEL_ROUGHNESS_BIT ? texture(samplerRoughness, fragTexcoord).rgb : debugColor;
-	vec3 metalness = (materialUBO._iTexMask & TEXTURE_CHANNEL_METALNESS_BIT)==TEXTURE_CHANNEL_METALNESS_BIT ? texture(samplerMetalness, fragTexcoord).rgb : debugColor;
-	vec3 emissive = (materialUBO._iTexMask & TEXTURE_CHANNEL_EMISSIVE_BIT)==TEXTURE_CHANNEL_EMISSIVE_BIT ? texture(samplerEmissive, fragTexcoord).rgb : debugColor;
+    vec3 albedo = bAlbedoMap ? texture(samplerAlbedo, fragTexcoord).rgb : materialUBO._Albedo.rgb;
+    vec3 normals = bNormalMap ? texture(samplerNormal, fragTexcoord).rgb : fragNormal;
+	float ao = bAOMap ? texture(samplerAO, fragTexcoord).r : 1;
+	float roughness = bRoughnessMap ? texture(samplerRoughness, fragTexcoord).r : materialUBO._fRoughness;
+	float metalness = bMetalnessMap ? texture(samplerMetalness, fragTexcoord).r : materialUBO._fMetalness;
+	vec3 emissive = bEmissiveMap ? texture(samplerEmissive, fragTexcoord).rgb : vec3(0.);
 
     outAlbedo.rgb = albedo;
 	outAlbedo.a = 1.0;
-    outNormals.rgb = normals;
+
+	float fBumpiness = 1.0;
+    mat3 TBN = cotangent_frame(fragNormal,fragPos,fragTexcoord);
+    vec3 N = bNormalMap ? mix(normalize(fragNormal),perturb_normal(TBN,normals),fBumpiness) : normalize(fragNormal);
+    outNormals.rgb = N;
 	outNormals.a = 1.0;
+
 	outRoughMetalAO.r = roughness.r;
 	outRoughMetalAO.g = metalness.r;
-	//outRoughMetalAO.b = ao.r;
+	outRoughMetalAO.b = ao.r;
 	outRoughMetalAO.a = 1.0;
 }

@@ -69,9 +69,6 @@
     <ClInclude Include="..\include\Augusta\Pipeline.h">
       <Filter>Source Files\Vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Augusta\Uniform.h">
-      <Filter>Source Files\Vulkan</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Dependencies\imgui-docking\imstb_rectpack.h">
       <Filter>imgui</Filter>
     </ClInclude>
@@ -121,7 +118,7 @@
       <Filter>Source Files\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Augusta\InputManager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Vulkan</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -167,9 +164,6 @@
     <ClCompile Include="src\Pipeline.cpp">
       <Filter>Source Files\Vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="src\Uniform.cpp">
-      <Filter>Source Files\Vulkan</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Dependencies\imgui-docking\imgui.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
@@ -207,7 +201,7 @@
       <Filter>Source Files\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="src\InputManager.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Vulkan</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -165,8 +165,12 @@
   <ItemGroup>
     <None Include="shaders\composition.glsl_frag" />
     <None Include="shaders\composition.glsl_vert" />
+    <None Include="shaders\deferred.glsl_frag" />
+    <None Include="shaders\deferred.glsl_vert" />
     <None Include="shaders\gbuffer.glsl_frag" />
     <None Include="shaders\gbuffer.glsl_vert" />
+    <None Include="shaders\Lighting.header" />
+    <None Include="shaders\Utils.header" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

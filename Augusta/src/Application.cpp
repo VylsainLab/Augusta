@@ -9,6 +9,7 @@
 #include <iostream>
 #include <imgui-docking/backends/imgui_impl_vulkan.h>
 #include <imgui-docking/backends/imgui_impl_glfw.h>
+#include <cmath>
 
 namespace aug
 {
@@ -361,7 +362,7 @@ namespace aug
 		static uint32_t prevStartFrameQuery=0, prevEndFrameQuery=0;
 		if (prevStartFrameQuery != prevEndFrameQuery)
 		{
-			uint32_t queryCount = prevEndFrameQuery - prevStartFrameQuery;
+			uint32_t queryCount = abs(int64_t(prevEndFrameQuery - prevStartFrameQuery)) % NB_QUERIES;
 			std::vector<uint64_t> vQueries;
 			vQueries.resize(queryCount);
 			VkResult result = vkGetQueryPoolResults(Context::m_VkDevice, m_TimingQueryPool, prevStartFrameQuery, queryCount, queryCount * sizeof(uint64_t), vQueries.data(), sizeof(uint64_t), VK_QUERY_RESULT_64_BIT);

@@ -11,7 +11,7 @@
 #define ENABLE_VALIDATION_LAYERS	true
 #endif
 
-#define AUG_DESCRIPTOR_POOL_SIZE	100
+#define AUG_DESCRIPTOR_POOL_SIZE	1000
 
 namespace aug
 {
