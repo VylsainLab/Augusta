@@ -102,6 +102,7 @@ namespace aug
 		//create placeholder material
 		m_mMaterials["Default"] = Material::MakeShared();
 		m_mMaterials["Default"]->m_sName = "Default";
+		m_mMaterials["Default"]->m_Desc._iTexMask |= TEXTURE_CHANNEL_ALBEDO_BIT;
 
 		STextureDesc desc;
 		desc._strName = "Default";

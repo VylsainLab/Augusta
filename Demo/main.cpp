@@ -325,19 +325,50 @@ private:
 			throw std::runtime_error("Failed to allocate command buffers!");
 	}
 
+	void InitGround()
+	{
+		float half = 100;
+		float vertices[32] = {
+				-half,0.,-half,		0.,1.,0.,    0.,0.,
+				-half,0., half, 	0., 1., 0.,	 0., 0.05 * half,
+				half,0., half, 		0., 1., 0.,	 0.05 * half, 0.05 * half,
+				half,0., -half,		0., 1., 0.,	 0.05 * half, 0.
+		};
+
+		aug::SMeshDesc groundMeshDesc;
+		groundMeshDesc._usage = aug::MESH_USAGE_STATIC;
+		groundMeshDesc._pFormat = &m_GBufferVertexFormat;
+		groundMeshDesc._vertexCount = 4;
+		groundMeshDesc._vertexData = vertices;
+		groundMeshDesc._indexCount = 6;
+		uint32_t aIndices[6] = { 0, 1, 2, 0, 2, 3 };
+		groundMeshDesc._indexData = aIndices;
+
+		std::shared_ptr<aug::Material> pGroundMat = aug::MaterialFactory::CreateMaterial("Ground");
+		aug::TextureFactory::AddTexturePath("../../Assets/PBR/WetConcrete/");
+		pGroundMat->m_aTextures[aug::TEXTURE_CHANNEL_ALBEDO] = aug::TextureFactory::LoadTextureFromFile("Albedo.dds");
+		pGroundMat->m_aTextures[aug::TEXTURE_CHANNEL_NORMAL] = aug::TextureFactory::LoadTextureFromFile("Normal.dds");
+		pGroundMat->m_aTextures[aug::TEXTURE_CHANNEL_ROUGHNESS] = aug::TextureFactory::LoadTextureFromFile("Roughness.dds");
+		pGroundMat->m_Desc._iTexMask = TEXTURE_CHANNEL_ALBEDO_BIT | TEXTURE_CHANNEL_NORMAL_BIT | TEXTURE_CHANNEL_ROUGHNESS_BIT;
+		groundMeshDesc._pMaterial = pGroundMat;
+
+		std::shared_ptr<aug::Mesh> pGroundMesh = m_pScene->CreateMesh(groundMeshDesc, m_pScene->GetRootNode());
+	}
+
 	void Init()
 	{
 		m_pScene = std::make_shared<aug::Scene>();
-		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/KV2/kv2.FBX", "../../Assets/KV2/textures/","dds");
-		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/F18/F18_opaque.FBX", "../../Assets/F18/", "dds");
+		m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/KV2/kv2.FBX", "../../Assets/KV2/textures/","dds");m_pScene->GetRootNode()->Scale(glm::dvec3(0.01));
+		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/F18/F18_opaque.FBX", "../../Assets/F18/", "dds"); m_pScene->GetRootNode()->Scale(glm::dvec3(0.001));
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Cottage/Cottage.FBX", "../../Assets/Cottage/", "dds");
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Lighthouse/lighthouse.FBX", "../../Assets/Lighthouse/Textures/", "dds");
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Sponza/untitled.FBX", "../../Assets/Sponza/", "dds");
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Voskhod/Voskhod.FBX", "../../Assets/Voskhod/", "dds");
-		m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Viper/FINAL_MODEL_96.FBX", "../../Assets/Viper/");
+		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Viper/FINAL_MODEL_96.FBX", "../../Assets/Viper/"); m_pScene->GetRootNode()->Scale(glm::dvec3(0.01));
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Bistro_v5_2/BistroExterior.FBX", "../../Assets/Bistro_v5_2/Textures");
-		m_pScene->GetRootNode()->Scale(glm::dvec3(0.01));
-	
+		
+		InitGround();
+
 		aug::Shader::SetDirectory("shaders/");
 
 		CreateUniformBuffers();
@@ -388,14 +419,17 @@ private:
 
 		for (uint32_t i = 0; i < pNode->GetNbMeshes(); ++i)
 		{
-			//Init material descriptors if not done already
-			if (!pNode->GetMesh(i)->m_pMaterial->HasDescriptor(m_hMaterialSet))
+			if (pNode->GetMesh(i)->m_pMaterial)
 			{
-				pNode->GetMesh(i)->m_pMaterial->BuildUniformBuffer();
-				m_pGBufferPipeline->RegisterResource(m_hMaterialSet, pNode->GetMesh(i)->m_pMaterial.get());
-			}
+				//Init material descriptors if not done already
+				if (!pNode->GetMesh(i)->m_pMaterial->HasDescriptor(m_hMaterialSet))
+				{
+					pNode->GetMesh(i)->m_pMaterial->BuildUniformBuffer();
+					m_pGBufferPipeline->RegisterResource(m_hMaterialSet, pNode->GetMesh(i)->m_pMaterial.get());
+				}
 
-			m_pGBufferPipeline->BindResource(commandBuffer, m_hMaterialSet, 1, pNode->GetMesh(i)->m_pMaterial.get());
+				m_pGBufferPipeline->BindResource(commandBuffer, m_hMaterialSet, 1, pNode->GetMesh(i)->m_pMaterial.get());
+			}
 
 			pNode->GetMesh(i)->Draw(commandBuffer);
 		}
