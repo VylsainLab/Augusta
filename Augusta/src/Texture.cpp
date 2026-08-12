@@ -293,6 +293,8 @@ namespace aug
 		std::shared_ptr<Texture> pTexture = nullptr;
 		if (strRealPath.find(".dds") != std::string::npos)
 			pTexture = LoadTextureFromDDS(strFilename, strRealPath);
+		else if(strRealPath.find(".hdr") != std::string::npos)
+			pTexture = LoadHDRTextureFromSTBI(strFilename, strRealPath);
 		else
 			pTexture = LoadTextureFromSTBI(strFilename, strRealPath);
 
@@ -316,7 +318,8 @@ namespace aug
 			for (auto& texture : m_mTextureDictionary)
 			{				
 				std::shared_ptr<Texture> pTex = texture.second.lock();
-				if (pTex->GetCurrentLayout() != VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL || !filter.PassFilter(pTex->m_TextureDesc._strName.c_str()))
+
+				if (!pTex.get() && (pTex->GetCurrentLayout() != VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL || !filter.PassFilter(pTex->m_TextureDesc._strName.c_str())))
 					continue;
 
 				const bool bIsSelected = (iSelected == iCount);
@@ -423,6 +426,48 @@ namespace aug
 		desc._height = h;
 		desc._usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 		desc._layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		return Texture::MakeShared(desc, &stagingBuffer);
+	}
+
+	std::shared_ptr<Texture> TextureFactory::LoadHDRTextureFromSTBI(const std::string& strName, const std::string& strPath)
+	{
+		int32_t w, h, c;
+		uint16_t* pData = reinterpret_cast<uint16_t*>(stbi_loadf(strPath.c_str(), &w, &h, &c, 0));
+		if (pData == nullptr)
+		{
+			Debug::Log(LOG_TYPE_ERROR, std::string("Failed to load image ") + strPath);
+			return nullptr;
+		}
+
+		uint16_t* pDst = pData;
+		if (c == 3) //remap to RGBA buffer
+		{
+			pDst = new uint16_t[w * h * 4];
+			memset(pDst, 0, w * h * 4 * sizeof(uint16_t));
+			uint16_t* pSrcPos = pData;
+			uint16_t* pDstPos = pDst;
+			for (uint32_t pixel = 0; pixel < w * h; ++pixel)
+			{
+				memcpy(pDstPos, pSrcPos, 3 * sizeof(uint16_t));
+				pDstPos += 4;
+				pSrcPos += 3;
+			}
+		}
+
+		uint64_t uiSize = w * h * 4 * sizeof(uint16_t);
+		Buffer stagingBuffer(uiSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY, pDst);
+
+		stbi_image_free(pData);
+		if (c == 3)
+			delete[] pDst;
+
+		STextureDesc desc;
+		desc._strName = strName;
+		desc._width = w;
+		desc._height = h;
+		desc._usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+		desc._layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		desc._format = VK_FORMAT_R16G16B16A16_SFLOAT;
 		return Texture::MakeShared(desc, &stagingBuffer);
 	}
 }

@@ -86,6 +86,7 @@ namespace aug
 		
 		static std::shared_ptr<Texture> LoadTextureFromDDS(const std::string& strName, const std::string& strPath);
 		static std::shared_ptr<Texture> LoadTextureFromSTBI(const std::string& strName, const std::string& strPath);
+		static std::shared_ptr<Texture> LoadHDRTextureFromSTBI(const std::string& strName, const std::string& strPath);
 
 		static std::vector<std::string> m_vPaths;
 		static std::string m_sForcedExtension;

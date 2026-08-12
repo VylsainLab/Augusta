@@ -59,6 +59,7 @@ private:
 
 	//Scene	
 	std::shared_ptr<aug::Scene> m_pScene;
+	std::shared_ptr<aug::Texture> m_pHDRCubemap = nullptr;
 
 	aug::Camera m_Camera;
 
@@ -357,6 +358,9 @@ private:
 
 	void Init()
 	{
+		aug::TextureFactory::AddTexturePath("../../Assets/HDR");
+		m_pHDRCubemap = aug::TextureFactory::LoadTextureFromFile("03_hangar.hdr");
+
 		m_pScene = std::make_shared<aug::Scene>();
 		m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/KV2/kv2.FBX", "../../Assets/KV2/textures/","dds");m_pScene->GetRootNode()->Scale(glm::dvec3(0.01));
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/F18/F18_opaque.FBX", "../../Assets/F18/", "dds"); m_pScene->GetRootNode()->Scale(glm::dvec3(0.001));
