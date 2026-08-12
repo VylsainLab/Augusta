@@ -217,6 +217,8 @@ namespace aug
 		aiReleaseImport(m_pAiScene);
 		m_pAiScene = NULL;
 
+		TextureFactory::SetTextureExtension("");
+
 		return true;
 	}
 

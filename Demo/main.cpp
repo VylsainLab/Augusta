@@ -59,7 +59,11 @@ private:
 
 	//Scene	
 	std::shared_ptr<aug::Scene> m_pScene;
+
+	//Cubemap
+	std::shared_ptr<aug::Mesh> m_pSphere = nullptr;
 	std::shared_ptr<aug::Texture> m_pHDRCubemap = nullptr;
+	aug::DescriptorSetLayoutHandle m_hHDRCubemapSet;
 
 	aug::Camera m_Camera;
 
@@ -159,6 +163,8 @@ private:
 
 		m_pDeferredPipeline->BindResource(cb, m_hGBufferSet, 0, m_aGBufferFBs[m_uiCurrentFrame].get());
 
+		m_pDeferredPipeline->BindResource(cb, m_hHDRCubemapSet, 1, m_pHDRCubemap.get());
+
 		//Draw screen triangle
 		VkBuffer vertexBuffers[] = { m_pScreenTriangleVB->GetBufferHandle() };
 		VkDeviceSize offsets[] = { 0 };
@@ -212,9 +218,9 @@ private:
 			fbDesc._strName = "00_GBuffer" + std::to_string(uiCount);
 			fbDesc._uiWidth = WINDOW_WIDTH;
 			fbDesc._uiHeight = WINDOW_HEIGHT;
-			fbDesc._vColorAttachmentsFormats.push_back(VK_FORMAT_B8G8R8A8_UNORM);//albedo
-			fbDesc._vColorAttachmentsFormats.push_back(VK_FORMAT_B8G8R8A8_UNORM);//normals
-			fbDesc._vColorAttachmentsFormats.push_back(VK_FORMAT_B8G8R8A8_UNORM);//roughness-metalness-ao
+			fbDesc._vColorAttachmentsFormats.push_back(VK_FORMAT_B8G8R8A8_UNORM);//albedo-roughness
+			fbDesc._vColorAttachmentsFormats.push_back(VK_FORMAT_R16G16B16A16_SFLOAT);//normals-metalness
+			fbDesc._vColorAttachmentsFormats.push_back(VK_FORMAT_R16G16B16A16_SFLOAT);//emissive-ao
 			fbDesc._DepthFormat = VK_FORMAT_D32_SFLOAT;
 			fb = std::make_shared<aug::Framebuffer>(fbDesc);
 			uiCount++;
@@ -282,7 +288,6 @@ private:
 			fbDesc._uiWidth = WINDOW_WIDTH;
 			fbDesc._uiHeight = WINDOW_HEIGHT;
 			fbDesc._vColorAttachmentsFormats.push_back(VK_FORMAT_R16G16B16A16_SFLOAT);//HDR
-			//fbDesc._DepthFormat = VK_FORMAT_D32_SFLOAT;
 			fb = std::make_shared<aug::Framebuffer>(fbDesc);
 			uiCount++;
 		}
@@ -298,19 +303,27 @@ private:
 		deferredPipelineDesc._uiPushConstantSize = sizeof(PushConstantData);
 		m_pDeferredPipeline = std::make_unique<aug::Pipeline>(m_aDeferredFBs[0].get());
 
-		aug::SDescriptorSetDesc descGBufferTextures;
-		descGBufferTextures._uiSet = 0;
-		descGBufferTextures.AddBinding(0, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //albedo
-		descGBufferTextures.AddBinding(1, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //normals
-		descGBufferTextures.AddBinding(2, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //roughness-metalness-ao
-		descGBufferTextures.AddBinding(3, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //depth
+		aug::SDescriptorSetDesc GBufferTexturesSetDesc;
+		GBufferTexturesSetDesc._uiSet = 0;
+		GBufferTexturesSetDesc.AddBinding(0, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //albedo
+		GBufferTexturesSetDesc.AddBinding(1, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //normals
+		GBufferTexturesSetDesc.AddBinding(2, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //roughness-metalness-ao
+		GBufferTexturesSetDesc.AddBinding(3, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //depth
+		m_hGBufferSet = m_pDeferredPipeline->DeclareResourceLayout(GBufferTexturesSetDesc);
 
-		m_hGBufferSet = m_pDeferredPipeline->DeclareResourceLayout(descGBufferTextures);
+		aug::SDescriptorSetDesc hdrCubemapSetDesc;
+		hdrCubemapSetDesc._uiSet = 1;
+		hdrCubemapSetDesc.AddBinding(0, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
+		m_hHDRCubemapSet = m_pDeferredPipeline->DeclareResourceLayout(hdrCubemapSetDesc);
+		
 		deferredPipelineDesc._vLayoutHandles.push_back(m_hGBufferSet);
+		deferredPipelineDesc._vLayoutHandles.push_back(m_hHDRCubemapSet);
 		m_pDeferredPipeline->Init(deferredPipelineDesc);
 
 		m_pDeferredPipeline->RegisterResource(m_hGBufferSet, m_aGBufferFBs[0].get());
 		m_pDeferredPipeline->RegisterResource(m_hGBufferSet, m_aGBufferFBs[1].get());
+
+		m_pDeferredPipeline->RegisterResource(m_hHDRCubemapSet, m_pHDRCubemap.get());
 
 		aug::SRenderPass pass;
 		pass._RenderFunc = std::bind(&AugustaDemo::RenderDeferred, this);
@@ -352,15 +365,73 @@ private:
 		pGroundMat->m_aTextures[aug::TEXTURE_CHANNEL_ROUGHNESS] = aug::TextureFactory::LoadTextureFromFile("Roughness.dds");
 		pGroundMat->m_Desc._iTexMask = TEXTURE_CHANNEL_ALBEDO_BIT | TEXTURE_CHANNEL_NORMAL_BIT | TEXTURE_CHANNEL_ROUGHNESS_BIT;
 		groundMeshDesc._pMaterial = pGroundMat;
-
-		std::shared_ptr<aug::Mesh> pGroundMesh = m_pScene->CreateMesh(groundMeshDesc, m_pScene->GetRootNode());
+		m_pScene->CreateMesh(groundMeshDesc, m_pScene->GetRootNode());
 	}
 
-	void Init()
+#include <Augusta/Utils.h>
+
+	void InitCubemap()
 	{
 		aug::TextureFactory::AddTexturePath("../../Assets/HDR");
 		m_pHDRCubemap = aug::TextureFactory::LoadTextureFromFile("03_hangar.hdr");
 
+		std::shared_ptr<aug::Material> pCubemapMat = aug::MaterialFactory::CreateMaterial("Cubemap");
+		pCubemapMat->m_aTextures[aug::TEXTURE_CHANNEL_EMISSIVE] = m_pHDRCubemap;
+		pCubemapMat->m_Desc._iTexMask = TEXTURE_CHANNEL_EMISSIVE_BIT;		
+
+		struct SVertex
+		{
+			glm::vec3 pos;
+			glm::vec3 normal;
+			glm::vec2 uv;
+		};
+		
+		uint32_t iRes = 100;
+		double dRadius = 1000;
+
+		//face geometry patch
+		std::vector<SVertex> vVertices;
+		std::vector<uint32_t> vIndices;
+		for (uint32_t i = 0; i < iRes; ++i)
+		{
+			for (uint32_t j = 0; j < iRes; ++j)
+			{
+				SVertex vertex;
+				vertex.uv = glm::vec2(float(j) / (iRes - 1), float(i) / (iRes - 1));
+				float alpha = 2. * PI * vertex.uv.x;
+				float beta = PI * (-0.5 + vertex.uv.y);
+				vertex.pos = float(dRadius) * glm::vec3(-cos(beta) * cos(alpha), sin(beta), cos(beta) * sin(alpha));
+				vertex.normal = -glm::normalize(vertex.pos);
+				vertex.uv *= -1;
+				vVertices.push_back(vertex);
+
+				if (i < iRes - 1 && j < iRes - 1)
+				{
+					vIndices.push_back(i * iRes + j);
+					vIndices.push_back((i + 1)* iRes + j);
+					vIndices.push_back(i * iRes + j + 1);					
+
+					vIndices.push_back((i + 1) * iRes + j);
+					vIndices.push_back((i + 1)* iRes + j + 1);
+					vIndices.push_back(i * iRes + j + 1);					
+				}
+			}
+		}
+
+
+		aug::SMeshDesc cubeMeshDesc;
+		cubeMeshDesc._usage = aug::MESH_USAGE_STATIC;
+		cubeMeshDesc._pFormat = &m_GBufferVertexFormat;
+		cubeMeshDesc._vertexCount = vVertices.size();
+		cubeMeshDesc._vertexData = vVertices.data();
+		cubeMeshDesc._indexCount = vIndices.size();
+		cubeMeshDesc._indexData = vIndices.data();
+		cubeMeshDesc._pMaterial = pCubemapMat;
+		m_pSphere = m_pScene->CreateMesh(cubeMeshDesc, m_pScene->GetRootNode());
+	}
+
+	void Init()
+	{
 		m_pScene = std::make_shared<aug::Scene>();
 		m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/KV2/kv2.FBX", "../../Assets/KV2/textures/","dds");m_pScene->GetRootNode()->Scale(glm::dvec3(0.01));
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/F18/F18_opaque.FBX", "../../Assets/F18/", "dds"); m_pScene->GetRootNode()->Scale(glm::dvec3(0.001));
@@ -372,6 +443,8 @@ private:
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Bistro_v5_2/BistroExterior.FBX", "../../Assets/Bistro_v5_2/Textures");
 		
 		InitGround();
+
+		InitCubemap();
 
 		aug::Shader::SetDirectory("shaders/");
 
@@ -423,12 +496,13 @@ private:
 
 		for (uint32_t i = 0; i < pNode->GetNbMeshes(); ++i)
 		{
-			if (pNode->GetMesh(i)->m_pMaterial)
+			std::shared_ptr<aug::Material> pMat = pNode->GetMesh(i)->m_pMaterial;
+			if (pMat)
 			{
 				//Init material descriptors if not done already
-				if (!pNode->GetMesh(i)->m_pMaterial->HasDescriptor(m_hMaterialSet))
+				if (!pMat->HasDescriptor(m_hMaterialSet))
 				{
-					pNode->GetMesh(i)->m_pMaterial->BuildUniformBuffer();
+					pMat->BuildUniformBuffer();
 					m_pGBufferPipeline->RegisterResource(m_hMaterialSet, pNode->GetMesh(i)->m_pMaterial.get());
 				}
 
@@ -469,7 +543,7 @@ int main()
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << "Exception thrown: " <<e.what() << std::endl;
+		aug::Debug::Log(aug::LOG_TYPE_ERROR, std::format("Exception thrown: {}", e.what()));
 		return EXIT_FAILURE;
 	}
 

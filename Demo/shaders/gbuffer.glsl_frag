@@ -10,9 +10,9 @@ layout(location = 1) in vec2 fragTexcoord;
 layout(location = 2) in vec3 fragPos;
 
 //OUTPUTS
-layout(location = 0) out vec4 outAlbedo;
-layout(location = 1) out vec4 outNormals;
-layout(location = 2) out vec4 outRoughMetalAO;
+layout(location = 0) out vec4 outAlbedoRoughness;
+layout(location = 1) out vec4 outNormalsMetalness;
+layout(location = 2) out vec4 outEmissiveAO;
 
 //MATERIAL
 #define TEXTURE_CHANNEL_ALBEDO_BIT		1
@@ -44,7 +44,7 @@ void main()
 	//debugPrintfEXT("Material mask: %lx %d %d", materialUBO._uiAddress, materialUBO._iTexMask, bNormal);
 
 	bool bAlbedoMap =		(materialUBO._iTexMask & TEXTURE_CHANNEL_ALBEDO_BIT)==TEXTURE_CHANNEL_ALBEDO_BIT;
-	bool bNormalMap =		(materialUBO._iTexMask & TEXTURE_CHANNEL_NORMAL_BIT)==TEXTURE_CHANNEL_NORMAL_BIT;
+	bool bNormalMap =   	(materialUBO._iTexMask & TEXTURE_CHANNEL_NORMAL_BIT)==TEXTURE_CHANNEL_NORMAL_BIT;
 	bool bAOMap =			(materialUBO._iTexMask & TEXTURE_CHANNEL_AO_BIT)==TEXTURE_CHANNEL_AO_BIT;
 	bool bRoughnessMap =	(materialUBO._iTexMask & TEXTURE_CHANNEL_ROUGHNESS_BIT)==TEXTURE_CHANNEL_ROUGHNESS_BIT;
 	bool bMetalnessMap =	(materialUBO._iTexMask & TEXTURE_CHANNEL_METALNESS_BIT)==TEXTURE_CHANNEL_METALNESS_BIT;
@@ -57,17 +57,15 @@ void main()
 	float metalness = bMetalnessMap ? texture(samplerMetalness, fragTexcoord).r : materialUBO._fMetalness;
 	vec3 emissive = bEmissiveMap ? texture(samplerEmissive, fragTexcoord).rgb : vec3(0.);
 
-    outAlbedo.rgb = albedo;
-	outAlbedo.a = 1.0;
+    outAlbedoRoughness.rgb = albedo;
+	outAlbedoRoughness.a = roughness;
 
 	float fBumpiness = 1.0;
     mat3 TBN = cotangent_frame(fragNormal,fragPos,fragTexcoord);
     vec3 N = bNormalMap ? mix(normalize(fragNormal),perturb_normal(TBN,normals),fBumpiness) : normalize(fragNormal);
-    outNormals.rgb = N;
-	outNormals.a = 1.0;
+    outNormalsMetalness.rgb = N;
+	outNormalsMetalness.a = metalness;
 
-	outRoughMetalAO.r = roughness.r;
-	outRoughMetalAO.g = metalness.r;
-	outRoughMetalAO.b = ao.r;
-	outRoughMetalAO.a = 1.0;
+	outEmissiveAO.rgb = emissive;
+	outEmissiveAO.a = ao.r;
 }

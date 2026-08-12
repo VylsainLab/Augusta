@@ -51,6 +51,9 @@ namespace aug
 			imageInfo.sampler = m_aTextures[i]->GetSampler();
 
 			DescriptorFactory::UpdateDescriptor(m_mDescriptorHandles[h], &imageInfo, i+1);
+
+			const VkDescriptorSet s = DescriptorFactory::GetDescriptorSet(m_mDescriptorHandles[h]);
+			Debug::Log(LOG_TYPE_INFO, std::format("{} {:x}", m_aTextures[i]->GetDesc()._strName.c_str(), (const uint64_t)s));
 		}
 	}
 

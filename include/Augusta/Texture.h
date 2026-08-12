@@ -28,7 +28,7 @@ namespace aug
 		VkImageLayout _layout = VK_IMAGE_LAYOUT_UNDEFINED;
 	};
 
-	class Texture
+	class Texture : public DescriptorTarget
 	{
 	public:
 		void TransitionImageToLayout(VkImageLayout newLayout, VkCommandBuffer cb=VK_NULL_HANDLE);
@@ -42,6 +42,8 @@ namespace aug
 
 		const STextureDesc& GetDesc() { return m_TextureDesc; }
 		const VkImageLayout& GetCurrentLayout() { return m_CurrentImageLayout; }
+
+		void UpdateDescriptor(DescriptorSetLayoutHandle h) override;
 
 		void ImGuiDrawDebug();
 

@@ -61,15 +61,15 @@ namespace aug
 		switch (type)
 		{
 		case LOG_TYPE_INFO:
-			strOutput = std::format("\nINFO:\n{}", strEntry);
+			strOutput = std::format("\n\nINFO: {}", strEntry);
 			std::cout << strOutput;
 			break;
 		case LOG_TYPE_WARNING:
-			strOutput = std::format("\nINFO:\n{}", strEntry);
+			strOutput = std::format("\n\nWARNING: {}", strEntry);
 			std::cout << strOutput;
 			break;
 		case LOG_TYPE_ERROR:
-			strOutput = std::format("\nINFO:\n{}", strEntry);
+			strOutput = std::format("\n\nERROR: {}", strEntry);
 			std::cerr << strOutput;
 			break;
 		}
