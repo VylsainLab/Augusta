@@ -42,18 +42,17 @@ namespace aug
 
 		for (uint32_t i = 0; i < TEXTURE_CHANNEL_COUNT; i++)
 		{
-			if (m_aTextures[i] == nullptr)
-				continue;
+			std::shared_ptr<Texture> pTex = m_aTextures[i] != nullptr ? m_aTextures[i] : MaterialFactory::GetDefaultTexture();
 			
 			VkDescriptorImageInfo imageInfo;
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL;
-			imageInfo.imageView = m_aTextures[i]->GetImageView();
-			imageInfo.sampler = m_aTextures[i]->GetSampler();
+			imageInfo.imageView = pTex->GetImageView();
+			imageInfo.sampler = pTex->GetSampler();
 
 			DescriptorFactory::UpdateDescriptor(m_mDescriptorHandles[h], &imageInfo, i+1);
 
 			const VkDescriptorSet s = DescriptorFactory::GetDescriptorSet(m_mDescriptorHandles[h]);
-			Debug::Log(LOG_TYPE_INFO, std::format("{} {:x}", m_aTextures[i]->GetDesc()._strName.c_str(), (const uint64_t)s));
+			Debug::Log(LOG_TYPE_INFO, std::format("{} {:x}", pTex->GetDesc()._strName.c_str(), (const uint64_t)s));
 		}
 	}
 
@@ -100,6 +99,7 @@ namespace aug
 
 	std::map<std::string, std::shared_ptr<Material>> MaterialFactory::m_mMaterials;
 	std::unique_ptr<Buffer> MaterialFactory::m_pDefaultTextureBuffer;
+	std::shared_ptr<Texture> MaterialFactory::m_pDefaultTexture;
 	void MaterialFactory::Init()
 	{
 		//create placeholder material
@@ -124,7 +124,8 @@ namespace aug
 			255,0,255,255		
 		};
 		m_pDefaultTextureBuffer = std::make_unique<Buffer>(uiSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY, pixels);
-		m_mMaterials["Default"]->m_aTextures[TEXTURE_CHANNEL_ALBEDO] = TextureFactory::LoadTextureFromMemory(desc,m_pDefaultTextureBuffer.get());
+		m_pDefaultTexture = TextureFactory::LoadTextureFromMemory(desc, m_pDefaultTextureBuffer.get());
+		m_mMaterials["Default"]->m_aTextures[TEXTURE_CHANNEL_ALBEDO] = m_pDefaultTexture;
 	}
 
 	std::shared_ptr<Material> MaterialFactory::CreateMaterial(const std::string& strName)
@@ -146,6 +147,11 @@ namespace aug
 			return it->second;
 		
 		return m_mMaterials["Default"];
+	}
+
+	std::shared_ptr<Texture> MaterialFactory::GetDefaultTexture()
+	{
+		return m_pDefaultTexture;
 	}
 
 	void MaterialFactory::DrawDebug()

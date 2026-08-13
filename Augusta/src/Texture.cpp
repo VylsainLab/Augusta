@@ -332,7 +332,7 @@ namespace aug
 			{				
 				std::shared_ptr<Texture> pTex = texture.second.lock();
 
-				if (!pTex.get() && (pTex->GetCurrentLayout() != VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL || !filter.PassFilter(pTex->m_TextureDesc._strName.c_str())))
+				if (!pTex.get() || pTex->GetCurrentLayout() != VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL || !filter.PassFilter(pTex->m_TextureDesc._strName.c_str()))
 					continue;
 
 				const bool bIsSelected = (iSelected == iCount);

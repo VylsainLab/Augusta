@@ -265,10 +265,7 @@ namespace aug
 		{
 			pTex = TextureFactory::LoadTextureFromFile(strPath);
 			if (pTex == nullptr)
-			{
-				pTex = MaterialFactory::GetMaterialByName("Default")->m_aTextures[TEXTURE_CHANNEL_ALBEDO];
 				return false;
-			}
 			return true;
 		}
 		

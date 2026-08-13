@@ -66,11 +66,13 @@ namespace aug
 
 		static std::shared_ptr<Material> CreateMaterial(const std::string& strName);
 		static std::shared_ptr<Material> GetMaterialByName(const std::string& strName);
+		static std::shared_ptr<Texture> GetDefaultTexture();
 
 		static void DrawDebug();
 
 	protected:
 		static std::map<std::string, std::shared_ptr<Material>> m_mMaterials; //use weak pointer instead
 		static std::unique_ptr<Buffer> m_pDefaultTextureBuffer;
+		static std::shared_ptr<Texture> m_pDefaultTexture;
 	};
 }
