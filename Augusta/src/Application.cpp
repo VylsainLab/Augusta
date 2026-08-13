@@ -130,6 +130,9 @@ namespace aug
 
 		if (InputManager::InputReleased(GLFW_KEY_F1))
 			m_bDisplayImGuiMenu = !m_bDisplayImGuiMenu;
+		
+		if (InputManager::InputReleased(GLFW_KEY_F2))
+			m_bDisplayDebugImGui = !m_bDisplayDebugImGui;
 
 		if (InputManager::InputReleased(GLFW_KEY_GRAVE_ACCENT))
 			m_bDisplayConsole = !m_bDisplayConsole;
