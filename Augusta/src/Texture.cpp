@@ -452,8 +452,20 @@ namespace aug
 			return nullptr;
 		}
 
-		uint64_t uiSize = w * h * c * sizeof(float);
-		Buffer stagingBuffer(uiSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY, pData);
+		std::vector<glm::vec4> vDst;
+		if (c == 3) //remap to RGBA buffer
+		{
+			float* pSrc = pData;
+			vDst.resize(w * h * 4);
+			for (uint32_t i = 0; i < w * h; ++i)
+			{
+				vDst[i] = { pSrc[0], pSrc[1], pSrc[2], 0.f };
+				pSrc += 3;
+			}
+		}
+
+		uint64_t uiSize = w * h * 4 * sizeof(float);
+		Buffer stagingBuffer(uiSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY, c==3 ? reinterpret_cast<float*>(vDst.data()) : pData);
 
 		stbi_image_free(pData);
 		
@@ -463,7 +475,7 @@ namespace aug
 		desc._height = h;
 		desc._usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 		desc._layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		desc._format = c==3 ? VK_FORMAT_R32G32B32_SFLOAT : VK_FORMAT_R32G32B32A32_SFLOAT;
+		desc._format = VK_FORMAT_R32G32B32A32_SFLOAT;
 		return Texture::MakeShared(desc, &stagingBuffer);
 	}
 }
