@@ -35,6 +35,7 @@ namespace aug
 
 		glm::dmat4 GetViewMatrix() { return m_ViewMatrix; }
 		glm::dmat4 GetProjectionMatrix() { return m_ProjectionMatrix; }
+		glm::vec3 GetPosition() { return glm::vec3(m_Position); }
 
 	private:
 

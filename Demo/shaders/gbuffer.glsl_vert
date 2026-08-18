@@ -11,17 +11,18 @@ layout(location = 2) out vec3 fragPos;
 
 layout(set=0, binding = 0) uniform UniformBufferObject 
 {
-    mat4 view;
-    mat4 proj;
+    mat4 _view;
+    mat4 _proj;
+    vec3 _camPos;
 } ubo;
 
 layout(push_constant) uniform PushConstantData 
 {
-  mat4 model;
+  mat4 _model;
 } pcd;
 
 void main() {
-    gl_Position = ubo.proj * ubo.view * pcd.model * vec4(inPosition, 1.0);
+    gl_Position = ubo._proj * ubo._view * pcd._model * vec4(inPosition, 1.0);
     fragNormal = inNormal;
 	fragTexcoord = inTexcoord;
     fragPos = gl_Position.xyz;

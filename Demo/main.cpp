@@ -36,7 +36,7 @@ public:
 	}
 
 private:	
-	
+
 	//GBuffer pass
 	aug::VertexFormat m_GBufferVertexFormat;
 	std::unique_ptr<aug::Pipeline> m_pGBufferPipeline;
@@ -44,6 +44,8 @@ private:
 	std::array<VkCommandBuffer, MAX_FRAMES_IN_FLIGHT> m_aGBufferCBs;	
 	VkFence m_GBufferFence;
 	aug::DescriptorSetLayoutHandle m_hGBufferSet;
+	aug::DescriptorSetLayoutHandle m_hGBufferUBOSet;
+	aug::DescriptorSetLayoutHandle m_hMaterialSet;
 
 	//Deferred pass
 	std::unique_ptr<aug::Pipeline> m_pDeferredPipeline;
@@ -51,11 +53,11 @@ private:
 	std::array<VkCommandBuffer, MAX_FRAMES_IN_FLIGHT> m_aDeferredCBs;
 	VkFence m_DeferredFence;
 	aug::DescriptorSetLayoutHandle m_hDeferredSet;
+	aug::DescriptorSetLayoutHandle m_hDeferredUBOSet;
 
 	//Main pass
 	std::unique_ptr<aug::Buffer> m_pScreenTriangleVB = nullptr;
-	aug::VertexFormat m_MainVertexFormat; //move to render subpass
-	std::vector<aug::Buffer*> m_vUniformBuffers; //One per swap chain image
+	aug::VertexFormat m_MainVertexFormat; //move to render subpass	
 
 	//Scene	
 	std::shared_ptr<aug::Scene> m_pScene;
@@ -66,9 +68,8 @@ private:
 	aug::DescriptorSetLayoutHandle m_hHDRCubemapSet;
 
 	aug::Camera m_Camera;
-
-	aug::DescriptorSetLayoutHandle m_hModelMatrixUniformSet;
-	aug::DescriptorSetLayoutHandle m_hMaterialSet;
+	
+	std::vector<aug::Buffer*> m_vMainUBOs; //One per swap chain image	
 
 	//Utils
 	aug::AssimpParser m_AssimpParser;	
@@ -76,19 +77,20 @@ private:
 	//************UNIFORMS**********
 	struct UniformBufferObject 
 	{
-		glm::mat4 view;
-		glm::mat4 proj;
+		glm::mat4 _view;
+		glm::mat4 _proj;
+		glm::vec3 _camPos;
 	};
 
 	struct PushConstantData
 	{
-		glm::mat4 model;
+		glm::mat4 _model;
 	};
 
 	void CreateUniformBuffers()
 	{
 		for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
-			m_vUniformBuffers.push_back(new aug::Buffer(sizeof(UniformBufferObject), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU, nullptr));
+			m_vMainUBOs.push_back(new aug::Buffer(sizeof(UniformBufferObject), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU, nullptr));
 	}
 
 	//***************************************
@@ -161,9 +163,11 @@ private:
 		m_pDeferredPipeline->Bind(cb);
 		m_pDeferredPipeline->BeginRendering(cb, m_aDeferredFBs[m_uiCurrentFrame].get(), aug::Framebuffer::FRAMEBUFFER_LAYOUT_ATTACHMENT);
 
-		m_pDeferredPipeline->BindResource(cb, m_hGBufferSet, 0, m_aGBufferFBs[m_uiCurrentFrame].get());
+		m_pDeferredPipeline->BindResource(cb, m_hDeferredUBOSet, 0, m_vMainUBOs[m_uiCurrentFrame]);
 
-		m_pDeferredPipeline->BindResource(cb, m_hHDRCubemapSet, 1, m_pHDRCubemap.get());
+		m_pDeferredPipeline->BindResource(cb, m_hGBufferSet, 1, m_aGBufferFBs[m_uiCurrentFrame].get());
+
+		m_pDeferredPipeline->BindResource(cb, m_hHDRCubemapSet, 2, m_pHDRCubemap.get());
 
 		//Draw screen triangle
 		VkBuffer vertexBuffers[] = { m_pScreenTriangleVB->GetBufferHandle() };
@@ -240,8 +244,8 @@ private:
 		aug::SDescriptorSetDesc descUB;
 		descUB._uiSet = 0;
 		descUB.AddBinding(0, VK_SHADER_STAGE_VERTEX_BIT, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); //model UB
-		m_hModelMatrixUniformSet = m_pGBufferPipeline->DeclareResourceLayout(descUB);
-		gbufferPipelineDesc._vLayoutHandles.push_back(m_hModelMatrixUniformSet);
+		m_hGBufferUBOSet = m_pGBufferPipeline->DeclareResourceLayout(descUB);
+		gbufferPipelineDesc._vLayoutHandles.push_back(m_hGBufferUBOSet);
 
 		aug::SDescriptorSetDesc descMat;
 		descMat._uiSet = 1;
@@ -256,8 +260,8 @@ private:
 		gbufferPipelineDesc._vLayoutHandles.push_back(m_hMaterialSet);
 		m_pGBufferPipeline->Init(gbufferPipelineDesc);
 
-		m_pGBufferPipeline->RegisterResource(m_hModelMatrixUniformSet, m_vUniformBuffers[0]);
-		m_pGBufferPipeline->RegisterResource(m_hModelMatrixUniformSet, m_vUniformBuffers[1]);
+		m_pGBufferPipeline->RegisterResource(m_hGBufferUBOSet, m_vMainUBOs[0]);
+		m_pGBufferPipeline->RegisterResource(m_hGBufferUBOSet, m_vMainUBOs[1]);
 
 		aug::SRenderPass pass;
 		pass._RenderFunc = std::bind(&AugustaDemo::RenderGBuffer, this);
@@ -303,8 +307,14 @@ private:
 		deferredPipelineDesc._uiPushConstantSize = sizeof(PushConstantData);
 		m_pDeferredPipeline = std::make_unique<aug::Pipeline>(m_aDeferredFBs[0].get());
 
+		aug::SDescriptorSetDesc descUB;
+		descUB._uiSet = 0;
+		descUB.AddBinding(0, VK_SHADER_STAGE_VERTEX_BIT, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); //model UB
+		m_hDeferredUBOSet = m_pDeferredPipeline->DeclareResourceLayout(descUB);
+		deferredPipelineDesc._vLayoutHandles.push_back(m_hDeferredUBOSet);
+
 		aug::SDescriptorSetDesc GBufferTexturesSetDesc;
-		GBufferTexturesSetDesc._uiSet = 0;
+		GBufferTexturesSetDesc._uiSet = 1;
 		GBufferTexturesSetDesc.AddBinding(0, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //albedo
 		GBufferTexturesSetDesc.AddBinding(1, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //normals
 		GBufferTexturesSetDesc.AddBinding(2, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //roughness-metalness-ao
@@ -312,13 +322,16 @@ private:
 		m_hGBufferSet = m_pDeferredPipeline->DeclareResourceLayout(GBufferTexturesSetDesc);
 
 		aug::SDescriptorSetDesc hdrCubemapSetDesc;
-		hdrCubemapSetDesc._uiSet = 1;
+		hdrCubemapSetDesc._uiSet = 2;
 		hdrCubemapSetDesc.AddBinding(0, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
 		m_hHDRCubemapSet = m_pDeferredPipeline->DeclareResourceLayout(hdrCubemapSetDesc);
 		
 		deferredPipelineDesc._vLayoutHandles.push_back(m_hGBufferSet);
 		deferredPipelineDesc._vLayoutHandles.push_back(m_hHDRCubemapSet);
 		m_pDeferredPipeline->Init(deferredPipelineDesc);
+
+		m_pDeferredPipeline->RegisterResource(m_hDeferredUBOSet, m_vMainUBOs[0]);
+		m_pDeferredPipeline->RegisterResource(m_hDeferredUBOSet, m_vMainUBOs[1]);
 
 		m_pDeferredPipeline->RegisterResource(m_hGBufferSet, m_aGBufferFBs[0].get());
 		m_pDeferredPipeline->RegisterResource(m_hGBufferSet, m_aGBufferFBs[1].get());
@@ -433,8 +446,8 @@ private:
 	void Init()
 	{
 		m_pScene = std::make_shared<aug::Scene>();
-		m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/KV2/kv2.FBX", "../../Assets/KV2/textures/","dds");m_pScene->GetRootNode()->Scale(glm::dvec3(0.01));
-		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/F18/F18_opaque.FBX", "../../Assets/F18/", "dds"); m_pScene->GetRootNode()->Scale(glm::dvec3(0.001));
+		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/KV2/kv2.FBX", "../../Assets/KV2/textures/","dds");m_pScene->GetRootNode()->Scale(glm::dvec3(0.01));
+		m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/F18/F18_opaque.FBX", "../../Assets/F18/", "dds"); m_pScene->GetRootNode()->Scale(glm::dvec3(0.001));
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Cottage/Cottage.FBX", "../../Assets/Cottage/", "dds");
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Lighthouse/lighthouse.FBX", "../../Assets/Lighthouse/Textures/", "dds");
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Sponza/untitled.FBX", "../../Assets/Sponza/", "dds");
@@ -482,9 +495,10 @@ private:
 
 		//update uniform buffers
 		UniformBufferObject ubo;
-		ubo.view = glm::mat4(m_Camera.GetViewMatrix());
-		ubo.proj = glm::mat4(m_Camera.GetProjectionMatrix());
-		m_vUniformBuffers[m_uiCurrentFrame]->CopyData(sizeof(UniformBufferObject), &ubo);
+		ubo._view = glm::mat4(m_Camera.GetViewMatrix());
+		ubo._proj = glm::mat4(m_Camera.GetProjectionMatrix());
+		ubo._camPos = m_Camera.GetPosition();
+		m_vMainUBOs[m_uiCurrentFrame]->CopyData(sizeof(UniformBufferObject), &ubo);
 	}
 
 	virtual void RenderNode(const VkCommandBuffer& commandBuffer, std::shared_ptr<aug::Node> pNode, glm::dmat4 trans) override
@@ -492,7 +506,7 @@ private:
 		glm::mat4 ftrans = static_cast<glm::mat4>(trans);
 		m_pGBufferPipeline->PushConstants(commandBuffer,&ftrans);
 
-		m_pGBufferPipeline->BindResource(commandBuffer, m_hModelMatrixUniformSet, 0, m_vUniformBuffers[m_uiCurrentFrame]);
+		m_pGBufferPipeline->BindResource(commandBuffer, m_hGBufferUBOSet, 0, m_vMainUBOs[m_uiCurrentFrame]);
 
 		for (uint32_t i = 0; i < pNode->GetNbMeshes(); ++i)
 		{
@@ -528,7 +542,7 @@ private:
 	{		
 		vkDestroyFence(aug::Context::m_VkDevice, m_GBufferFence, nullptr);
 
-		for (auto elem : m_vUniformBuffers)
+		for (auto elem : m_vMainUBOs)
 			delete elem;
 	}
 };
