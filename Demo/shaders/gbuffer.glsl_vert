@@ -22,8 +22,9 @@ layout(push_constant) uniform PushConstantData
 } pcd;
 
 void main() {
-    gl_Position = ubo._proj * ubo._view * pcd._model * vec4(inPosition, 1.0);
+    vec4 p = pcd._model * vec4(inPosition, 1.0);
+    fragPos = p.xyz;
+    gl_Position = ubo._proj * ubo._view * p;
     fragNormal = inNormal;
 	fragTexcoord = inTexcoord;
-    fragPos = gl_Position.xyz;
 }

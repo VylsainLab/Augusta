@@ -170,6 +170,8 @@
     <None Include="shaders\gbuffer.glsl_frag" />
     <None Include="shaders\gbuffer.glsl_vert" />
     <None Include="shaders\Lighting.header" />
+    <None Include="shaders\Maths.header" />
+    <None Include="shaders\PBR.header" />
     <None Include="shaders\Utils.header" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,6 +1,7 @@
 #version 450 core
 
 #include "Lighting.header"
+#include "PBR.header"
 
 layout(location = 0) in vec2 uv;
 
@@ -8,30 +9,62 @@ layout(location = 0) out vec4 color;
 
 layout(set=0, binding = 0) uniform UniformBufferObject 
 {
-    mat4 _view;
-    mat4 _proj;
-    vec3 _camPos;
-} ubo;
+    mat4 _View;
+    mat4 _Proj;
+	vec3 _CamPos;
+} mainUBO;
 
-layout(set=1, binding = 0) uniform sampler2D samplerAlbedoRoughness;
-layout(set=1, binding = 1) uniform sampler2D samplerNormalsMetalness;
+layout(set=1, binding = 0) uniform sampler2D samplerAlbedo;
+layout(set=1, binding = 1) uniform sampler2D samplerNormals;
 layout(set=1, binding = 2) uniform sampler2D samplerEmissiveAO;
 layout(set=1, binding = 3) uniform sampler2D samplerDepth;
 
 layout(set=2, binding = 0) uniform sampler2D samplerHDRCubemap;
 
+vec3 WorldPosFromDepth(float depth) 
+{
+    vec4 clipSpacePosition = vec4(uv * 2.0 - 1.0, depth, 1.0);
+    vec4 viewSpacePosition = inverse(mainUBO._Proj) * clipSpacePosition;
+
+    // Perspective division
+    viewSpacePosition /= viewSpacePosition.w;
+
+    vec4 worldSpacePosition = inverse(mainUBO._View) * viewSpacePosition;
+
+    return worldSpacePosition.xyz;
+}
+
 void main()
 {  
     SDirectionalLight Sun;
-    Sun._fIlluminance = 1.0f;
+    Sun._fIlluminance = 5.0f;
     Sun._vDirection = vec3(0,1,0);
+    vec3 L = normalize(Sun._vDirection);
 
-    vec3 normals = texture(samplerNormalsMetalness, uv).rgb;
-    vec3 diffuse = GetDirectionalLight(Sun,normals) * texture(samplerAlbedoRoughness, uv).rgb;
+    vec4 normalMetalness = texture(samplerNormals, uv);
+    vec3 N = normalize(normalMetalness.rgb);
+
+    float fDepth = texture(samplerDepth, uv).r;
+    vec3 p = WorldPosFromDepth(fDepth);
+    vec3 V = normalize(mainUBO._CamPos - p);
+    
+    vec3 H = normalize(V+L);
+
+    vec4 albedoRoughness = texture(samplerAlbedo, uv);
+    albedoRoughness.rgb = pow(albedoRoughness.rgb,vec3(2.2)); //bring albedo to linear space ahead of light calculations
+
+    SPBRDesc desc;
+    desc._albedo = albedoRoughness.rgb;    
+    desc._fRoughness = albedoRoughness.a;
+    desc._fMetalness = normalMetalness.a;
+    desc._NdotH = max(dot(N,H),0.f);
+    desc._NdotV = dot(N,V);
+    desc._NdotL = dot(N,L);
+    desc._HdotV = dot(H,V);
+    desc._irradiance = GetDirectionalLight(Sun, N);
+    vec3 radiance = BRDF(desc);
 
     vec3 emissive = texture(samplerEmissiveAO, uv).rgb;
 
-    float fDepth = texture(samplerDepth, uv).r;
-
-    color = vec4(diffuse + emissive, 1.0);
+    color = vec4(radiance + emissive, 1.0);
 }

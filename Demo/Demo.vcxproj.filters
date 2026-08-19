@@ -47,5 +47,11 @@
     <None Include="shaders\Lighting.header">
       <Filter>shaders</Filter>
     </None>
+    <None Include="shaders\PBR.header">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\Maths.header">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

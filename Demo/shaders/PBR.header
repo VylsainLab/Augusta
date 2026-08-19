@@ -1,0 +1,104 @@
+ #include "Maths.header"
+
+ //General reflectance equation
+// Lo = Integral over Omega( Fr*Li*n.wi )dwi
+// Omega: hemisphere around the considered surface point, aligned along normal n
+// Lo: Outgoing radiance for a given surface from a given direction
+// Fr: Bidirectional Reflectance Distribution Function
+// Li: Irradiance, sum of all incoming radiance
+// n: normal
+// wi: negative direction of incoming light
+
+// Fr
+// CookTorrance BRDF
+// Fr = Kd*Fd + Fs
+// Kd: diffuse component, ratio of light that gets refracted
+// Fd: Lambertian diffuse (albedo / PI)
+// Fs: Specular term (Cook-Torrance)
+
+// Fs 
+// Specular Term
+// D*F*G / 4*(wo.n)*(wi.n)
+// D: Normal Distribution Function
+// F: Fresnel equation
+// G: Geometry function
+// wo: direction of outgoing light
+// wi: negative direction of incoming light
+// n: normal
+
+// D (GGX)
+// Statistically approximates the relative surface area of microfacets exactly aligned to the (halfway) vector h
+float D_GGX(float NdotH, float r) 
+{
+    float r2=r*r;
+    float a = NdotH * r2;
+    float k = r2 / (1.0 - NdotH * NdotH + a * a);
+    return k * k * (1.0 / PI);
+}
+
+// F (Schlick)
+// Describes the ratio of surface reflection at different surface angles.
+// F = F0 + (1-F0)(1-H.V)^5
+// F0: approximation of base reflectivity (0.04 for dielectrics)
+vec3 F_Schlick(float HdotV, vec3 F0)
+{
+    return F0 + (1.0 - F0) * pow(1.0 - max(HdotV,0.f), 5.0);
+}
+
+// G (Schlick-GGX)
+// Describes the self-shadowing property of the microfacets
+// Schlick approximation evaluates how much light is obstructed
+// Smith's method applies this approximation for both geometry obstruction (light stopped between reflection and eye) and geomtry shadowing (light stopped between source and reflection)
+// n.v / (n.v)*(1-k)+k
+// k: roughness coefficient, remapping of roughness that differs for direct and indirect light
+// n: normal
+// v: view vector
+float SchlickGGX(float NdotV, float r)
+{
+    float k = r+1.0;
+    k = (k*k)/8.0; //roughness coefficient for diffuse light
+
+    float nom   = NdotV;
+    float denom = NdotV * (1.0 - k) + k;
+	
+    return nom / denom;
+}
+
+float G_GGX(float NdotV, float NdotL, float r)
+{
+    float ggxV = SchlickGGX(max(NdotV,0.f), r);
+    float ggxL = SchlickGGX(max(NdotL,0.f), r);	
+    return ggxV * ggxL;
+}
+
+// BRDF
+struct SPBRDesc
+{
+    vec3 _albedo;
+    float _fRoughness;
+    float _fMetalness;
+    float _NdotH;
+    float _NdotV;
+    float _NdotL;
+    float _HdotV;
+    float _irradiance;
+};
+
+vec3 BRDF(SPBRDesc desc)
+{
+    vec3 F0 = vec3(0.04); 
+    F0 = mix(F0, desc._albedo, desc._fMetalness);
+    vec3 Fresnel = F_Schlick(desc._HdotV, F0);
+
+    vec3 Ks = Fresnel;
+    vec3 Kd = vec3(1.0) - Ks;
+    Kd *= (1.0-desc._fMetalness)/PI;
+
+    float D = D_GGX(desc._NdotH,desc._fRoughness);
+    vec3 F = Fresnel;
+    float G = G_GGX(desc._NdotV, desc._NdotL, desc._fRoughness);
+    vec3 Fs = D*F*G;
+    Fs /= 4.0 * max(desc._NdotV, 0.0) * max(desc._NdotL, 0.0) + 0.0001;
+
+    return (Kd*desc._albedo + Fs) * desc._irradiance * desc._NdotL;
+}

@@ -4,6 +4,7 @@
 #include <Augusta/Camera.h>
 #include <Augusta/AssimpParser.h>
 #include <Augusta/Material.h>
+#include <Augusta/Utils.h>
 #include <iostream>
 #include <stdexcept>
 
@@ -225,7 +226,7 @@ private:
 			fbDesc._vColorAttachmentsFormats.push_back(VK_FORMAT_B8G8R8A8_UNORM);//albedo-roughness
 			fbDesc._vColorAttachmentsFormats.push_back(VK_FORMAT_R16G16B16A16_SFLOAT);//normals-metalness
 			fbDesc._vColorAttachmentsFormats.push_back(VK_FORMAT_R16G16B16A16_SFLOAT);//emissive-ao
-			fbDesc._DepthFormat = VK_FORMAT_D32_SFLOAT;
+			fbDesc._DepthFormat = VK_FORMAT_D24_UNORM_S8_UINT;
 			fb = std::make_shared<aug::Framebuffer>(fbDesc);
 			uiCount++;
 		}
@@ -309,7 +310,7 @@ private:
 
 		aug::SDescriptorSetDesc descUB;
 		descUB._uiSet = 0;
-		descUB.AddBinding(0, VK_SHADER_STAGE_VERTEX_BIT, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); //model UB
+		descUB.AddBinding(0, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER); //model UB
 		m_hDeferredUBOSet = m_pDeferredPipeline->DeclareResourceLayout(descUB);
 		deferredPipelineDesc._vLayoutHandles.push_back(m_hDeferredUBOSet);
 
@@ -381,8 +382,6 @@ private:
 		m_pScene->CreateMesh(groundMeshDesc, m_pScene->GetRootNode());
 	}
 
-#include <Augusta/Utils.h>
-
 	void InitCubemap()
 	{
 		aug::TextureFactory::AddTexturePath("../../Assets/HDR");
@@ -446,12 +445,12 @@ private:
 	void Init()
 	{
 		m_pScene = std::make_shared<aug::Scene>();
-		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/KV2/kv2.FBX", "../../Assets/KV2/textures/","dds");m_pScene->GetRootNode()->Scale(glm::dvec3(0.01));
-		m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/F18/F18_opaque.FBX", "../../Assets/F18/", "dds"); m_pScene->GetRootNode()->Scale(glm::dvec3(0.001));
+		m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/KV2/kv2.FBX", "../../Assets/KV2/textures/","dds"); m_pScene->GetRootNode()->Scale(glm::dvec3(0.05));
+		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/F18/F18_opaque.FBX", "../../Assets/F18/", "dds"); m_pScene->GetRootNode()->Scale(glm::dvec3(0.001));
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Cottage/Cottage.FBX", "../../Assets/Cottage/", "dds");
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Lighthouse/lighthouse.FBX", "../../Assets/Lighthouse/Textures/", "dds");
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Sponza/untitled.FBX", "../../Assets/Sponza/", "dds");
-		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Voskhod/Voskhod.FBX", "../../Assets/Voskhod/", "dds");
+		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Voskhod/Voskhod.FBX", "../../Assets/Voskhod/", "dds"); m_pScene->GetRootNode()->Scale(glm::dvec3(0.01));
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Viper/FINAL_MODEL_96.FBX", "../../Assets/Viper/"); m_pScene->GetRootNode()->Scale(glm::dvec3(0.01));
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Bistro_v5_2/BistroExterior.FBX", "../../Assets/Bistro_v5_2/Textures");
 		
