@@ -24,7 +24,7 @@ namespace aug
 		const uint32_t* _indexData = nullptr;
 		std::shared_ptr<Material> _pMaterial = nullptr;
 	};
-
+ 
 	class Mesh
 	{
 	public:
@@ -40,4 +40,6 @@ namespace aug
 		uint32_t m_uiIndexCount = 0;
 		std::unique_ptr<Buffer> m_pIndexBuffer = nullptr;		
 	};
+
+	std::shared_ptr<Mesh> CreateSphereMesh(uint32_t uiVertexFormatMask, uint32_t uiSubdivision, float fRadius, bool bInwardNormals=false);
 }

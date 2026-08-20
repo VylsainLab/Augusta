@@ -386,7 +386,12 @@ namespace aug
 	std::shared_ptr<Texture> TextureFactory::LoadTextureFromDDS(const std::string& strName, const std::string& strPath)
 	{
 		gli::texture ddsTexture = gli::load_dds(strPath);
-		ddsTexture = gli::flip(ddsTexture);
+		if(gli::is_compressed(ddsTexture.format()) && gli::is_s3tc_compressed(ddsTexture.format()))
+			ddsTexture = gli::flip(ddsTexture);
+		else
+		{
+			//TODO flip AT1N & AT2N
+		}
 
 		uint32_t uiWidth = ddsTexture.extent().x;
 		uint32_t uiHeight = ddsTexture.extent().y;
@@ -407,6 +412,9 @@ namespace aug
 			break;
 		case gli::FORMAT_RGBA_DXT5_UNORM_BLOCK16:
 			desc._format = VK_FORMAT_BC3_UNORM_BLOCK;
+			break;
+		case gli::FORMAT_RG_ATI2N_UNORM_BLOCK16:
+			desc._format = VK_FORMAT_BC5_UNORM_BLOCK;
 			break;
 		default:
 			throw std::invalid_argument("Unsupported DDS texture format!");

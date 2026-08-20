@@ -125,11 +125,11 @@ namespace aug
 			}
 		}
 
-		std::vector<VertexFormatComponents> vVertexFormatComponents({ VERTEX_FORMAT_VEC3F32 });
+		std::vector<VertexFormatComponents> vVertexFormatComponents({ VertexFormatComponents::VERTEX_FORMAT_VEC3F32 });
 		if (m_uiVertexComponentFlags & VERTEX_COMPONENT_NORMAL)
-			vVertexFormatComponents.push_back(VERTEX_FORMAT_VEC3F32);
+			vVertexFormatComponents.push_back(VertexFormatComponents::VERTEX_FORMAT_VEC3F32);
 		if (m_uiVertexComponentFlags & VERTEX_COMPONENT_TEXCOORD)
-			vVertexFormatComponents.push_back(VERTEX_FORMAT_VEC2F32);
+			vVertexFormatComponents.push_back(VertexFormatComponents::VERTEX_FORMAT_VEC2F32);
 		VertexFormat vertexFormat(vVertexFormatComponents);
 
 		for (uint32_t i = 0; i < m_pAiScene->mNumMeshes; ++i)

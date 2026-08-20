@@ -14,23 +14,23 @@ namespace aug
 			uint32_t size;
 			switch (vComponents[i])
 			{
-			case VERTEX_FORMAT_INT32:
+			case VertexFormatComponents::VERTEX_FORMAT_INT32:
 				format = VK_FORMAT_R32_SINT;
 				size = sizeof(int32_t);				
 				break;
-			case VERTEX_FORMAT_UINT32:
+			case VertexFormatComponents::VERTEX_FORMAT_UINT32:
 				format = VK_FORMAT_R32_UINT;
 				size = sizeof(uint32_t);
 				break;
-			case VERTEX_FORMAT_FLOAT32:
+			case VertexFormatComponents::VERTEX_FORMAT_FLOAT32:
 				format = VK_FORMAT_R32_SFLOAT;
 				size = sizeof(float);
 				break;
-			case VERTEX_FORMAT_VEC2F32:
+			case VertexFormatComponents::VERTEX_FORMAT_VEC2F32:
 				format = VK_FORMAT_R32G32_SFLOAT;
 				size = 2*sizeof(float);
 				break;
-			case VERTEX_FORMAT_VEC3F32:
+			case VertexFormatComponents::VERTEX_FORMAT_VEC3F32:
 				format = VK_FORMAT_R32G32B32_SFLOAT;
 				size = 3*sizeof(float);
 				break;
@@ -47,6 +47,45 @@ namespace aug
 
 			m_Binding.stride += size;
 		}
+	}
+
+	VertexFormat::VertexFormat(uint32_t uiComponentMask)
+	{
+		m_Binding = VkVertexInputBindingDescription{};
+		m_Binding.binding = 0;
+		m_Binding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+		uint32_t uiLocation = 0;
+		VkVertexInputAttributeDescription desc{};
+		if (uiComponentMask & VERTEX_FORMAT_POS_VEC3F32 == VERTEX_FORMAT_POS_VEC3F32)
+		{			
+			desc.location = uiLocation;
+			desc.format = VK_FORMAT_R32G32B32_SFLOAT;
+			desc.offset = m_Binding.stride; 	
+			m_vAttributes.push_back(desc);
+			m_Binding.stride += 3 * sizeof(float);
+			uiLocation++;
+		}
+
+		if (uiComponentMask & VERTEX_FORMAT_NORMAL_VEC3F32 == VERTEX_FORMAT_NORMAL_VEC3F32)
+		{
+			desc.location = uiLocation;
+			desc.format = VK_FORMAT_R32G32B32_SFLOAT;
+			desc.offset = m_Binding.stride; 		
+			m_vAttributes.push_back(desc);
+			m_Binding.stride += 3 * sizeof(float);
+			uiLocation++;
+		}
+
+		if (uiComponentMask & VERTEX_FORMAT_UV_VEC2F32 == VERTEX_FORMAT_UV_VEC2F32)
+		{
+			desc.location = uiLocation;
+			desc.format = VK_FORMAT_R32G32_SFLOAT;
+			desc.offset = m_Binding.stride; 	
+			m_vAttributes.push_back(desc);
+			m_Binding.stride += 2 * sizeof(float);
+			uiLocation++;
+		}		
 	}
 
 	VkPipelineVertexInputStateCreateInfo VertexFormat::GetPipelineVertexInputStateCreateInfo() const

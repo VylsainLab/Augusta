@@ -5,7 +5,13 @@
 
 namespace aug
 {
-	enum VertexFormatComponents
+	//usual vertex attributes
+	#define VERTEX_FORMAT_POS_VEC3F32		1
+	#define VERTEX_FORMAT_NORMAL_VEC3F32	2
+	#define VERTEX_FORMAT_UV_VEC2F32		4	
+
+	//more attributes for custom types
+	enum class VertexFormatComponents
 	{
 		VERTEX_FORMAT_INT32,
 		VERTEX_FORMAT_UINT32,
@@ -20,6 +26,7 @@ namespace aug
 	{
 	public:
 		VertexFormat(const std::vector<VertexFormatComponents>& vComponents);
+		VertexFormat(uint32_t uiComponentMask);
 
 		VkPipelineVertexInputStateCreateInfo GetPipelineVertexInputStateCreateInfo() const;
 

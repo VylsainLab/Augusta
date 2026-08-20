@@ -16,8 +16,8 @@ class AugustaDemo : public aug::Application
 public:
 	AugustaDemo(const std::string& name, uint16_t width, uint16_t height)
 		:	aug::Application(name, width, height),
-			m_GBufferVertexFormat({ aug::VERTEX_FORMAT_VEC3F32,aug::VERTEX_FORMAT_VEC3F32, aug::VERTEX_FORMAT_VEC2F32 }),
-			m_MainVertexFormat({ aug::VERTEX_FORMAT_VEC2F32 }),
+			m_GBufferVertexFormat({ aug::VertexFormatComponents::VERTEX_FORMAT_VEC3F32,aug::VertexFormatComponents::VERTEX_FORMAT_VEC3F32, aug::VertexFormatComponents::VERTEX_FORMAT_VEC2F32 }),
+			m_MainVertexFormat({ aug::VertexFormatComponents::VERTEX_FORMAT_VEC2F32 }),
 			m_AssimpParser(aug::VERTEX_COMPONENT_NORMAL|aug::VERTEX_COMPONENT_TEXCOORD, true, aiProcess_Triangulate|aiProcess_PreTransformVertices)
 	{
 		aug::SCameraDesc desc;
@@ -67,7 +67,7 @@ private:
 	std::vector<std::shared_ptr<aug::Scene>> m_vScenes;
 
 	//Cubemap
-	std::shared_ptr<aug::Mesh> m_pSphere = nullptr;
+	//std::shared_ptr<aug::Mesh> m_pSphere = nullptr;
 	std::shared_ptr<aug::Texture> m_pHDRCubemap = nullptr;
 	aug::DescriptorSetLayoutHandle m_hHDRCubemapSet;
 
@@ -401,55 +401,10 @@ private:
 		pCubemapMat->m_aTextures[aug::TEXTURE_CHANNEL_EMISSIVE] = m_pHDRCubemap;
 		pCubemapMat->m_Desc._iTexMask = TEXTURE_CHANNEL_EMISSIVE_BIT;		
 
-		struct SVertex
-		{
-			glm::vec3 pos;
-			glm::vec3 normal;
-			glm::vec2 uv;
-		};
-		
-		uint32_t iRes = 100;
-		double dRadius = 1000;
-
-		//face geometry patch
-		std::vector<SVertex> vVertices;
-		std::vector<uint32_t> vIndices;
-		for (uint32_t i = 0; i < iRes; ++i)
-		{
-			for (uint32_t j = 0; j < iRes; ++j)
-			{
-				SVertex vertex;
-				vertex.uv = glm::vec2(float(j) / (iRes - 1), float(i) / (iRes - 1));
-				float alpha = 2. * PI * vertex.uv.x;
-				float beta = PI * (-0.5 + vertex.uv.y);
-				vertex.pos = float(dRadius) * glm::vec3(-cos(beta) * cos(alpha), sin(beta), cos(beta) * sin(alpha));
-				vertex.normal = -glm::normalize(vertex.pos);
-				vertex.uv *= -1;
-				vVertices.push_back(vertex);
-
-				if (i < iRes - 1 && j < iRes - 1)
-				{
-					vIndices.push_back(i * iRes + j);
-					vIndices.push_back((i + 1)* iRes + j);
-					vIndices.push_back(i * iRes + j + 1);					
-
-					vIndices.push_back((i + 1) * iRes + j);
-					vIndices.push_back((i + 1)* iRes + j + 1);
-					vIndices.push_back(i * iRes + j + 1);					
-				}
-			}
-		}
-
-
-		aug::SMeshDesc cubeMeshDesc;
-		cubeMeshDesc._usage = aug::MESH_USAGE_STATIC;
-		cubeMeshDesc._pFormat = &m_GBufferVertexFormat;
-		cubeMeshDesc._vertexCount = vVertices.size();
-		cubeMeshDesc._vertexData = vVertices.data();
-		cubeMeshDesc._indexCount = vIndices.size();
-		cubeMeshDesc._indexData = vIndices.data();
-		cubeMeshDesc._pMaterial = pCubemapMat;
-		m_pSphere = pScene->CreateMesh(cubeMeshDesc, pScene->GetRootNode());
+		uint32_t mask = VERTEX_FORMAT_POS_VEC3F32 | VERTEX_FORMAT_NORMAL_VEC3F32 | VERTEX_FORMAT_UV_VEC2F32;
+		std::shared_ptr<aug::Mesh> pSphere = aug::CreateSphereMesh(mask, 64, 1000, true);
+		pSphere->m_pMaterial = pCubemapMat;
+		pScene->AddExistingMesh(pSphere, pScene->GetRootNode());
 	}
 
 	void InitTestSphere()
@@ -460,55 +415,10 @@ private:
 		std::shared_ptr<aug::Material> pMat = aug::MaterialFactory::CreateMaterial("Sphere");
 		pMat->m_Desc._Albedo = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 
-		struct SVertex
-		{
-			glm::vec3 pos;
-			glm::vec3 normal;
-			glm::vec2 uv;
-		};
-
-		uint32_t iRes = 100;
-		double dRadius = 1;
-
-		//face geometry patch
-		std::vector<SVertex> vVertices;
-		std::vector<uint32_t> vIndices;
-		for (uint32_t i = 0; i < iRes; ++i)
-		{
-			for (uint32_t j = 0; j < iRes; ++j)
-			{
-				SVertex vertex;
-				vertex.uv = glm::vec2(float(j) / (iRes - 1), float(i) / (iRes - 1));
-				float alpha = 2. * PI * vertex.uv.x;
-				float beta = PI * (-0.5 + vertex.uv.y);
-				vertex.pos = float(dRadius) * glm::vec3(-cos(beta) * cos(alpha), sin(beta), cos(beta) * sin(alpha));
-				vertex.normal = glm::normalize(vertex.pos);
-				vertex.uv *= -1;
-				vVertices.push_back(vertex);
-
-				if (i < iRes - 1 && j < iRes - 1)
-				{
-					vIndices.push_back(i * iRes + j);					
-					vIndices.push_back(i * iRes + j + 1);
-					vIndices.push_back((i + 1)* iRes + j);
-
-					vIndices.push_back((i + 1) * iRes + j);					
-					vIndices.push_back(i * iRes + j + 1);
-					vIndices.push_back((i + 1)* iRes + j + 1);
-				}
-			}
-		}
-
-
-		aug::SMeshDesc cubeMeshDesc;
-		cubeMeshDesc._usage = aug::MESH_USAGE_STATIC;
-		cubeMeshDesc._pFormat = &m_GBufferVertexFormat;
-		cubeMeshDesc._vertexCount = vVertices.size();
-		cubeMeshDesc._vertexData = vVertices.data();
-		cubeMeshDesc._indexCount = vIndices.size();
-		cubeMeshDesc._indexData = vIndices.data();
-		cubeMeshDesc._pMaterial = pMat;
-		pScene->CreateMesh(cubeMeshDesc, pScene->GetRootNode());
+		uint32_t mask = VERTEX_FORMAT_POS_VEC3F32 | VERTEX_FORMAT_NORMAL_VEC3F32 | VERTEX_FORMAT_UV_VEC2F32;
+		std::shared_ptr<aug::Mesh> pSphere = aug::CreateSphereMesh(mask, 16, 0.5);
+		pSphere->m_pMaterial = pMat;
+		pScene->AddExistingMesh(pSphere, pScene->GetRootNode());
 
 		pScene->GetRootNode()->Translate(glm::dvec3(0., 1., 0.));
 	}
@@ -523,8 +433,8 @@ private:
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Lighthouse/lighthouse.FBX", "../../Assets/Lighthouse/Textures/", "dds");
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Sponza/untitled.FBX", "../../Assets/Sponza/", "dds");
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Voskhod/Voskhod.FBX", "../../Assets/Voskhod/", "dds"); m_pScene->GetRootNode()->Scale(glm::dvec3(0.01));
-		m_AssimpParser.LoadSceneFromFile(pScene, "../../Assets/Viper/FINAL_MODEL_96.FBX", "../../Assets/Viper/"); pScene->GetRootNode()->Scale(glm::dvec3(0.01));
-		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Bistro_v5_2/BistroExterior.FBX", "../../Assets/Bistro_v5_2/Textures");
+		//m_AssimpParser.LoadSceneFromFile(pScene, "../../Assets/Viper/FINAL_MODEL_96.FBX", "../../Assets/Viper/"); pScene->GetRootNode()->Scale(glm::dvec3(0.01));
+		//m_AssimpParser.LoadSceneFromFile(pScene, "../../Assets/Bistro_v5_2/BistroExterior.FBX", "../../Assets/Bistro_v5_2/Textures");
 		
 		InitGround();
 
