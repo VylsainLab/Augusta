@@ -21,6 +21,7 @@ namespace aug
 		VkPipelineVertexInputStateCreateInfo _vertexInputInfo;
 		uint32_t _uiPushConstantSize = 0;
 		std::vector<DescriptorSetLayoutHandle> _vLayoutHandles;
+		VkPolygonMode _polygonMode=VK_POLYGON_MODE_FILL;
 	};
 
 	class Pipeline
