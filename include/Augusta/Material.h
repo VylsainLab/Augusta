@@ -53,6 +53,9 @@ namespace aug
 		SMaterialDesc m_Desc;
 		std::unique_ptr<Buffer> m_pMaterialUniformBuffer;
 
+		//keep track of layout handles to update descriptors on material change
+		std::vector<DescriptorSetLayoutHandle> m_vDescriptorSetLayoutHandles; 
+
 	protected:		
 		Material();
 		~Material();

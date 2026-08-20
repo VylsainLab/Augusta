@@ -21,10 +21,13 @@ public:
 			m_AssimpParser(aug::VERTEX_COMPONENT_NORMAL|aug::VERTEX_COMPONENT_TEXCOORD, true, aiProcess_Triangulate|aiProcess_PreTransformVertices)
 	{
 		aug::SCameraDesc desc;
-		desc._speed = 1.0f;
+		desc._speed = 10.0f;
 		desc._sensitivity = 0.1f;
-		desc._position = glm::vec3(0., 0., 1.);
+		desc._position = glm::vec3(0., 5., 10.);
 		desc._aspect = float(width) / float(height);
+		desc._yaw = 0.;
+		desc._pitch = 30.;
+		desc._roll = 0.;
 		m_Camera = aug::Camera(desc);
 		AddEventObserver(&m_Camera);
 	}
@@ -61,7 +64,7 @@ private:
 	aug::VertexFormat m_MainVertexFormat; //move to render subpass	
 
 	//Scene	
-	std::shared_ptr<aug::Scene> m_pScene;
+	std::vector<std::shared_ptr<aug::Scene>> m_vScenes;
 
 	//Cubemap
 	std::shared_ptr<aug::Mesh> m_pSphere = nullptr;
@@ -118,7 +121,8 @@ private:
 		m_pGBufferPipeline->Bind(cb);
 		m_pGBufferPipeline->BeginRendering(cb, m_aGBufferFBs[m_uiCurrentFrame].get(), aug::Framebuffer::FRAMEBUFFER_LAYOUT_ATTACHMENT);		
 
-		RecursiveRender(cb, m_pScene->GetRootNode(), glm::dmat4(1.));
+		for(auto& scene : m_vScenes)
+			RecursiveRender(cb, scene->GetRootNode(), glm::dmat4(1.));
 
 		m_pGBufferPipeline->EndRendering(cb, m_aGBufferFBs[m_uiCurrentFrame].get(), aug::Framebuffer::FRAMEBUFFER_LAYOUT_SAMPLING);
 
@@ -355,12 +359,15 @@ private:
 
 	void InitGround()
 	{
-		float half = 100;
+		std::shared_ptr<aug::Scene> pScene = std::make_shared<aug::Scene>();
+		m_vScenes.emplace_back(pScene);
+
+		float half = 5;
 		float vertices[32] = {
 				-half,0.,-half,		0.,1.,0.,    0.,0.,
-				-half,0., half, 	0., 1., 0.,	 0., 0.05 * half,
-				half,0., half, 		0., 1., 0.,	 0.05 * half, 0.05 * half,
-				half,0., -half,		0., 1., 0.,	 0.05 * half, 0.
+				-half,0., half, 	0., 1., 0.,	 0., half,
+				half,0., half, 		0., 1., 0.,	 half, half,
+				half,0., -half,		0., 1., 0.,	 half, 0.
 		};
 
 		aug::SMeshDesc groundMeshDesc;
@@ -379,11 +386,14 @@ private:
 		pGroundMat->m_aTextures[aug::TEXTURE_CHANNEL_ROUGHNESS] = aug::TextureFactory::LoadTextureFromFile("Roughness.dds");
 		pGroundMat->m_Desc._iTexMask = TEXTURE_CHANNEL_ALBEDO_BIT | TEXTURE_CHANNEL_NORMAL_BIT | TEXTURE_CHANNEL_ROUGHNESS_BIT;
 		groundMeshDesc._pMaterial = pGroundMat;
-		m_pScene->CreateMesh(groundMeshDesc, m_pScene->GetRootNode());
+		pScene->CreateMesh(groundMeshDesc, pScene->GetRootNode());
 	}
 
 	void InitCubemap()
 	{
+		std::shared_ptr<aug::Scene> pScene = std::make_shared<aug::Scene>();
+		m_vScenes.emplace_back(pScene);
+
 		aug::TextureFactory::AddTexturePath("../../Assets/HDR");
 		m_pHDRCubemap = aug::TextureFactory::LoadTextureFromFile("03_hangar.hdr");
 
@@ -439,24 +449,88 @@ private:
 		cubeMeshDesc._indexCount = vIndices.size();
 		cubeMeshDesc._indexData = vIndices.data();
 		cubeMeshDesc._pMaterial = pCubemapMat;
-		m_pSphere = m_pScene->CreateMesh(cubeMeshDesc, m_pScene->GetRootNode());
+		m_pSphere = pScene->CreateMesh(cubeMeshDesc, pScene->GetRootNode());
+	}
+
+	void InitTestSphere()
+	{
+		std::shared_ptr<aug::Scene> pScene = std::make_shared<aug::Scene>();
+		m_vScenes.emplace_back(pScene);
+
+		std::shared_ptr<aug::Material> pMat = aug::MaterialFactory::CreateMaterial("Sphere");
+		pMat->m_Desc._Albedo = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+
+		struct SVertex
+		{
+			glm::vec3 pos;
+			glm::vec3 normal;
+			glm::vec2 uv;
+		};
+
+		uint32_t iRes = 100;
+		double dRadius = 1;
+
+		//face geometry patch
+		std::vector<SVertex> vVertices;
+		std::vector<uint32_t> vIndices;
+		for (uint32_t i = 0; i < iRes; ++i)
+		{
+			for (uint32_t j = 0; j < iRes; ++j)
+			{
+				SVertex vertex;
+				vertex.uv = glm::vec2(float(j) / (iRes - 1), float(i) / (iRes - 1));
+				float alpha = 2. * PI * vertex.uv.x;
+				float beta = PI * (-0.5 + vertex.uv.y);
+				vertex.pos = float(dRadius) * glm::vec3(-cos(beta) * cos(alpha), sin(beta), cos(beta) * sin(alpha));
+				vertex.normal = glm::normalize(vertex.pos);
+				vertex.uv *= -1;
+				vVertices.push_back(vertex);
+
+				if (i < iRes - 1 && j < iRes - 1)
+				{
+					vIndices.push_back(i * iRes + j);					
+					vIndices.push_back(i * iRes + j + 1);
+					vIndices.push_back((i + 1)* iRes + j);
+
+					vIndices.push_back((i + 1) * iRes + j);					
+					vIndices.push_back(i * iRes + j + 1);
+					vIndices.push_back((i + 1)* iRes + j + 1);
+				}
+			}
+		}
+
+
+		aug::SMeshDesc cubeMeshDesc;
+		cubeMeshDesc._usage = aug::MESH_USAGE_STATIC;
+		cubeMeshDesc._pFormat = &m_GBufferVertexFormat;
+		cubeMeshDesc._vertexCount = vVertices.size();
+		cubeMeshDesc._vertexData = vVertices.data();
+		cubeMeshDesc._indexCount = vIndices.size();
+		cubeMeshDesc._indexData = vIndices.data();
+		cubeMeshDesc._pMaterial = pMat;
+		pScene->CreateMesh(cubeMeshDesc, pScene->GetRootNode());
+
+		pScene->GetRootNode()->Translate(glm::dvec3(0., 1., 0.));
 	}
 
 	void Init()
 	{
-		m_pScene = std::make_shared<aug::Scene>();
-		m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/KV2/kv2.FBX", "../../Assets/KV2/textures/","dds"); m_pScene->GetRootNode()->Scale(glm::dvec3(0.05));
+		std::shared_ptr<aug::Scene> pScene = std::make_shared<aug::Scene>();
+		m_vScenes.emplace_back(pScene);
+		//m_AssimpParser.LoadSceneFromFile(pScene, "../../Assets/KV2/kv2.FBX", "../../Assets/KV2/textures/","dds"); pScene->GetRootNode()->Scale(glm::dvec3(0.05));
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/F18/F18_opaque.FBX", "../../Assets/F18/", "dds"); m_pScene->GetRootNode()->Scale(glm::dvec3(0.001));
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Cottage/Cottage.FBX", "../../Assets/Cottage/", "dds");
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Lighthouse/lighthouse.FBX", "../../Assets/Lighthouse/Textures/", "dds");
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Sponza/untitled.FBX", "../../Assets/Sponza/", "dds");
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Voskhod/Voskhod.FBX", "../../Assets/Voskhod/", "dds"); m_pScene->GetRootNode()->Scale(glm::dvec3(0.01));
-		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Viper/FINAL_MODEL_96.FBX", "../../Assets/Viper/"); m_pScene->GetRootNode()->Scale(glm::dvec3(0.01));
+		//m_AssimpParser.LoadSceneFromFile(pScene, "../../Assets/Viper/FINAL_MODEL_96.FBX", "../../Assets/Viper/"); pScene->GetRootNode()->Scale(glm::dvec3(0.01));
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Bistro_v5_2/BistroExterior.FBX", "../../Assets/Bistro_v5_2/Textures");
 		
 		InitGround();
 
 		InitCubemap();
+
+		InitTestSphere();
 
 		aug::Shader::SetDirectory("shaders/");
 

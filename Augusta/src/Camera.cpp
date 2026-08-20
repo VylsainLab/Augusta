@@ -7,9 +7,9 @@ namespace aug
 	Camera::Camera(SCameraDesc desc)
 	{
 		m_Position = desc._position;
-		m_Direction = desc._direction;
-		m_Up = desc._up;
-		m_Right = desc._right;
+		m_ddegYaw = desc._yaw;
+		m_ddegPitch = desc._pitch;
+		m_ddegRoll = desc._roll;
 		m_dZNear = desc._znear;
 		m_dZFar = desc._zfar;
 		m_ddegVFov = desc._deg_vfov;

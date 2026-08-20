@@ -29,6 +29,9 @@ namespace aug
 
 	void Material::UpdateDescriptor(DescriptorSetLayoutHandle h)
 	{
+		if (std::find(m_vDescriptorSetLayoutHandles.begin(), m_vDescriptorSetLayoutHandles.end(),h) == m_vDescriptorSetLayoutHandles.end())
+			m_vDescriptorSetLayoutHandles.push_back(h);
+
 		VkDescriptorSet s = DescriptorFactory::GetDescriptorSet(m_mDescriptorHandles[h]);
 		m_Desc._uAddress = reinterpret_cast<uint64_t>(s);
 
@@ -63,15 +66,19 @@ namespace aug
 
 	void Material::DrawDebug()
 	{
+		bool bUpdate = false;
+
 		ImGui::Begin("Material Inspector");
 		if (!m_aTextures[TEXTURE_CHANNEL_ALBEDO])
 		{
-			ImGui::SliderFloat4("Albedo", &m_Desc._Albedo.r, 0.0, 1.0);
+			ImGui::Text("Albedo"); ImGui::SameLine();
+			if (ImGui::ColorEdit4("##RefColor", &m_Desc._Albedo.r, ImGuiColorEditFlags_NoInputs)/*ImGui::SliderFloat4("Albedo", &m_Desc._Albedo.r, 0.0, 1.0)*/)
+				bUpdate = true;
 		}
-		if (!m_aTextures[TEXTURE_CHANNEL_ROUGHNESS])
-			ImGui::SliderFloat("Roughness", &m_Desc._fRoughness, 0.0, 1.0);
-		if (!m_aTextures[TEXTURE_CHANNEL_METALNESS])
-			ImGui::SliderFloat("Metalness", &m_Desc._fMetalness, 0.0, 1.0);
+		if (!m_aTextures[TEXTURE_CHANNEL_ROUGHNESS] && ImGui::SliderFloat("Roughness", &m_Desc._fRoughness, 0.0, 1.0))
+			bUpdate = true;
+		if (!m_aTextures[TEXTURE_CHANNEL_METALNESS] && ImGui::SliderFloat("Metalness", &m_Desc._fMetalness, 0.0, 1.0))
+			bUpdate = true;
 
 		static int iSelected = 0;
 		Texture* pSelectedTexture = nullptr;
@@ -95,6 +102,13 @@ namespace aug
 			pSelectedTexture->ImGuiDrawDebug();
 
 		ImGui::End();
+
+		if (bUpdate)
+		{
+			for(auto &handle : m_vDescriptorSetLayoutHandles)
+				UpdateDescriptor(handle);
+		}
+			
 	}
 
 	std::map<std::string, std::shared_ptr<Material>> MaterialFactory::m_mMaterials;

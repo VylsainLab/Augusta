@@ -9,12 +9,13 @@ namespace aug
 	struct SCameraDesc
 	{
 		glm::dvec3 _position = glm::dvec3(0., 0., 0.);
-		glm::dvec3 _direction = glm::dvec3(0., 0., -1.);
-		glm::dvec3 _up = glm::dvec3(0., 1., 0.);
-		glm::dvec3 _right = glm::dvec3(-1., 0., 0.);
+		
+		double _yaw;
+		double _pitch;
+		double _roll;
 
-		double _znear = 0.0001;
-		double _zfar = 100.;
+		double _znear = 0.01;
+		double _zfar = 10000.;
 		double _aspect = 1.;
 		double _deg_vfov = 60.;
 
