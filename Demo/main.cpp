@@ -523,7 +523,7 @@ private:
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Lighthouse/lighthouse.FBX", "../../Assets/Lighthouse/Textures/", "dds");
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Sponza/untitled.FBX", "../../Assets/Sponza/", "dds");
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Voskhod/Voskhod.FBX", "../../Assets/Voskhod/", "dds"); m_pScene->GetRootNode()->Scale(glm::dvec3(0.01));
-		//m_AssimpParser.LoadSceneFromFile(pScene, "../../Assets/Viper/FINAL_MODEL_96.FBX", "../../Assets/Viper/"); pScene->GetRootNode()->Scale(glm::dvec3(0.01));
+		m_AssimpParser.LoadSceneFromFile(pScene, "../../Assets/Viper/FINAL_MODEL_96.FBX", "../../Assets/Viper/"); pScene->GetRootNode()->Scale(glm::dvec3(0.01));
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Bistro_v5_2/BistroExterior.FBX", "../../Assets/Bistro_v5_2/Textures");
 		
 		InitGround();

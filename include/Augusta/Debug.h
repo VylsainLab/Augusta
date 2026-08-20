@@ -9,13 +9,14 @@
 namespace aug
 {
 	//number of messages kept in the console
-	#define LOG_DEPTH 100
+	#define LOG_DEPTH 1024
 
 	enum ELogType
 	{
 		LOG_TYPE_INFO,
 		LOG_TYPE_WARNING,
 		LOG_TYPE_ERROR,
+		LOG_TYPE_VERBOSE,
 		LOG_TYPE_COUNT
 	};
 

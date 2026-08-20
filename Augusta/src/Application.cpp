@@ -113,6 +113,8 @@ namespace aug
 
 			if(m_bDisplayDebugImGui)
 				ImGui::ShowDemoWindow(&m_bDisplayDebugImGui);
+
+			m_bImGuiHasFocus = ImGui::GetIO().WantCaptureMouse;
 		}
 	}
 
@@ -136,6 +138,9 @@ namespace aug
 
 		if (InputManager::InputReleased(GLFW_KEY_GRAVE_ACCENT))
 			m_bDisplayConsole = !m_bDisplayConsole;
+
+		if (m_bImGuiHasFocus) //do not process events when the ImGui debug has the focus
+			return;
 
 		for (auto observer : m_vEventObservers)
 			observer->ProcessEvents(m_fDeltaT);

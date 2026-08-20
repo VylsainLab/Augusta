@@ -253,7 +253,7 @@ namespace aug
 		DescriptorFactory::UpdateDescriptor(m_mDescriptorHandles[h], &imageInfo, 0);
 
 		const VkDescriptorSet s = DescriptorFactory::GetDescriptorSet(m_mDescriptorHandles[h]);
-		Debug::Log(LOG_TYPE_INFO, std::format("{} {:x}", m_TextureDesc._strName.c_str(), (const uint64_t)s));
+		Debug::Log(LOG_TYPE_VERBOSE, std::format("{} {:x}", m_TextureDesc._strName.c_str(), (const uint64_t)s));
 	}
 
 	void Texture::ImGuiDrawDebug()

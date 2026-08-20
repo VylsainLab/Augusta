@@ -72,6 +72,10 @@ namespace aug
 			strOutput = std::format("\n\nERROR: {}", strEntry);
 			std::cerr << strOutput;
 			break;
+		case LOG_TYPE_VERBOSE:
+			strOutput = std::format("\n\nVERBOSE: {}", strEntry);
+			std::cerr << strOutput;
+			break;
 		}
 
 		//log to file
@@ -101,6 +105,9 @@ namespace aug
 			uint32_t uiCount = 0;
 			for (auto& entry : m_dqLog)
 			{
+				if (entry.first == LOG_TYPE_VERBOSE)
+					continue;
+
 				ImGui::TableNextRow();
 				ImGui::TableNextColumn();
 				switch (entry.first)

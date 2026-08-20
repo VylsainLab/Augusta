@@ -55,7 +55,7 @@ namespace aug
 			DescriptorFactory::UpdateDescriptor(m_mDescriptorHandles[h], &imageInfo, i+1);
 
 			const VkDescriptorSet s = DescriptorFactory::GetDescriptorSet(m_mDescriptorHandles[h]);
-			Debug::Log(LOG_TYPE_INFO, std::format("{} {:x}", pTex->GetDesc()._strName.c_str(), (const uint64_t)s));
+			Debug::Log(LOG_TYPE_VERBOSE, std::format("{} {:x}", pTex->GetDesc()._strName.c_str(), (const uint64_t)s));
 		}
 	}
 
