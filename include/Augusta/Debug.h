@@ -20,11 +20,15 @@ namespace aug
 		LOG_TYPE_COUNT
 	};
 
-	#define DEBUG_ENTRY_NAME		0
-	#define DEBUG_ENTRY_FUNCTION	1
-	#define DEBUG_ENTRY_ENABLED		2
-	typedef std::tuple<std::string, std::function<void(void)>, bool> DebugEntry;
+	struct SDebugEntry
+	{
+		std::string _strName;
+		std::function<void(void)> _drawFunc;
+		bool _bEnabled;
+	};
+
 	typedef std::pair<ELogType,std::string> LogEntry;
+
 	class Debug
 	{
 	public:
@@ -39,7 +43,7 @@ namespace aug
 	protected:
 		static bool m_bShowConsole;
 		static std::deque<LogEntry> m_dqLog;
-		static std::unordered_map<std::string, std::vector<DebugEntry>> m_mDebugees;
+		static std::unordered_map<std::string, std::vector<SDebugEntry>> m_mDebugees;
 		static std::ofstream m_LogFile;
 	};
 }

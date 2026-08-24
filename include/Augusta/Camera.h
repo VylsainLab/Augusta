@@ -26,8 +26,8 @@ namespace aug
 	class Camera : public IEventObserver
 	{
 	public:
-		Camera() {}
 		Camera(SCameraDesc desc);
+		Camera(Camera& camera) = delete;
 		
 		void ComputeCamera();
 		virtual void ProcessEvents(float fDeltaT) override;
@@ -37,6 +37,8 @@ namespace aug
 		glm::dmat4 GetViewMatrix() { return m_ViewMatrix; }
 		glm::dmat4 GetProjectionMatrix() { return m_ProjectionMatrix; }
 		glm::vec3 GetPosition() { return glm::vec3(m_Position); }
+
+		static void DrawDebug(void* pObject);
 
 	private:
 

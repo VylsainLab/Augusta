@@ -18,6 +18,8 @@ namespace aug
 		m_fSensitivity = desc._sensitivity;
 
 		ComputeCamera();
+
+		Debug::RegisterDebugee("Debug", "Camera", std::bind(&Camera::DrawDebug, this));
 	}
 
 	void Camera::ComputeCamera()
@@ -129,5 +131,27 @@ namespace aug
 	void Camera::ApplyMovement()
 	{
 		m_Position += m_Movement;
+	}
+
+	void Camera::DrawDebug(void* pObject)
+	{
+		Camera* pCam = reinterpret_cast<Camera*>(pObject);
+		if(pCam)
+		{
+			ImGui::SliderFloat("Speed", &pCam->m_fSpeed, 0.1, 1000.);
+			ImGui::SliderFloat("Sensitivity", &pCam->m_fSensitivity, 0.001, 1.);
+
+			float fFOV = pCam->m_ddegVFov;
+			if (ImGui::SliderFloat("FOV", &fFOV, 10., 120.))
+				pCam->m_ddegVFov = fFOV;
+
+			float fZNear = pCam->m_dZNear;
+			if (ImGui::SliderFloat("ZNear", &fZNear, 0.00001, 0.1))
+				pCam->m_dZNear = fZNear;
+
+			float fZFar = pCam->m_dZFar;
+			if (ImGui::SliderFloat("ZFar", &fZFar, 10., 10000.))
+				pCam->m_dZFar = fZFar;
+		}
 	}
 }

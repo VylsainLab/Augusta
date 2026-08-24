@@ -75,19 +75,19 @@ namespace aug
 				glm::vec3 normal = (bInwardNormals ? -1.f : 1.f) * glm::normalize(pos);
 				uv *= -1;
 
-				if (uiVertexFormatMask & VERTEX_FORMAT_POS_VEC3F32 == VERTEX_FORMAT_POS_VEC3F32)
+				if ((uiVertexFormatMask & VERTEX_FORMAT_POS_VEC3F32) == VERTEX_FORMAT_POS_VEC3F32)
 				{
 					const std::byte* pByte = reinterpret_cast<std::byte*>(&pos);
 					vVertices.insert(vVertices.end(), pByte, pByte+sizeof(glm::vec3));
 				}
 				
-				if (uiVertexFormatMask & VERTEX_FORMAT_NORMAL_VEC3F32 == VERTEX_FORMAT_NORMAL_VEC3F32)
+				if ((uiVertexFormatMask & VERTEX_FORMAT_NORMAL_VEC3F32) == VERTEX_FORMAT_NORMAL_VEC3F32)
 				{
 					const std::byte* pByte = reinterpret_cast<std::byte*>(&normal);
 					vVertices.insert(vVertices.end(), pByte, pByte + sizeof(glm::vec3));
 				}
 
-				if (uiVertexFormatMask & VERTEX_FORMAT_UV_VEC2F32 == VERTEX_FORMAT_UV_VEC2F32)
+				if ((uiVertexFormatMask & VERTEX_FORMAT_UV_VEC2F32) == VERTEX_FORMAT_UV_VEC2F32)
 				{
 					const std::byte* pByte = reinterpret_cast<std::byte*>(&uv);
 					vVertices.insert(vVertices.end(), pByte, pByte + sizeof(glm::vec2));

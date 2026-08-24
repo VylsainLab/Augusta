@@ -28,8 +28,8 @@ public:
 		desc._yaw = 0.;
 		desc._pitch = 30.;
 		desc._roll = 0.;
-		m_Camera = aug::Camera(desc);
-		AddEventObserver(&m_Camera);
+		m_pCamera = std::make_shared<aug::Camera>(desc);
+		AddEventObserver(m_pCamera.get());
 	}
 
 	void RunDemo() 
@@ -71,7 +71,7 @@ private:
 	std::shared_ptr<aug::Texture> m_pHDRCubemap = nullptr;
 	aug::DescriptorSetLayoutHandle m_hHDRCubemapSet;
 
-	aug::Camera m_Camera;
+	std::shared_ptr<aug::Camera> m_pCamera;
 	
 	std::vector<aug::Buffer*> m_vMainUBOs; //One per swap chain image	
 
@@ -474,13 +474,13 @@ private:
 
 	void Update()
 	{
-		m_Camera.ComputeCamera();
+		m_pCamera->ComputeCamera();
 
 		//update uniform buffers
 		UniformBufferObject ubo;
-		ubo._view = glm::mat4(m_Camera.GetViewMatrix());
-		ubo._proj = glm::mat4(m_Camera.GetProjectionMatrix());
-		ubo._camPos = m_Camera.GetPosition();
+		ubo._view = glm::mat4(m_pCamera->GetViewMatrix());
+		ubo._proj = glm::mat4(m_pCamera->GetProjectionMatrix());
+		ubo._camPos = m_pCamera->GetPosition();
 		m_vMainUBOs[m_uiCurrentFrame]->CopyData(sizeof(UniformBufferObject), &ubo);
 	}
 

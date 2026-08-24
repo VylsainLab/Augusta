@@ -9,12 +9,14 @@ namespace aug
 {
 	bool Debug::m_bShowConsole;
 	std::deque<LogEntry> Debug::m_dqLog;
-	std::unordered_map<std::string, std::vector<DebugEntry>> Debug::m_mDebugees;
+	std::unordered_map<std::string, std::vector<SDebugEntry>> Debug::m_mDebugees;
 	std::ofstream Debug::m_LogFile;
 
 	void Debug::RegisterDebugee(const char* szMenu, const char* szName, const std::function<void(void)> drawFunc)
 	{
-		m_mDebugees[szMenu].push_back({szName,drawFunc,false});
+		SDebugEntry& entry = m_mDebugees[szMenu].emplace_back();
+		entry._strName = szName;
+		entry._drawFunc = drawFunc;
 	}
 
 	void Debug::DrawDebugees()
@@ -27,8 +29,8 @@ namespace aug
 				{
 					for (auto& debugEntry : menu.second)
 					{
-						if (ImGui::MenuItem(std::get<DEBUG_ENTRY_NAME>(debugEntry).c_str()))
-							std::get<DEBUG_ENTRY_ENABLED>(debugEntry) = true;
+						if (ImGui::MenuItem(debugEntry._strName.c_str()))
+							debugEntry._bEnabled = true;
 					}
 					ImGui::EndMenu();
 				}
@@ -40,10 +42,10 @@ namespace aug
 		{
 			for (auto& debugEntry : menu.second)
 			{
-				if (std::get<DEBUG_ENTRY_ENABLED>(debugEntry))
+				if (debugEntry._bEnabled)
 				{
-					ImGui::Begin(std::get<DEBUG_ENTRY_NAME>(debugEntry).c_str(), &std::get<DEBUG_ENTRY_ENABLED>(debugEntry));
-					std::get<DEBUG_ENTRY_FUNCTION>(debugEntry)();
+					ImGui::Begin(debugEntry._strName.c_str(), &debugEntry._bEnabled);
+					debugEntry._drawFunc();
 					ImGui::End();
 				}
 			}
