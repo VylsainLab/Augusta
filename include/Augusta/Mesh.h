@@ -29,7 +29,8 @@ namespace aug
 	{
 	public:
 		Mesh(SMeshDesc desc);
-		~Mesh();
+		Mesh(const Mesh& copy) = delete;
+		virtual ~Mesh();
 
 		void Draw(const VkCommandBuffer &commandBuffer);
 

@@ -42,6 +42,8 @@ namespace aug
 	{
 	public:
 		Scene();
+		Scene(const Scene& copy) = delete;
+		virtual ~Scene();
 
 		std::shared_ptr<Mesh> CreateMesh(SMeshDesc desc, std::shared_ptr<Node> pTarget = nullptr);
 		void AddExistingMesh(std::shared_ptr<Mesh> pMesh, std::shared_ptr<Node> pTarget = nullptr);

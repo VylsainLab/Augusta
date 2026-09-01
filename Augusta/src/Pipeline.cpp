@@ -293,7 +293,7 @@ namespace aug
 		colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 		colorBlending.logicOpEnable = VK_FALSE;
 		colorBlending.logicOp = VK_LOGIC_OP_COPY;
-		colorBlending.attachmentCount = vColorBlendAttachment.size();
+		colorBlending.attachmentCount = static_cast<uint32_t>(vColorBlendAttachment.size());
 		colorBlending.pAttachments = vColorBlendAttachment.data();
 		colorBlending.blendConstants[0] = 0.0f;
 		colorBlending.blendConstants[1] = 0.0f;

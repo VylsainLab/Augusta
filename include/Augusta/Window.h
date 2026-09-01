@@ -17,6 +17,7 @@ namespace aug
 	{		
 	public:
 		Window(const std::string &name, uint16_t width, uint16_t height, bool bResizable, bool bVisible);
+		Window(const Window& copy) = delete;
 		virtual ~Window();
 
 		void InitAttachments();

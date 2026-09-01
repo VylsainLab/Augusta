@@ -465,7 +465,7 @@ namespace aug
 		{
 			float* pSrc = pData;
 			vDst.resize(w * h * 4);
-			for (uint32_t i = 0; i < w * h; ++i)
+			for (int32_t i = 0; i < w * h; ++i)
 			{
 				vDst[i] = { pSrc[0], pSrc[1], pSrc[2], 0.f };
 				pSrc += 3;

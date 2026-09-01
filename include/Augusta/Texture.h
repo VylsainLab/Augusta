@@ -51,6 +51,7 @@ namespace aug
 		friend class TextureFactory;
 
 		Texture(STextureDesc& desc, Buffer* pBuffer = nullptr);
+		Texture(const Texture& copy) = delete;
 		virtual ~Texture();
 
 		static std::shared_ptr<Texture> MakeShared(STextureDesc& desc, Buffer* pBuffer = nullptr);

@@ -233,7 +233,7 @@ namespace aug
 			imageInfo.imageView = m_DepthAttachment->_pRenderTargetTexture->GetImageView();
 			imageInfo.sampler = m_DepthAttachment->_pRenderTargetTexture->GetSampler();
 
-			DescriptorFactory::UpdateDescriptor(m_mDescriptorHandles[h], &imageInfo, m_vColorAttachments.size());
+			DescriptorFactory::UpdateDescriptor(m_mDescriptorHandles[h], &imageInfo, static_cast<uint8_t>(m_vColorAttachments.size()));
 		}
 	}
 }

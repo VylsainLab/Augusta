@@ -11,6 +11,7 @@ namespace aug
 	{
 	public:
 		Buffer(uint64_t size, VkBufferUsageFlags bufferUsage, VmaMemoryUsage memoryUsage, void* pData);
+		Buffer(const Buffer& copy) = delete;
 		~Buffer();
 
 		void CopyData(uint64_t size, void* pData);

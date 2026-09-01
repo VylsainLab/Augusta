@@ -22,7 +22,8 @@ namespace aug
 	{
 	public:
 		Framebuffer(const SFramebufferDesc& desc);
-		~Framebuffer();
+		Framebuffer(const Framebuffer& copy) = delete;
+		virtual ~Framebuffer();
 
 		const SFramebufferDesc& GetDesc() { return m_Desc; }
 

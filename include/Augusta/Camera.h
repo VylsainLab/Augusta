@@ -27,7 +27,8 @@ namespace aug
 	{
 	public:
 		Camera(SCameraDesc desc);
-		Camera(Camera& camera) = delete;
+		Camera(const Camera& camera) = delete;
+		virtual ~Camera();
 		
 		void ComputeCamera();
 		virtual void ProcessEvents(float fDeltaT) override;

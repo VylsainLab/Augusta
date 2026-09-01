@@ -58,7 +58,8 @@ namespace aug
 
 	protected:		
 		Material();
-		~Material();
+		Material(const Material& copy) = delete;
+		virtual ~Material();
 		
 	};
 

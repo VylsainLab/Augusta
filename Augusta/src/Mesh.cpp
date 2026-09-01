@@ -69,8 +69,8 @@ namespace aug
 			for (uint32_t j = 0; j < uiSubdivision; ++j)
 			{
 				glm::vec2 uv(float(j) / (uiSubdivision - 1), float(i) / (uiSubdivision - 1));
-				float alpha = 2. * PI * uv.x;
-				float beta = PI * (-0.5 + uv.y);
+				float alpha = 2.f * PI * uv.x;
+				float beta = PI * (-0.5f + uv.y);
 				glm::vec3 pos = fRadius * glm::vec3(-cos(beta) * cos(alpha), sin(beta), cos(beta) * sin(alpha));
 				glm::vec3 normal = (bInwardNormals ? -1.f : 1.f) * glm::normalize(pos);
 				uv *= -1;
@@ -136,7 +136,7 @@ namespace aug
 		desc._pFormat = &format;
 		desc._vertexCount = uiNbVertices;
 		desc._vertexData = vVertices.data();
-		desc._indexCount = vIndices.size();
+		desc._indexCount = static_cast<uint32_t>(vIndices.size());
 		desc._indexData = vIndices.data();
 		return std::make_shared<Mesh>(desc);
 	}

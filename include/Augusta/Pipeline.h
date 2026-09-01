@@ -28,6 +28,7 @@ namespace aug
 	{
 	public:
 		Pipeline(IRenderTarget* pRT);
+		Pipeline(const Pipeline& copy) = delete;
 		virtual ~Pipeline();
 
 #ifndef USE_DYNAMIC_RENDERING

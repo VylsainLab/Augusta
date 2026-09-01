@@ -22,6 +22,10 @@ namespace aug
 		Debug::RegisterDebugee("Debug", "Camera", std::bind(&Camera::DrawDebug, this));
 	}
 
+	Camera::~Camera()
+	{
+	}
+
 	void Camera::ComputeCamera()
 	{
 		ComputeViewMatrix();
@@ -138,19 +142,19 @@ namespace aug
 		Camera* pCam = reinterpret_cast<Camera*>(pObject);
 		if(pCam)
 		{
-			ImGui::SliderFloat("Speed", &pCam->m_fSpeed, 0.1, 1000.);
-			ImGui::SliderFloat("Sensitivity", &pCam->m_fSensitivity, 0.001, 1.);
+			ImGui::SliderFloat("Speed", &pCam->m_fSpeed, 0.1f, 1000.f);
+			ImGui::SliderFloat("Sensitivity", &pCam->m_fSensitivity, 0.001f, 1.f);
 
-			float fFOV = pCam->m_ddegVFov;
-			if (ImGui::SliderFloat("FOV", &fFOV, 10., 120.))
+			float fFOV = static_cast<float>(pCam->m_ddegVFov);
+			if (ImGui::SliderFloat("FOV", &fFOV, 10.f, 120.f))
 				pCam->m_ddegVFov = fFOV;
 
-			float fZNear = pCam->m_dZNear;
-			if (ImGui::SliderFloat("ZNear", &fZNear, 0.00001, 0.1))
+			float fZNear = static_cast<float>(pCam->m_dZNear);
+			if (ImGui::SliderFloat("ZNear", &fZNear, 0.00001f, 0.1f))
 				pCam->m_dZNear = fZNear;
 
-			float fZFar = pCam->m_dZFar;
-			if (ImGui::SliderFloat("ZFar", &fZFar, 10., 10000.))
+			float fZFar = static_cast<float>(pCam->m_dZFar);
+			if (ImGui::SliderFloat("ZFar", &fZFar, 10.f, 10000.f))
 				pCam->m_dZFar = fZFar;
 		}
 	}

@@ -26,6 +26,7 @@ namespace aug
 	{
 	public:
 		VertexFormat(const std::vector<VertexFormatComponents>& vComponents);
+		VertexFormat(const VertexFormat& copy) = delete;
 		VertexFormat(uint32_t uiComponentMask);
 
 		VkPipelineVertexInputStateCreateInfo GetPipelineVertexInputStateCreateInfo() const;

@@ -32,6 +32,7 @@ namespace aug
 	{
 	public:
 		Application(const std::string& name, uint16_t width, uint16_t height, bool bResizable=true, bool bVisible=true);
+		Application(const Application& copy) = delete;
 		virtual ~Application();
 
 		void Run();		

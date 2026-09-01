@@ -18,6 +18,7 @@ namespace aug
 	{
 	public:
 		AssimpParser(uint32_t uiVertexComponentFlags, bool bLog = true, uint32_t uiImportFlags = aiProcess_Triangulate);
+		AssimpParser(const AssimpParser& copy) = delete;
 		virtual ~AssimpParser();
 
 		void RecursiveLoad(std::shared_ptr<Scene> pScene, std::shared_ptr<Node> pNode, aiNode* node);

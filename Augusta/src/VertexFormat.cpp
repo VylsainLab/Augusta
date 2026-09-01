@@ -57,7 +57,7 @@ namespace aug
 
 		uint32_t uiLocation = 0;
 		VkVertexInputAttributeDescription desc{};
-		if (uiComponentMask & VERTEX_FORMAT_POS_VEC3F32 == VERTEX_FORMAT_POS_VEC3F32)
+		if ((uiComponentMask & VERTEX_FORMAT_POS_VEC3F32) == VERTEX_FORMAT_POS_VEC3F32)
 		{			
 			desc.location = uiLocation;
 			desc.format = VK_FORMAT_R32G32B32_SFLOAT;
@@ -67,7 +67,7 @@ namespace aug
 			uiLocation++;
 		}
 
-		if (uiComponentMask & VERTEX_FORMAT_NORMAL_VEC3F32 == VERTEX_FORMAT_NORMAL_VEC3F32)
+		if ((uiComponentMask & VERTEX_FORMAT_NORMAL_VEC3F32) == VERTEX_FORMAT_NORMAL_VEC3F32)
 		{
 			desc.location = uiLocation;
 			desc.format = VK_FORMAT_R32G32B32_SFLOAT;
@@ -77,7 +77,7 @@ namespace aug
 			uiLocation++;
 		}
 
-		if (uiComponentMask & VERTEX_FORMAT_UV_VEC2F32 == VERTEX_FORMAT_UV_VEC2F32)
+		if ((uiComponentMask & VERTEX_FORMAT_UV_VEC2F32) == VERTEX_FORMAT_UV_VEC2F32)
 		{
 			desc.location = uiLocation;
 			desc.format = VK_FORMAT_R32G32_SFLOAT;

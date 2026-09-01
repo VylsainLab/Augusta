@@ -19,7 +19,8 @@ namespace aug
 	{
 	public:
 		ShaderModule(const std::string& strName, const std::string& filepath, VkShaderStageFlagBits stage);
-		~ShaderModule();
+		ShaderModule(const ShaderModule& copy) = delete;
+		virtual ~ShaderModule();
 
 		void ReadAndCompileModule();		
 

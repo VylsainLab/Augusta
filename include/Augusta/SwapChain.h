@@ -18,6 +18,7 @@ namespace aug
 		static SSwapChainSupportDetails QuerySwapChainSupport(const VkPhysicalDevice& device, const VkSurfaceKHR& surface);
 
 		SwapChain(const VkSurfaceKHR& surface);
+		SwapChain(const SwapChain& copy) = delete;
 		virtual ~SwapChain();
 
 		uint32_t AcquireNextImage(VkSemaphore semaphore);

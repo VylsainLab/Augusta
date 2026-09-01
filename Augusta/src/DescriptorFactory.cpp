@@ -69,13 +69,13 @@ namespace aug
 
 		VkDescriptorSetLayoutCreateInfo layoutInfo{};
 		layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-		layoutInfo.bindingCount = vLayoutBindings.size();
+		layoutInfo.bindingCount = static_cast<uint32_t>(vLayoutBindings.size());
 		layoutInfo.pBindings = vLayoutBindings.data();
 
 		if (vkCreateDescriptorSetLayout(aug::Context::m_VkDevice, &layoutInfo, nullptr, &layout) != VK_SUCCESS)
 			throw std::runtime_error("Failed to create descriptor set layout!");
 
-		DescriptorSetLayoutHandle res = m_vLayouts.size()-1;
+		DescriptorSetLayoutHandle res = static_cast<DescriptorSetLayoutHandle>(m_vLayouts.size()-1);
 		return res;
 	}
 
@@ -92,7 +92,7 @@ namespace aug
 		if (res != VK_SUCCESS)
 			throw std::runtime_error("Failed to allocate descriptor sets!");
 
-		DescriptorSetHandle sh = m_vSets.size();
+		DescriptorSetHandle sh = static_cast<DescriptorSetHandle>(m_vSets.size());
 		m_mDescriptorMapping[h].push_back(sh);
 		m_vSets.push_back(descriptorSet);
 		return sh;
@@ -131,7 +131,7 @@ namespace aug
 		if (m_mDescriptorMapping.find(h)!=m_mDescriptorMapping.end())
 		{
 			//free all related sets
-			FreeDescriptors(h,m_mDescriptorMapping[h].size(), m_mDescriptorMapping[h].data());
+			FreeDescriptors(h, static_cast<uint32_t>(m_mDescriptorMapping[h].size()), m_mDescriptorMapping[h].data());
 
 			//destroy layout
 			vkDestroyDescriptorSetLayout(aug::Context::m_VkDevice, m_vLayouts[h], nullptr);
@@ -143,7 +143,7 @@ namespace aug
 	void DescriptorFactory::FreeDescriptors(DescriptorSetLayoutHandle h, uint32_t uiCount, DescriptorSetHandle* pHandles)
 	{
 		std::vector<VkDescriptorSet> vSets;
-		for (int i = 0; i < uiCount; ++i)
+		for (uint32_t i = 0; i < uiCount; ++i)
 			vSets.push_back(m_vSets[pHandles[i]]);
 		vkFreeDescriptorSets(Context::m_VkDevice, m_VkDescriptorPool, uiCount, vSets.data());
 	}
