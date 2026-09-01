@@ -28,6 +28,7 @@ namespace aug
 		m_pWindow = std::make_unique<Window>(name, width, height, bResizable, bVisible);
 
 		Context::Init(m_pWindow->GetSurface());
+		aug::Shader::AddDirectory("../Augusta/src/shaders/");
 		DescriptorFactory::Init();
 		m_pWindow->InitAttachments();
 		InitImGui();
@@ -45,6 +46,7 @@ namespace aug
 
 		Debug::RegisterDebugee("Debug", "Materials", std::bind(&MaterialFactory::DrawDebug));
 		Debug::RegisterDebugee("Debug", "Textures", std::bind(&TextureFactory::DrawDebug));
+		Debug::RegisterDebugee("Debug", "Lights", std::bind(&LightManager::DrawDebug,&m_LightManager));
 	}
 
 	Application::~Application()

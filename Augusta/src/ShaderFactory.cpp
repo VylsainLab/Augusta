@@ -148,7 +148,7 @@ namespace aug
 	shaderc_include_result* ShaderIncluder::GetInclude(const char* requested_source, shaderc_include_type type, const char* requesting_source, size_t include_depth)
 	{
 		std::array<std::string, 2>* aContent = new std::array<std::string, 2>();
-		(*aContent)[0] = Shader::GetDirectory() + "/" + requested_source;
+		(*aContent)[0] = Shader::FindShader(requested_source);
 		(*aContent)[1] = ShaderModule::ReadFile((*aContent)[0], m_pShaderModule->GetLastModificationTime((*aContent)[0]));
 
 		shaderc_include_result* pRes = new shaderc_include_result();
@@ -169,7 +169,7 @@ namespace aug
 		delete data;
 	}
 
-	std::string Shader::m_sDirectory = "";
+	std::vector<std::string> Shader::m_vDirectories;
 
 	Shader::Shader(const SShaderDesc& desc)
 	{
@@ -194,7 +194,8 @@ namespace aug
 			}
 
 			std::string strName = stage.second + strExtension;
-			m_mModules[stage.first] = std::make_unique<ShaderModule>(strName, m_sDirectory + strName, stage.first);
+			std::string strPath = FindShader(strName);
+			m_mModules[stage.first] = std::make_unique<ShaderModule>(strName, strPath, stage.first);
 			m_vVkPipelineShaderStageCreateInfo.push_back(m_mModules[stage.first]->GetPipelineShaderModuleCreateInfo());
 		}
 	}
@@ -222,6 +223,17 @@ namespace aug
 			m_vVkPipelineShaderStageCreateInfo.push_back(it.second->GetPipelineShaderModuleCreateInfo());
 
 		return bRet;
+	}
+
+	std::string Shader::FindShader(const std::string& strFilename)
+	{
+		for (auto& path : m_vDirectories)
+		{
+			std::string strPath = path + "\\" + strFilename;
+			if (std::filesystem::exists(strPath))
+				return strPath;
+		}
+		return "";
 	}
 	
 }

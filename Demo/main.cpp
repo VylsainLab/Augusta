@@ -58,6 +58,7 @@ private:
 	VkFence m_DeferredFence;
 	aug::DescriptorSetLayoutHandle m_hDeferredSet;
 	aug::DescriptorSetLayoutHandle m_hDeferredUBOSet;
+	aug::DescriptorSetLayoutHandle m_hLightsUBOSet;
 
 	//Main pass
 	std::unique_ptr<aug::Buffer> m_pScreenTriangleVB = nullptr;
@@ -65,6 +66,8 @@ private:
 
 	//Scene	
 	std::vector<std::shared_ptr<aug::Scene>> m_vScenes;
+
+	std::shared_ptr<aug::SDirectionalLight> m_pSun;
 
 	//Cubemap
 	//std::shared_ptr<aug::Mesh> m_pSphere = nullptr;
@@ -173,6 +176,8 @@ private:
 		m_pDeferredPipeline->BindResource(cb, m_hGBufferSet, 1, m_aGBufferFBs[m_uiCurrentFrame].get());
 
 		m_pDeferredPipeline->BindResource(cb, m_hHDRCubemapSet, 2, m_pHDRCubemap.get());
+		
+		m_pDeferredPipeline->BindResource(cb, m_hLightsUBOSet, 3, &m_LightManager);
 
 		//Draw screen triangle
 		VkBuffer vertexBuffers[] = { m_pScreenTriangleVB->GetBufferHandle() };
@@ -325,14 +330,20 @@ private:
 		GBufferTexturesSetDesc.AddBinding(2, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //roughness-metalness-ao
 		GBufferTexturesSetDesc.AddBinding(3, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER); //depth
 		m_hGBufferSet = m_pDeferredPipeline->DeclareResourceLayout(GBufferTexturesSetDesc);
+		deferredPipelineDesc._vLayoutHandles.push_back(m_hGBufferSet);
 
 		aug::SDescriptorSetDesc hdrCubemapSetDesc;
 		hdrCubemapSetDesc._uiSet = 2;
 		hdrCubemapSetDesc.AddBinding(0, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
-		m_hHDRCubemapSet = m_pDeferredPipeline->DeclareResourceLayout(hdrCubemapSetDesc);
-		
-		deferredPipelineDesc._vLayoutHandles.push_back(m_hGBufferSet);
+		m_hHDRCubemapSet = m_pDeferredPipeline->DeclareResourceLayout(hdrCubemapSetDesc);		
 		deferredPipelineDesc._vLayoutHandles.push_back(m_hHDRCubemapSet);
+
+		aug::SDescriptorSetDesc lightsUBO;
+		lightsUBO._uiSet = 3;
+		lightsUBO.AddBinding(0, VK_SHADER_STAGE_FRAGMENT_BIT, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+		m_hLightsUBOSet = m_pDeferredPipeline->DeclareResourceLayout(lightsUBO);
+		deferredPipelineDesc._vLayoutHandles.push_back(m_hLightsUBOSet);
+
 		m_pDeferredPipeline->Init(deferredPipelineDesc);
 
 		m_pDeferredPipeline->RegisterResource(m_hDeferredUBOSet, m_vMainUBOs[0]);
@@ -342,6 +353,7 @@ private:
 		m_pDeferredPipeline->RegisterResource(m_hGBufferSet, m_aGBufferFBs[1].get());
 
 		m_pDeferredPipeline->RegisterResource(m_hHDRCubemapSet, m_pHDRCubemap.get());
+		m_pDeferredPipeline->RegisterResource(m_hLightsUBOSet, &m_LightManager);
 
 		aug::SRenderPass pass;
 		pass._RenderFunc = std::bind(&AugustaDemo::RenderDeferred, this);
@@ -425,6 +437,9 @@ private:
 
 	void Init()
 	{
+		m_pSun = m_LightManager.AddDirectionalLight("Sun");
+		m_pSun->_fIlluminance = 5.f;
+
 		std::shared_ptr<aug::Scene> pScene = std::make_shared<aug::Scene>();
 		m_vScenes.emplace_back(pScene);
 		//m_AssimpParser.LoadSceneFromFile(pScene, "../../Assets/KV2/kv2.FBX", "../../Assets/KV2/textures/","dds"); pScene->GetRootNode()->Scale(glm::dvec3(0.05));
@@ -442,7 +457,7 @@ private:
 
 		InitTestSphere();
 
-		aug::Shader::SetDirectory("shaders/");
+		aug::Shader::AddDirectory("shaders/");
 
 		CreateUniformBuffers();
 

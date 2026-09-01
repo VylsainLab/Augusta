@@ -78,11 +78,13 @@ namespace aug
 
 		bool CheckForModifications();
 
-		static void SetDirectory(const char* szPath) { m_sDirectory = szPath; }
-		static const std::string& GetDirectory() { return m_sDirectory; }
+		static void AddDirectory(const char* szPath) { m_vDirectories.push_back(szPath); }
+		//static const std::vector<std::string>& GetDirectories() { return m_vDirectories; }
+
+		static std::string FindShader(const std::string& strFilename);
 
 	protected:
-		static std::string m_sDirectory;
+		static std::vector<std::string> m_vDirectories;
 
 		SShaderDesc m_Desc;
 		std::map<int32_t, std::unique_ptr<ShaderModule>> m_mModules;

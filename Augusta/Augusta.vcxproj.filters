@@ -25,6 +25,12 @@
     <Filter Include="imgui">
       <UniqueIdentifier>{e1fb2332-1d7b-4077-998a-00c8b7a7cc22}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Renderer">
+      <UniqueIdentifier>{82839a5c-b01f-4c47-9053-8b9409eb4580}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Shaders">
+      <UniqueIdentifier>{7658826e-d7d6-4761-b5c9-60cc01befca9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Augusta\Application.h">
@@ -120,6 +126,9 @@
     <ClInclude Include="..\include\Augusta\Debug.h">
       <Filter>Source Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\Augusta\LightManager.h">
+      <Filter>Source Files\Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp">
@@ -203,5 +212,22 @@
     <ClCompile Include="src\Debug.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\LightManager.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\shaders\Lighting.header">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="src\shaders\Maths.header">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="src\shaders\PBR.header">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="src\shaders\Utils.header">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -107,8 +107,7 @@ namespace aug
 		{
 			for(auto &handle : m_vDescriptorSetLayoutHandles)
 				UpdateDescriptor(handle);
-		}
-			
+		}			
 	}
 
 	std::map<std::string, std::shared_ptr<Material>> MaterialFactory::m_mMaterials;

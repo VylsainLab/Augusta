@@ -1,7 +1,7 @@
 struct SDirectionalLight
 {
-	float _fIlluminance;
 	vec3 _vDirection;
+	float _fIlluminance;	
 };
 
 float GetDirectionalLight(SDirectionalLight l, vec3 N)

@@ -7,6 +7,7 @@
 #include <Augusta/Buffer.h>
 #include <Augusta/Scene.h>
 #include <Augusta/FrameBuffer.h>
+#include <Augusta/LightManager.h>
 #include <vector>
 #include <memory>
 #include <imgui-docking/misc/freetype/imgui_freetype.h>
@@ -86,6 +87,7 @@ namespace aug
 		bool m_bImGuiHasFocus = false;
 
 		std::vector<SRenderPass> m_vRenderPasses;
+		LightManager m_LightManager;
 
 		float m_fDeltaT = 0;
 	};

@@ -39,6 +39,7 @@
     <ClInclude Include="..\include\Augusta\Geodetics.h" />
     <ClInclude Include="..\include\Augusta\InputManager.h" />
     <ClInclude Include="..\include\Augusta\IRenderTarget.h" />
+    <ClInclude Include="..\include\Augusta\LightManager.h" />
     <ClInclude Include="..\include\Augusta\Material.h" />
     <ClInclude Include="..\include\Augusta\Pipeline.h" />
     <ClInclude Include="..\include\Augusta\MemoryAllocator.h" />
@@ -69,6 +70,7 @@
     <ClCompile Include="src\DescriptorFactory.cpp" />
     <ClCompile Include="src\FrameBuffer.cpp" />
     <ClCompile Include="src\InputManager.cpp" />
+    <ClCompile Include="src\LightManager.cpp" />
     <ClCompile Include="src\Material.cpp" />
     <ClCompile Include="src\Pipeline.cpp" />
     <ClCompile Include="src\MemoryAllocator.cpp" />
@@ -83,6 +85,12 @@
     <ClCompile Include="src\Window.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\shaders\Lighting.header" />
+    <None Include="src\shaders\Maths.header" />
+    <None Include="src\shaders\PBR.header" />
+    <None Include="src\shaders\Utils.header" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
