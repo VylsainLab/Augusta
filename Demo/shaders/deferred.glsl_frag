@@ -65,6 +65,7 @@ void main()
     desc._NdotL = dot(N,L);
     desc._HdotV = dot(H,V);
     desc._irradiance = GetDirectionalLight(lightsUBO._aDirectionalLights[0], N);
+    desc._vLightColor = lightsUBO._aDirectionalLights[0]._vColor;
     vec3 radiance = BRDF(desc);
 
     vec3 emissive = texture(samplerEmissiveAO, uv).rgb;

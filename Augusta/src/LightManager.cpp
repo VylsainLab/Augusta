@@ -5,9 +5,14 @@
 
 namespace aug
 {
-    std::shared_ptr<SDirectionalLight> aug::LightManager::AddDirectionalLight(const std::string& strName)
+	void DirectionalLight::Update()
+	{
+		GetDirectionFromAzimuthElevation(m_fDegAzimuth, m_fDegElevation, m_UB._vDirection);
+	}
+
+    std::shared_ptr<DirectionalLight> aug::LightManager::AddDirectionalLight(const std::string& strName)
     {
-        std::shared_ptr<SDirectionalLight> pLight = std::make_shared<SDirectionalLight>();
+        std::shared_ptr<DirectionalLight> pLight = std::make_shared<DirectionalLight>();
         m_mDirectionalLights[strName] = pLight;
         return pLight;
     }
@@ -33,36 +38,17 @@ namespace aug
 		struct SLightUBO
 		{
 			uint32_t _uiNbDirectionalLights;
-			SDirectionalLight _aDirectionalLights[MAX_NB_LIGHTS];
+			DirectionalLight::SDirectionalLight _aDirectionalLights[MAX_NB_LIGHTS];
 		}lightUBO;
 
-		lightUBO._uiNbDirectionalLights = m_mDirectionalLights.size();
+		lightUBO._uiNbDirectionalLights = static_cast<uint32_t>(m_mDirectionalLights.size());
 		for (uint32_t i = 0; i < lightUBO._uiNbDirectionalLights; ++i)
 		{
 			auto it = std::next(m_mDirectionalLights.begin(), i);
-			lightUBO._aDirectionalLights[i] = *it->second.get();
+			lightUBO._aDirectionalLights[i] = it->second->m_UB;
 		}
 
-		m_pUniformBufferObject = std::make_unique<Buffer>(sizeof(SLightUBO), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU, &lightUBO);
-	}
-
-	void GetAzimuthElevationFromDirection(const glm::vec3 dir, float& fAzimuth, float& fElevation)
-	{
-		float distanceXZ = std::hypot(dir.x, dir.z);
-		fElevation = std::atan2(dir.y, distanceXZ) * 180. / PI;
-		fAzimuth = std::atan2(dir.x, dir.z) * 180 / PI;
-	}
-
-	void GetDirectionFromAzimuthElevation(const float& fAzimuth, const float& fElevation, glm::vec3 &dir)
-	{
-		float radElevation = fElevation * PI / 180.;
-		float cosElevation = std::cos(radElevation);
-
-		float radAzimuth = fAzimuth * PI / 180.;
-		dir.x = cosElevation * std::cos(radAzimuth);
-		dir.z = cosElevation * std::sin(radAzimuth);
-
-		dir.y = std::sin(radElevation);
+		m_pUniformBufferObject = std::make_shared<Buffer>(sizeof(SLightUBO), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_TO_GPU, &lightUBO);
 	}
 
 	void LightManager::DrawDebug()
@@ -75,19 +61,20 @@ namespace aug
 			{
 				if (ImGui::TreeNode(light.first.c_str()))
 				{
-					if (ImGui::SliderFloat("Illuminance", &light.second->_fIlluminance, 0.0, 1000.0))
+					if (ImGui::ColorEdit3("Color", &light.second->m_UB._vColor.r, ImGuiColorEditFlags_NoInputs))
 						bUpdate = true;
 
-					float fAzimuth, fElevation;
-					GetAzimuthElevationFromDirection(light.second->_vDirection, fAzimuth, fElevation);
-					if (ImGui::SliderFloat("Azimuth", &fAzimuth, -180.0, 180.0))
+					if (ImGui::SliderFloat("Illuminance", &light.second->m_UB._fIlluminance, 0.0, 1000.0))
 						bUpdate = true;
 
-					if(ImGui::SliderFloat("Elevation", &fElevation, -90.0, 90.0))
+					if (ImGui::SliderFloat("Azimuth", &light.second->m_fDegAzimuth, -180.0, 180.0))
 						bUpdate = true;
 
-					if(bUpdate)
-						GetDirectionFromAzimuthElevation(fAzimuth, fElevation, light.second->_vDirection);
+					if(ImGui::SliderFloat("Elevation", &light.second->m_fDegElevation, -90.0, 90.0))
+						bUpdate = true;
+
+					if (bUpdate)
+						light.second->Update();
 
 					ImGui::TreePop();
 				}				

@@ -1,5 +1,6 @@
 struct SDirectionalLight
 {
+	vec3 _vColor;
 	vec3 _vDirection;
 	float _fIlluminance;	
 };

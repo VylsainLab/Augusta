@@ -67,7 +67,7 @@ private:
 	//Scene	
 	std::vector<std::shared_ptr<aug::Scene>> m_vScenes;
 
-	std::shared_ptr<aug::SDirectionalLight> m_pSun;
+	std::shared_ptr<aug::DirectionalLight> m_pSun;
 
 	//Cubemap
 	//std::shared_ptr<aug::Mesh> m_pSphere = nullptr;
@@ -438,11 +438,13 @@ private:
 	void Init()
 	{
 		m_pSun = m_LightManager.AddDirectionalLight("Sun");
-		m_pSun->_fIlluminance = 5.f;
+		m_pSun->SetIlluminance(5.f);
+		m_pSun->SetAzimuth(45.f);
+		m_pSun->SetElevation(45.f);
 
 		std::shared_ptr<aug::Scene> pScene = std::make_shared<aug::Scene>();
 		m_vScenes.emplace_back(pScene);
-		//m_AssimpParser.LoadSceneFromFile(pScene, "../../Assets/KV2/kv2.FBX", "../../Assets/KV2/textures/","dds"); pScene->GetRootNode()->Scale(glm::dvec3(0.05));
+		m_AssimpParser.LoadSceneFromFile(pScene, "../../Assets/KV2/kv2.FBX", "../../Assets/KV2/textures/","dds"); pScene->GetRootNode()->Scale(glm::dvec3(0.05));
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/F18/F18_opaque.FBX", "../../Assets/F18/", "dds"); m_pScene->GetRootNode()->Scale(glm::dvec3(0.001));
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Cottage/Cottage.FBX", "../../Assets/Cottage/", "dds");
 		//m_AssimpParser.LoadSceneFromFile(m_pScene, "../../Assets/Lighthouse/lighthouse.FBX", "../../Assets/Lighthouse/Textures/", "dds");
@@ -455,7 +457,7 @@ private:
 
 		InitCubemap();
 
-		InitTestSphere();
+		//InitTestSphere();
 
 		aug::Shader::AddDirectory("shaders/");
 
