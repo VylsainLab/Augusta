@@ -21,11 +21,13 @@ namespace aug
 		CleanModule();
 	}
 
-	void ShaderModule::ReadAndCompileModule()
+	bool ShaderModule::ReadAndCompileModule()
 	{
-		CleanModule();
+		std::string glsl_code;
+		if (!ReadFile(m_strFilePath, glsl_code, m_mLastModificationTimes[m_strFilePath]))
+			return false;
 
-		std::string glsl_code = ReadFile(m_strFilePath, m_mLastModificationTimes[m_strFilePath]);
+		CleanModule();
 
 		shaderc_shader_kind shaderKind;
 		switch (m_VkShaderStageFlag)
@@ -69,6 +71,7 @@ namespace aug
 		m_VkPipelineShaderStageCreateInfo.stage = m_VkShaderStageFlag;
 		m_VkPipelineShaderStageCreateInfo.module = m_VkShaderModule;
 		m_VkPipelineShaderStageCreateInfo.pName = m_strEntryPointName.c_str();
+		return true;
 	}
 
 	void ShaderModule::CleanModule()
@@ -86,23 +89,21 @@ namespace aug
 	{
 		for (auto& entry : m_mLastModificationTimes)
 		{
-			if (std::filesystem::exists(entry.first))
-			{
-				std::filesystem::file_time_type t = std::filesystem::last_write_time(entry.first);
-				if (t > entry.second)
-					return true;
-			}
+			std::error_code ec;
+			std::filesystem::file_time_type t = std::filesystem::last_write_time(entry.first, ec);
+			if (!ec && t > entry.second)
+				return true;
 		}
 
 		return false;
 	}
 
-	std::string ShaderModule::ReadFile(const std::string& filepath, std::filesystem::file_time_type& t)
+	bool ShaderModule::ReadFile(const std::string& filepath, std::string &strDst, std::filesystem::file_time_type& t)
 	{
 		std::ifstream file(filepath, std::ios::ate | std::ios::binary);
 
 		if (!file.is_open())
-			throw std::runtime_error("failed to open file!");
+			return false;
 
 		t = std::filesystem::last_write_time(filepath);
 
@@ -113,7 +114,8 @@ namespace aug
 
 		file.close();
 
-		return std::string(buffer.begin(),buffer.end());
+		strDst = std::string(buffer.begin(),buffer.end());
+		return true;
 	}
 
 	// Compiles a shader to a SPIR-V binary. Returns the binary as
@@ -149,7 +151,8 @@ namespace aug
 	{
 		std::array<std::string, 2>* aContent = new std::array<std::string, 2>();
 		(*aContent)[0] = Shader::FindShader(requested_source);
-		(*aContent)[1] = ShaderModule::ReadFile((*aContent)[0], m_pShaderModule->GetLastModificationTime((*aContent)[0]));
+		if (!ShaderModule::ReadFile((*aContent)[0], (*aContent)[1], m_pShaderModule->GetLastModificationTime((*aContent)[0])))
+			return nullptr;
 
 		shaderc_include_result* pRes = new shaderc_include_result();
 		pRes->source_name = (*aContent)[0].data();
@@ -212,15 +215,18 @@ namespace aug
 		{
 			if (it.second->CheckForModifications()) //TODO extend to all asset types
 			{
-				Debug::Log(LOG_TYPE_INFO, std::format("Shader module has changed: {}", it.second->GetName()));
-				it.second->ReadAndCompileModule();
-				bRet = true;
+				Debug::Log(LOG_TYPE_INFO, std::format("Shader module has changed: {} {:p}", it.second->GetName(), reinterpret_cast<const void*>(it.second->GetModule())));
+				if(it.second->ReadAndCompileModule())
+					bRet = true;
 			}
 		}
 
-		m_vVkPipelineShaderStageCreateInfo.clear();
-		for (auto& it : m_mModules)
-			m_vVkPipelineShaderStageCreateInfo.push_back(it.second->GetPipelineShaderModuleCreateInfo());
+		if (bRet)
+		{
+			m_vVkPipelineShaderStageCreateInfo.clear();
+			for (auto& it : m_mModules)
+				m_vVkPipelineShaderStageCreateInfo.push_back(it.second->GetPipelineShaderModuleCreateInfo());
+		}
 
 		return bRet;
 	}

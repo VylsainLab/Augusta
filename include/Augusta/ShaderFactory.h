@@ -22,7 +22,7 @@ namespace aug
 		ShaderModule(const ShaderModule& copy) = delete;
 		virtual ~ShaderModule();
 
-		void ReadAndCompileModule();		
+		[[nodiscard]] bool ReadAndCompileModule();
 
 		const VkPipelineShaderStageCreateInfo GetPipelineShaderModuleCreateInfo();
 		const VkShaderStageFlagBits GetShaderStageFlagBits();
@@ -30,9 +30,11 @@ namespace aug
 		bool CheckForModifications();
 
 		const char* GetName() { return m_strName.c_str(); }
+		const VkShaderModule GetModule() { return m_VkShaderModule; }
+
 		std::filesystem::file_time_type& GetLastModificationTime(const std::string& strPath) { return m_mLastModificationTimes[strPath]; }
 
-		static std::string ReadFile(const std::string& filepath, std::filesystem::file_time_type& t);
+		static [[nodiscard]] bool ReadFile(const std::string& filepath, std::string& strDst, std::filesystem::file_time_type& t);
 
 	protected:
 		void CleanModule();		
