@@ -56,10 +56,13 @@ void main()
     vec4 albedoRoughness = texture(samplerAlbedo, uv);
     albedoRoughness.rgb = pow(albedoRoughness.rgb,vec3(2.2)); //bring albedo to linear space ahead of light calculations
 
+    vec4 emissiveAO = texture(samplerEmissiveAO, uv);
+
     SPBRDesc desc;
     desc._albedo = albedoRoughness.rgb;    
     desc._fRoughness = albedoRoughness.a;
     desc._fMetalness = normalMetalness.a;
+    desc._fAO = emissiveAO.a;
     desc._NdotH = max(dot(N,H),0.f);
     desc._NdotV = dot(N,V);
     desc._NdotL = dot(N,L);
