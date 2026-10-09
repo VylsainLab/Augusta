@@ -11,7 +11,7 @@
 RaceEngineer::RaceEngineer(const std::string& name, uint16_t width, uint16_t height, bool bResizable, bool bVisible)
     : aug::Application(name, width, height, bResizable, bVisible)
 {
-    InitImGui();
+    InitFlags();
 
     ImGuiIO& io = ImGui::GetIO();
     m_pBodyFont = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Calibri.ttf", 18, NULL, io.Fonts->GetGlyphRangesDefault());
@@ -27,6 +27,15 @@ RaceEngineer::RaceEngineer(const std::string& name, uint16_t width, uint16_t hei
     cfg.GlyphOffset.y = -5;
     std::string strPath = GetRootDirectory() + "Dependencies\\Fonts\\flags color world.ttf";
     m_pFlagFont = io.Fonts->AddFontFromFileTTF(strPath.c_str(), 24.0f, &cfg, ranges);
+}
+
+void RaceEngineer::InitFlags()
+{
+    aug::TextureFactory::AddTexturePath("Flags/");
+    for (auto& flag : mFlags)
+    {
+        m_mFlagTextures[flag.first] = aug::TextureFactory::LoadTextureFromFile(flag.second.c_str());
+    }
 }
 
 void RaceEngineer::MainRenderPass(const VkCommandBuffer& commandBuffer)
@@ -203,9 +212,15 @@ void RaceEngineer::DrawStandings()
         ImGui::TableNextColumn();
         if (!mFlags[driver->_strCountry].empty())
         {
-            ImGui::PushFont(m_pFlagFont);
+            std::shared_ptr<aug::Texture> pFlagTex = m_mFlagTextures[driver->_strCountry];
+            if (pFlagTex)
+            {
+                ImVec2 size(pFlagTex->GetDesc()._width, pFlagTex->GetDesc()._height);
+                SL(ImGui::Image(pFlagTex->GetImGuiTextureID(), size))
+            }
+            /*ImGui::PushFont(m_pFlagFont);
             SL(ImGui::Text(mFlags[driver->_strCountry].c_str()))
-            ImGui::PopFont();
+            ImGui::PopFont();*/
         }
         else
         {

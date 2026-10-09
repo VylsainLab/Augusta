@@ -7,6 +7,8 @@ class RaceEngineer : public aug::Application
 public:
 	RaceEngineer(const std::string& name, uint16_t width, uint16_t height, bool bResizable, bool bVisible);
 
+	void InitFlags();
+
 	virtual void MainRenderPass(const VkCommandBuffer& commandBuffer) override;
 
 	void DrawTelemetry();
@@ -27,5 +29,7 @@ protected:
 	ImFont* m_pBodyFont;
 	ImFont* m_pEmojiFont;
 	ImFont* m_pFlagFont;
+
+	std::map<std::string, std::shared_ptr<aug::Texture>> m_mFlagTextures;
 };
 
